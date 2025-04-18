@@ -1,0 +1,49 @@
+{
+    "models": {
+        "deepseek-r1:14b": {
+            "categorie": {
+                "math": 1011.9179841437784
+            }
+        },
+        "deepseek-r1:32b": {
+            "categorie": {
+                "math": 1001.3702570681064
+            }
+        },
+        "mistral:7b": {
+            "categorie": {
+                "math": 926.2290373641401,
+                "language": 1015.2975328274754
+            }
+        },
+        "phi4:14b": {
+            "categorie": {
+                "math": 1017.4358728782763
+            }
+        },
+        "gemma3:27b": {
+            "categorie": {
+                "math": 1016.0
+            }
+        },
+        "qwen2.5:7b": {
+            "categorie": {
+                "math": 928.2431594054176,
+                "language": 1031.263693206478
+            }
+        },
+        "llama3.1:8b": {
+            "categorie": {
+                "math": 1029.8063226744412,
+                "language": 969.4387739660466
+            }
+        },
+        "llama3.2:3b": {
+            "categorie": {
+                "math": 1068.9973664658403,
+                "language": 984.0
+            }
+        }
+    },
+    "timestamp": "2025-04-12T15:28:33.498858"
+}

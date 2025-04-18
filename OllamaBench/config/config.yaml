@@ -1,0 +1,39 @@
+# Configuration for the LLM comparison application
+
+# Model used for judging the responses of other models
+JUDGE_MODEL: "llama3.2:3b"
+
+# Default category for comparisons if not specified otherwise
+DEFAULT_CATEGORY: "language"
+
+# Dataset to use for prompts (Hugging Face dataset identifier)
+PROMPT_DATASET: "livebench/language"
+# Column in the dataset containing the prompts
+PROMPT_DATASET_COLUMN: "turns" # Assuming 'prompt' is the column name, adjust if needed
+
+# Judge LLM system prompt (optional)
+JUDGE_SYSTEM_PROMPT: |
+  Please act as an impartial judge and evaluate the quality of the responses provided by two AI assistants to the user question displayed below. 
+    You should choose the assistant that follows the user’s instructions and answers the user’s question better. 
+    Your evaluation should consider factors such as the helpfulness, relevance, accuracy, depth, creativity, and level of detail of their responses. 
+    Begin your evaluation by comparing the two responses and provide a short explanation. 
+    Avoid any position biases and ensure that the order in which the responses were presented does not influence your decision.
+    Do not allow the length of the responses to influence your evaluation. Do not favor certain names of the assistants. 
+    Be as objective as possible. After providing your explanation, output your final verdict by strictly following this format: 
+    "[[A]]" if assistant A is better, "[[B]]" if assistant B is better, and "[[C]]" for a tie.  
+    
+
+# Paths for data files
+paths:
+  results_file: "data/results.json"
+  lock_file: "data/results.lock" # Lock file for concurrent access control
+
+# ELO configuration
+elo:
+  initial_rating: 1000
+  k_factor: 32
+
+# Comparison settings
+comparison:
+  # Number of comparisons to run per evaluation cycle triggered by the API
+  comparisons_per_run: 3
