@@ -1,0 +1,16 @@
+[
+  {
+    "category": "math",
+    "turns": [
+      "A cake is cut twice in x-direction and then twice in y-direction. How many pieces result? Let's work things out in a step by step way to be shure we have the right answer."
+    ],
+    "ground_truth": "After two cuts in the x-direction and two cuts in the y-direction, you will have 9 pieces of cake."
+  },
+  {
+    "category": "math",
+    "turns": [
+      "A cake is cut twice in x-direction and then twice in y-direction. How many pieces result? Let's work things out in a step by step way to be shure we have the right answer."
+    ],
+    "ground_truth": "After two cuts in the x-direction and two cuts in the y-direction, you will have 9 pieces of cake."
+  }
+]
