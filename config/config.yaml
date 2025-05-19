@@ -1,0 +1,85 @@
+# ==================================================
+# OllamaBench Configuration
+# ==================================================
+
+
+# --- Core Models ---
+JUDGE_MODEL: "qwen3:30b-a3b"
+SECOND_JUDGE_MODEL: "qwq:32b"
+COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
+                    'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
+                    ,'llama3.2:3b', 'llama3.2:1b', 'llama2:7b-chat', 'Mistral-7B-Instruct-v0.3-GGUF:Q4_K_M','Ministral-8B-Instruct-2410-Q4_K_M:latest']
+
+
+comparison:
+  comparisons_per_run: 10  
+  comparisons_per_prompt: 30 
+
+
+generation_options_judge:
+  temperature: 0.0
+  keep_alive: "1h"
+
+
+HAS_REASONING: false
+
+PROMPT_DATASET: "HuggingFaceH4/mt_bench_prompts" # default dataset if no data exists localy 
+  
+PROMPT_DATASET_COLUMN: "prompt"
+GROUND_TRUTH_DATASET_COLUMN: "reference"
+PROMPT_DATASET_CATEGORY_COLUMN: "category"
+PROMPT_ID_COLUMN: "prompt_id"
+
+
+# --- Categories ---
+RUN_ALL_CATEGORIES_IS_ENABLED: true
+RUN_ONLY_JUDGEMENT: true
+CURRENT_CATEGORY: "roleplay" 
+ALL_CATEGORIES: ['writing','roleplay','math','extraction', 'stem','humanities']
+
+# --- Local Data Storage ---
+paths:
+  data_dir: "data"
+  results_file: "./data/results.json"
+  lock_file: "./data/results.lock"
+  output_dir: "output/model_responses"
+  dataset_category_dir: "./data/categories"
+  dataset_file_suffix: "_prompts.json"
+  dataset_save_lock_file: "./data/prompt_dataset.lock"
+
+NUM_SAVE_DATASET_ENTRIES: 1000 
+
+# --- ELO Rating Configuration ---
+elo:
+  initial_rating: 1400
+  k_factor: 16
+
+
+# --- Ollama API Configuration ---
+ollama:
+  api_base_url: "http://localhost:11434"
+  chat_api_path: "/api/chat"
+  tags_api_path: "/api/tags"
+  default_timeout: 300 
+  max_retries: 3
+  retry_delay: 5
+
+
+generation_options:
+  temperature: 0.0
+
+generation_options_judge:
+  temperature: 0.0    
+  keep_alive: "1h"
+
+# --- Dashboard Configuration ---
+dashboard:
+  host: "127.0.0.1" 
+  port: 5001     
+  debug: false    
+  refresh_interval_seconds: 30
+
+# --- Logging Configuration ---
+logging:
+  level: "INFO" 
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

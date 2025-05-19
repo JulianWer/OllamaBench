@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OllamaBench Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .chart-container { position: relative; height: 40vh; width: 100%; max-width: 600px; margin: auto; }
+        canvas { display: block; box-sizing: border-box; height: 100% !important; width: 100% !important; }
+        .table-container { overflow-x: auto; max-height: 400px; }
+        .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #555; }
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px;
+            border-radius: 50%; border-left-color: #3b82f6;
+            animation: spin 1s ease infinite; margin: 5px auto;
+            display: inline-block; vertical-align: middle;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .action-button {
+            background-color: #3b82f6; color: white; padding: 10px 20px; border: none;
+            border-radius: 8px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease;
+            display: inline-flex; align-items: center; gap: 8px; 
+        }
+        .action-button:hover { background-color: #2563eb; }
+        .action-button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .action-button .loading-spinner { width: 20px; height: 20px; border-width: 3px; margin: 0; } 
+        .status-message {
+            margin-top: 15px; padding: 10px 15px; border-radius: 6px; font-size: 0.9em;
+            text-align: center; transition: opacity 0.5s ease-in-out;
+        }
+        .status-success { background-color: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .status-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .status-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .status-info { background-color: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
+        .status-loading {
+             background-color: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc;
+             display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .status-loading .loading-spinner { width: 20px; height: 20px; border-width: 3px; margin: 0; }
+        .category-select {
+            padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db; 
+            background-color: white; margin-left: 10px; font-size: 0.9em; cursor: pointer;
+        }
+        .hidden { display: none; }
+        .sticky-header th { position: sticky; top: 0; background-color: #f9fafb; z-index: 10; white-space: nowrap; } 
+        .detailed-ratings-table td { white-space: nowrap; } 
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">OllamaBench Dashboard</h1>
+
+        <div class="mb-6 p-4 bg-white rounded-lg shadow-md text-center">
+            <button id="run-eval-button" class="action-button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+                </svg>
+                <span id="run-eval-button-text">Starte {{ COMPARISONS_PER_RUN }} Vergleiche</span>
+                <div class="loading-spinner hidden"></div>
+            </button>
+            <div id="eval-status" class="status-message status-info" style="opacity: 1;">Prüfe Status...</div>
+        </div>
+
+        <div id="loading-indicator" class="text-center my-8">
+            <div class="loading-spinner"></div>
+            <p class="text-gray-600 mt-2">Lade Dashboard-Daten...</p>
+        </div>
+
+        <div id="dashboard-content" class="hidden">
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-md mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-700">Gesamtranking der Modelle</h2>
+                    <span class="text-xs text-gray-500">Letzte Aktualisierung: <span id="data-timestamp">N/A</span></span>
+                </div>
+                <div class="table-container">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="sticky-header">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rang</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modell</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beste Kategorie</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Höchstes ELO</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alle Kategorien (Durchschnitts-ELO)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overall-rankings-table-body" class="bg-white divide-y divide-gray-200">
+                            <tr><td colspan="5" class="text-center py-4 text-gray-500">Lade Rankings...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                 <div class="bg-white p-4 md:p-6 rounded-lg shadow-md flex flex-col items-center">
+                    <div class="flex items-center justify-center w-full mb-4">
+                         <h2 class="text-xl font-semibold text-gray-700">ELO-Ratings nach Kategorie</h2>
+                         <select id="category-select-bar" class="category-select ml-auto">
+                             <option value="">Lade...</option>
+                         </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                         <p id="bar-chart-no-data" class="text-center text-gray-500 mt-4 hidden">Keine Daten für diese Kategorie verfügbar.</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-4 md:p-6 rounded-lg shadow-md flex flex-col items-center">
+                     <div class="flex items-center justify-center w-full mb-4">
+                         <h2 class="text-xl font-semibold text-gray-700">Modellvergleich über Kategorien</h2>
+                          </div>
+                     <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                        <p id="radar-chart-no-data" class="text-center text-gray-500 mt-4 hidden">Nicht genügend Daten (mind. 1 Modell und 3 Kategorien mit Ratings) für Radar-Diagramm.</p>
+                    </div>
+                </div>
+            </div>
+
+             <div class="bg-white p-4 md:p-6 rounded-lg shadow-md mt-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Detaillierte Ratings pro Kategorie</h2>
+                <div class="table-container">
+                    <table class="min-w-full divide-y divide-gray-200 detailed-ratings-table">
+                        <thead id="detailed-ratings-thead" class="sticky-header">
+                            </thead>
+                        <tbody id="detailed-ratings-tbody" class="bg-white divide-y divide-gray-200">
+                             <tr><td colspan="1" class="text-center py-4 text-gray-500">Lade detaillierte Ratings...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log("Script block started."); // First log
+
+        // API Endpunkte
+        const API_INITIAL_RESULTS_URL = '/api/results'; 
+        const API_RESULTS_STREAM_URL = '/stream';      
+        const API_RUN_EVAL_URL = '/api/run_evaluation';
+        const API_EVAL_STATUS_URL = '/api/evaluation_status';
+        
+        // Safely get COMPARISONS_PER_RUN from Flask, default to 1 if not a number
+        const COMPARISONS_PER_RUN_JS = parseInt("{{ COMPARISONS_PER_RUN }}", 10) || 1;
+        console.log("COMPARISONS_PER_RUN_JS:", COMPARISONS_PER_RUN_JS);
+
+
+        // --- Chart Instanzen & Daten ---
+        let barChartInstance = null;
+        let radarChartInstance = null;
+        let currentModelsData = {}; 
+        let availableCategories = []; 
+        let currentTimestamp = null;
+        let eventSource = null; 
+
+        // --- Hilfsfunktionen ---
+        function generateColors(count) {
+            const colors = [];
+            const baseHues = [210, 0, 120, 60, 270, 30, 330, 180, 240, 90]; 
+            const saturation = 70;
+            const lightness = 60;
+            for (let i = 0; i < count; i++) {
+                const hue = baseHues[i % baseHues.length] + (Math.floor(i / baseHues.length) * 15); 
+                colors.push({
+                    // fill: `hsla(${hue % 360}, ${saturation}%, ${lightness}%, 0.35)`, // Kept for reference if needed later
+                    stroke: `hsla(${hue % 360}, ${saturation}%, ${lightness - 15}%, 1)` 
+                });
+            }
+            return colors;
+        }
+
+        function formatTimestamp(isoTimestamp) {
+            if (!isoTimestamp) return 'N/A';
+            try {
+                const date = new Date(isoTimestamp);
+                return new Intl.DateTimeFormat('de-DE', {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+                }).format(date);
+            } catch (e) {
+                console.error("Fehler beim Formatieren des Zeitstempels:", isoTimestamp, e);
+                return isoTimestamp; 
+            }
+        }
+
+        function capitalizeFirstLetter(string) {
+            if (!string) return '';
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // --- Status Update Funktionen ---
+         function showStatusMessage(message, type = 'info', sticky = false) {
+            const statusDiv = document.getElementById('eval-status');
+            if (!statusDiv) { console.error("eval-status element not found!"); return; }
+
+            statusDiv.innerHTML = ''; 
+            statusDiv.className = 'status-message'; 
+            statusDiv.style.opacity = 1; 
+
+            let statusClass = '';
+            switch (type) {
+                case 'success': statusClass = 'status-success'; break;
+                case 'error': statusClass = 'status-error'; break;
+                case 'warning': statusClass = 'status-warning'; break;
+                case 'loading': statusClass = 'status-loading'; break;
+                default: statusClass = 'status-info'; break;
+            }
+            statusDiv.classList.add(statusClass);
+
+            if (type === 'loading') {
+                const spinner = document.createElement('div');
+                spinner.className = 'loading-spinner';
+                statusDiv.appendChild(spinner);
+                statusDiv.appendChild(document.createTextNode(' ' + message)); 
+            } else {
+                statusDiv.textContent = message;
+            }
+
+            if (!sticky && type !== 'loading') { 
+                setTimeout(() => {
+                    if (statusDiv.classList.contains(statusClass)) { 
+                         statusDiv.style.opacity = 0;
+                    }
+                }, 7000); // Increased timeout for non-sticky messages
+            }
+        }
+
+        function updateEvaluationButton(isLoading, message = null) {
+            const runButton = document.getElementById('run-eval-button');
+            const buttonTextEl = document.getElementById('run-eval-button-text'); // Use specific ID for text
+            const spinner = runButton?.querySelector('.loading-spinner');
+            
+            if (!runButton || !buttonTextEl || !spinner) {
+                console.error("Evaluation button elements not found for update:", runButton, buttonTextEl, spinner);
+                return;
+            }
+
+            runButton.disabled = isLoading;
+            if (isLoading) {
+                spinner.classList.remove('hidden');
+                buttonTextEl.textContent = message || 'Läuft...';
+            } else {
+                spinner.classList.add('hidden');
+                buttonTextEl.textContent = `Starte ${COMPARISONS_PER_RUN_JS} Vergleiche`;
+            }
+        }
+
+        // --- Chart Update Funktionen ---
+        function updateBarChart(selectedCategory) {
+            console.debug(`Aktualisiere Balkendiagramm für Kategorie: ${selectedCategory}`);
+            const barCtx = document.getElementById('barChart')?.getContext('2d');
+            const noDataElement = document.getElementById('bar-chart-no-data');
+            if (!barCtx || !noDataElement) { console.error("Balkendiagramm Canvas oder no-data Element nicht gefunden."); return; }
+            if (barChartInstance) barChartInstance.destroy();
+            noDataElement.classList.add('hidden');
+
+            const labels = [];
+            const ratings = [];
+            Object.entries(currentModelsData).forEach(([modelName, modelDetails]) => {
+                const categoryRating = modelDetails.categorie?.[selectedCategory];
+                if (categoryRating !== undefined && typeof categoryRating === 'number') {
+                    labels.push(modelName);
+                    ratings.push(categoryRating);
+                }
+            });
+
+            const sortedIndices = ratings.map((_, i) => i).sort((a, b) => ratings[b] - ratings[a]);
+            const sortedLabels = sortedIndices.map(i => labels[i]);
+            const sortedRatings = sortedIndices.map(i => ratings[i]);
+
+            if (sortedLabels.length === 0) {
+                console.warn(`Keine Daten für Kategorie ${selectedCategory} im Balkendiagramm.`);
+                noDataElement.classList.remove('hidden');
+                barCtx.clearRect(0, 0, barCtx.canvas.width, barCtx.canvas.height); 
+                return;
+            }
+
+            const chartColors = generateColors(sortedLabels.length);
+            // For Bar chart, we still need background colors for the bars
+            const barBgColors = chartColors.map(color => color.stroke.replace(/, 1\)$/, ', 0.6)')); // Use stroke color with some alpha for fill
+            const barBorderColors = chartColors.map(color => color.stroke);
+
+
+            barChartInstance = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: sortedLabels,
+                    datasets: [{
+                        label: `ELO Rating (${capitalizeFirstLetter(selectedCategory)})`,
+                        data: sortedRatings,
+                        backgroundColor: barBgColors, // Using generated background colors
+                        borderColor: barBorderColors,   // Using generated border colors
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                    scales: {
+                        y: { title: { display: true, text: 'Modell' } },
+                        x: { beginAtZero: false, title: { display: true, text: 'ELO Rating' } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label || ''}: ${ctx.parsed.x !== null ? ctx.parsed.x.toFixed(1) : 'N/A'}` } }
+                    }
+                }
+            });
+        }
+
+        function updateRadarChart() { 
+            console.debug(`Aktualisiere Radardiagramm: Modelle als Datensätze, Kategorien als Achsen.`);
+            const radarCtx = document.getElementById('radarChart')?.getContext('2d');
+            const noDataElement = document.getElementById('radar-chart-no-data');
+            if (!radarCtx || !noDataElement) { 
+                console.error("Radardiagramm Canvas oder no-data Element nicht gefunden."); 
+                return; 
+            }
+            if (radarChartInstance) radarChartInstance.destroy();
+            noDataElement.classList.add('hidden'); 
+
+            const modelNames = Object.keys(currentModelsData).sort();
+            const datasets = [];
+            
+            const radarLabels = availableCategories.map(cat => capitalizeFirstLetter(cat));
+
+            if (modelNames.length === 0 || radarLabels.length < 3) { 
+                 console.warn(`Nicht genug Daten für Radardiagramm (Modelle: ${modelNames.length}, Kategorien: ${radarLabels.length}). Benötigt >=1 Modell und >=3 Kategorien.`);
+                 noDataElement.textContent = `Nicht genügend Daten (mind. 1 Modell und 3 Kategorien mit Ratings) für Radar-Diagramm.`;
+                 noDataElement.classList.remove('hidden');
+                 radarCtx.clearRect(0, 0, radarCtx.canvas.width, radarCtx.canvas.height); 
+                 return;
+            }
+            
+            const radarChartColors = generateColors(modelNames.length); // Colors per model
+
+            modelNames.forEach((modelName, index) => {
+                const modelRatingsForCategories = [];
+                let hasDataForModel = false;
+                availableCategories.forEach(category => {
+                    const rating = currentModelsData[modelName]?.categorie?.[category];
+                    if (typeof rating === 'number') {
+                        modelRatingsForCategories.push(rating);
+                        hasDataForModel = true;
+                    } else {
+                        modelRatingsForCategories.push(null); 
+                    }
+                });
+
+                if (hasDataForModel) { 
+                    datasets.push({
+                        label: modelName.length > 20 ? modelName.substring(0,17) + '...' : modelName, 
+                        data: modelRatingsForCategories,
+                        backgroundColor: 'transparent', // Set background to transparent
+                        borderColor: radarChartColors[index % radarChartColors.length].stroke, // Use the stroke color from generateColors
+                        pointBackgroundColor: radarChartColors[index % radarChartColors.length].stroke,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: radarChartColors[index % radarChartColors.length].stroke,
+                        borderWidth: 2
+                    });
+                }
+            });
+            
+            if (datasets.length === 0) {
+                 console.warn(`Keine Modelle mit Daten über die Kategorien gefunden für Radar-Diagramm.`);
+                 noDataElement.textContent = `Keine Modelle mit ausreichenden Daten für Radar-Diagramm.`;
+                 noDataElement.classList.remove('hidden');
+                 radarCtx.clearRect(0, 0, radarCtx.canvas.width, radarCtx.canvas.height);
+                 return;
+            }
+            
+            let allRatings = [];
+            datasets.forEach(ds => {
+                ds.data.forEach(r => { if (r !== null) allRatings.push(r); });
+            });
+            const minRating = allRatings.length > 0 ? Math.min(...allRatings) : 1000; 
+            const maxRating = allRatings.length > 0 ? Math.max(...allRatings) : 2000; 
+            const scalePadding = Math.max(20, (maxRating - minRating) * 0.1);
+
+            radarChartInstance = new Chart(radarCtx, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels, 
+                    datasets: datasets  
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: false,
+                            angleLines: { display: true },
+                            suggestedMin: Math.floor(minRating - scalePadding),
+                            suggestedMax: Math.ceil(maxRating + scalePadding),
+                            pointLabels: { font: { size: 11 } }, 
+                            ticks: { backdropColor: 'rgba(255, 255, 255, 0.75)', stepSize: 50 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, padding: 10 } },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    if (tooltipItems.length > 0) {
+                                        return tooltipItems[0].dataset.label; 
+                                    }
+                                    return '';
+                                },
+                                label: function(context) {
+                                    let label = context.chart.data.labels[context.dataIndex] || ''; 
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r.toFixed(1);
+                                    } else {
+                                        label += 'N/A';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    elements: { line: { borderWidth: 2 } } 
+                }
+            });
+        }
+
+        // --- Daten-Darstellungsfunktionen ---
+        function populateOverallRankings(modelsData) {
+            const tableBody = document.getElementById('overall-rankings-table-body');
+            if (!tableBody) return;
+            tableBody.innerHTML = ''; 
+            const modelStats = [];
+
+            Object.entries(modelsData).forEach(([modelName, modelDetails]) => {
+                const categories = modelDetails.categorie || {};
+                if (Object.keys(categories).length > 0) {
+                    let highestRating = -Infinity;
+                    let highestCategory = 'N/A';
+                    let totalRating = 0;
+                    let categoryCount = 0;
+                    Object.entries(categories).forEach(([cat, rating]) => {
+                        if (typeof rating === 'number') {
+                            if (rating > highestRating) { highestRating = rating; highestCategory = cat; }
+                            totalRating += rating;
+                            categoryCount++;
+                        }
+                    });
+                    const avgRating = categoryCount > 0 ? totalRating / categoryCount : 0;
+                    modelStats.push({
+                        name: modelName, highestCategory: highestCategory,
+                        highestRating: highestRating, avgRating: avgRating, categoryCount: categoryCount
+                    });
+                }
+            });
+
+            modelStats.sort((a, b) => b.avgRating - a.avgRating); 
+
+            if (modelStats.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 text-center">Keine Modelle mit Ratings gefunden. Starte Vergleiche.</td></tr>';
+                return;
+            }
+
+            modelStats.forEach((stats, index) => {
+                const row = `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${stats.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${capitalizeFirstLetter(stats.highestCategory)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.highestRating.toFixed(1)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${stats.avgRating.toFixed(1)} (${stats.categoryCount} Kategorien)</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function populateDetailedTable(modelsData, categories) {
+            const tableHead = document.getElementById('detailed-ratings-thead');
+            const tableBody = document.getElementById('detailed-ratings-tbody');
+            if (!tableHead || !tableBody) return;
+
+            tableHead.innerHTML = ''; 
+            let headerHtml = '<tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modell</th>';
+            if (categories.length === 0) {
+                 headerHtml += '<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keine Kategorien</th>';
+            } else {
+                categories.forEach(cat => {
+                    headerHtml += `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${capitalizeFirstLetter(cat)}</th>`;
+                });
+            }
+            headerHtml += '</tr>';
+            tableHead.innerHTML = headerHtml;
+
+            tableBody.innerHTML = ''; 
+            const modelNames = Object.keys(modelsData).sort(); 
+
+            if (modelNames.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${categories.length + 1}" class="text-center py-4 text-gray-500">Keine Modelldaten verfügbar.</td></tr>`;
+                return;
+            }
+
+            modelNames.forEach(modelName => {
+                const modelDetails = modelsData[modelName];
+                const categoryRatings = modelDetails.categorie || {};
+                let rowHtml = `<tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${modelName}</td>`;
+                if (categories.length === 0) {
+                     rowHtml += '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">N/A</td>';
+                } else {
+                    categories.forEach(cat => {
+                        const rating = categoryRatings[cat];
+                        const displayRating = (typeof rating === 'number') ? rating.toFixed(1) : 'N/A';
+                        rowHtml += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${displayRating}</td>`;
+                    });
+                }
+                rowHtml += '</tr>';
+                tableBody.innerHTML += rowHtml;
+            });
+             if (tableBody.innerHTML === '') { 
+                 tableBody.innerHTML = `<tr><td colspan="${categories.length + 1}" class="text-center py-4 text-gray-500">Keine detaillierten Ratings verfügbar.</td></tr>`;
+            }
+        }
+        
+        function populateCategoryDropdowns(categories) {
+            const selectBar = document.getElementById('category-select-bar');
+            if (!selectBar) return;
+
+            const currentBarValue = selectBar.value; 
+            selectBar.innerHTML = ''; 
+            if (categories.length === 0) {
+                selectBar.innerHTML = '<option value="">Keine Kategorien</option>';
+                selectBar.disabled = true;
+            } else {
+                selectBar.disabled = false;
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = capitalizeFirstLetter(category);
+                    selectBar.appendChild(option);
+                });
+                if (categories.includes(currentBarValue)) {
+                    selectBar.value = currentBarValue;
+                } else if (categories.length > 0) {
+                    selectBar.value = categories[0];
+                }
+            }
+        }
+
+        // --- Dashboard Update Logik ---
+        function updateDashboard(data) {
+            console.log("updateDashboard called with data:", data);
+            const dashboardContent = document.getElementById('dashboard-content');
+            const loadingIndicator = document.getElementById('loading-indicator');
+             if (!data || !data.models) {
+                 console.error("Ungültige Datenstruktur für updateDashboard:", data);
+                 if (loadingIndicator) loadingIndicator.innerHTML = '<p class="text-red-600 font-semibold">Fehler beim Empfangen der Daten.</p>';
+                 if (dashboardContent) dashboardContent.classList.add('hidden');
+                 return;
+             }
+
+            currentModelsData = data.models;
+            currentTimestamp = data.timestamp;
+            const dataTimestampEl = document.getElementById('data-timestamp');
+            if (dataTimestampEl) dataTimestampEl.textContent = formatTimestamp(currentTimestamp);
+
+            const categories = new Set();
+            Object.values(currentModelsData).forEach(details => {
+                Object.keys(details.categorie || {}).forEach(cat => categories.add(cat));
+            });
+            availableCategories = Array.from(categories).sort();
+            console.log("Available categories:", availableCategories);
+
+            if (Object.keys(currentModelsData).length === 0) {
+                console.warn("Keine Modelldaten in den Ergebnissen.");
+                const overallRankingsBody = document.getElementById('overall-rankings-table-body');
+                if (overallRankingsBody) overallRankingsBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-sm text-gray-500 text-center">Keine Modelldaten verfügbar. Starte Vergleiche.</td></tr>';
+                populateDetailedTable({}, []); 
+                populateCategoryDropdowns([]);
+                if (barChartInstance) barChartInstance.destroy();
+                if (radarChartInstance) radarChartInstance.destroy();
+                const barNoData = document.getElementById('bar-chart-no-data');
+                const radarNoData = document.getElementById('radar-chart-no-data');
+                if(barNoData) barNoData.classList.remove('hidden');
+                if(radarNoData) radarNoData.classList.remove('hidden');
+            } else {
+                populateOverallRankings(currentModelsData);
+                populateDetailedTable(currentModelsData, availableCategories); 
+                populateCategoryDropdowns(availableCategories); 
+
+                const categorySelectBar = document.getElementById('category-select-bar');
+                const selectedCategoryBar = categorySelectBar ? categorySelectBar.value : null;
+
+                if (availableCategories.length > 0) {
+                    updateBarChart(selectedCategoryBar || availableCategories[0]);
+                    updateRadarChart(); 
+                } else {
+                    console.warn("Keine Kategorien zum Aktualisieren der Diagramme gefunden.");
+                    if (barChartInstance) barChartInstance.destroy();
+                    if (radarChartInstance) radarChartInstance.destroy();
+                    const barNoData = document.getElementById('bar-chart-no-data');
+                    const radarNoData = document.getElementById('radar-chart-no-data');
+                    if(barNoData) barNoData.classList.remove('hidden');
+                    if(radarNoData) radarNoData.classList.remove('hidden');
+                }
+            }
+
+            if (loadingIndicator) loadingIndicator.classList.add('hidden');
+            if (dashboardContent) dashboardContent.classList.remove('hidden');
+            console.log("Dashboard updated.");
+        }
+
+        // --- Event Listener und Initialisierung ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOMContentLoaded event fired.");
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const dashboardContent = document.getElementById('dashboard-content');
+            const runButton = document.getElementById('run-eval-button');
+            const categorySelectBar = document.getElementById('category-select-bar');
+            
+            try {
+                console.log("Attempting initial data fetch and setup...");
+                fetch(API_INITIAL_RESULTS_URL)
+                    .then(response => {
+                        console.log("Initial /api/results response received, status:", response.status);
+                        if (!response.ok) {
+                            throw new Error(`HTTP Fehler! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Initiale Daten geladen:", data);
+                        updateDashboard(data); 
+                    })
+                    .catch(error => {
+                        console.error('Fehler beim initialen Laden der Dashboard-Daten:', error);
+                        if (loadingIndicator) loadingIndicator.innerHTML = '<p class="text-red-600 font-semibold">Fehler beim Laden der initialen Daten. Prüfe die Konsole.</p>';
+                        if (dashboardContent) dashboardContent.classList.add('hidden');
+                    })
+                    .finally(() => {
+                        console.log("Initial data fetch process completed (finally block).");
+                        fetchEvaluationStatus();
+                        connectEventSource(); 
+                    });
+
+                if (runButton) {
+                    console.log("Run evaluation button found. Adding click listener.");
+                    runButton.addEventListener('click', runEvaluation);
+                } else {
+                    console.error("Run evaluation button (run-eval-button) NOT found!");
+                }
+
+                if (categorySelectBar) {
+                    console.log("Category select (bar chart) found. Adding change listener.");
+                    categorySelectBar.addEventListener('change', (event) => {
+                        if (availableCategories.length > 0) {
+                            updateBarChart(event.target.value);
+                        }
+                    });
+                } else {
+                    console.warn("Category select for bar chart (category-select-bar) NOT found!");
+                }
+
+            } catch (e) {
+                console.error("Error during DOMContentLoaded setup:", e);
+                if (loadingIndicator) loadingIndicator.innerHTML = '<p class="text-red-500">Ein kritischer JavaScript-Fehler ist aufgetreten. Prüfe die Konsole.</p>';
+            }
+        }); 
+
+        function connectEventSource() {
+            try {
+                if (eventSource) {
+                    eventSource.close(); 
+                }
+                console.log("Connecting to SSE Stream:", API_RESULTS_STREAM_URL);
+                eventSource = new EventSource(API_RESULTS_STREAM_URL);
+
+                eventSource.onopen = function() {
+                     console.log("SSE Verbindung geöffnet.");
+                     const statusDiv = document.getElementById('eval-status');
+                     if (statusDiv && statusDiv.classList.contains('status-warning')) { // e.g. if was disconnected
+                         fetchEvaluationStatus(); 
+                     }
+                };
+
+                eventSource.onmessage = function(event) {
+                    console.log("SSE Nachricht empfangen:", event.data);
+                    try {
+                        const data = JSON.parse(event.data);
+                        updateDashboard(data); 
+                    } catch (e) {
+                        console.error("Fehler beim Parsen der SSE Daten:", e, "Daten:", event.data);
+                    }
+                };
+
+                eventSource.onerror = function(err) {
+                    console.error("EventSource Fehler:", err);
+                    showStatusMessage("Verbindung zum Server verloren. Versuche erneut...", "warning", true);
+                    if (eventSource) eventSource.close(); // Ensure it's closed before retrying
+                    setTimeout(connectEventSource, 7000); // Slightly longer timeout for reconnect
+                };
+            } catch (e) {
+                console.error("Error in connectEventSource:", e);
+            }
+        }
+
+        async function fetchEvaluationStatus() {
+            console.log("Fetching evaluation status...");
+            try {
+                const response = await fetch(API_EVAL_STATUS_URL);
+                console.log("/api/evaluation_status response status:", response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP Fehler! Status: ${response.status}`);
+                }
+                const statusData = await response.json();
+                console.log("Evaluationsstatus data:", statusData);
+                updateEvaluationButton(statusData.running, statusData.message);
+                showStatusMessage(statusData.message, statusData.status || 'info', statusData.running); 
+            } catch (error) {
+                console.error('Fehler beim Abrufen des Evaluationsstatus:', error);
+                showStatusMessage("Fehler beim Abrufen des Evaluationsstatus.", "error");
+                updateEvaluationButton(false); // Reset button state on error
+            }
+        }
+
+        async function runEvaluation() {
+            console.log("runEvaluation called.");
+            updateEvaluationButton(true, "Starte Evaluation...");
+            showStatusMessage("Sende Anfrage zum Starten der Evaluation...", "loading", true);
+            try {
+                const response = await fetch(API_RUN_EVAL_URL, { method: 'POST' });
+                console.log("/api/run_evaluation response status:", response.status);
+                
+                const responseText = await response.text(); 
+                console.log("/api/run_evaluation response text:", responseText);
+
+                if (!response.ok) {
+                     let errorMsg = `HTTP Fehler! Status: ${response.status}`;
+                     try {
+                         const errorData = JSON.parse(responseText); 
+                         errorMsg = errorData.error || errorData.message || errorMsg;
+                         if (errorData.message) showStatusMessage(errorData.message, errorData.status || 'error', errorData.running || false);
+                     } catch (jsonError) { 
+                        console.warn("Could not parse error response as JSON from /api/run_evaluation");
+                        showStatusMessage(errorMsg, 'error');
+                     }
+                    throw new Error(errorMsg);
+                }
+                const result = JSON.parse(responseText); 
+                console.log("Evaluationsstart Antwort:", result);
+                updateEvaluationButton(result.running, result.message);
+                showStatusMessage(result.message, result.status || 'info', result.running);
+            } catch (error) {
+                console.error('Fehler beim Starten der Evaluation:', error);
+                showStatusMessage(`Fehler beim Starten: ${error.message}`, "error");
+                updateEvaluationButton(false); 
+                setTimeout(fetchEvaluationStatus, 1000); 
+            }
+        }
+        console.log("Script block finished parsing.");
+    </script>
+</body>
+</html>
