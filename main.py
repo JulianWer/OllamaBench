@@ -9,7 +9,7 @@ from utils.config import load_config, DEFAULT_CONFIG_PATH
 from scripts.run_comparison import run_judge_comparison
 
 CONFIG: Dict[str, Any] = {}
-
+# halllooo
 def setup_logging(config: Dict[str, Any]):
     """Configures logging based on the loaded configuration."""
     log_level_str = config.get("logging", {}).get("level", "INFO").upper()
