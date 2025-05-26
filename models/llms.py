@@ -1,13 +1,6 @@
-# OllamaBench_01/models/llms.py
-"""
-Defines the LLM class for interacting with different language models via Ollama.
-"""
-
 import logging
 from typing import Any, Dict, Optional
-
-# Relative import from sibling directory 'utils'
-from utils.chat_with_ollama import chat_with_ollama
+from utils.chat_with_LLM import chat_with_LLM
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +16,7 @@ class LLM:
         model_name: str,
         system_prompt: Optional[str] = None,
         temperature: float = 0.0,
+        has_reasoning=Optional[bool],
         options: Optional[Dict[str, Any]] = None,
     ):
         """
@@ -37,7 +31,8 @@ class LLM:
         """
         self.api_url = api_url
         self.model_name = model_name
-        self.system_prompt = system_prompt
+        self.system_prompt = system_prompt,
+        self.has_reasoning = has_reasoning,
         self.temperature = temperature
         self.options = options if options else {}
         logger.info(f"LLM instance created for model: {self.model_name} at {self.api_url}")
@@ -45,7 +40,6 @@ class LLM:
     def generate_response(
         self,
         prompt: str,
-        system_message_override: Optional[str] = None,
         temperature_override: Optional[float] = None,
         options_override: Optional[Dict[str, Any]] = None,
     ) -> Optional[str]:
@@ -65,7 +59,6 @@ class LLM:
         Returns:
             The generated text response as a string, or None if generation fails.
         """
-        system_msg = system_message_override if system_message_override is not None else self.system_prompt
         temp = temperature_override if temperature_override is not None else self.temperature
         # Combine options: override takes precedence
         current_options = self.options.copy()
@@ -74,12 +67,12 @@ class LLM:
 
         logger.info(f"Generating response using model {self.model_name} with prompt: '{prompt[:50]}...'")
 
-        api_response = chat_with_ollama(
+        api_response = chat_with_LLM(
             api_url=self.api_url,
             model=self.model_name,
             prompt=prompt,
-            system_message=system_msg,
             temperature=temp,
+            has_reasoning=self.has_reasoning,
             options=current_options,
             request_timeout=600,
             stream=False,

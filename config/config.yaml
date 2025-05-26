@@ -11,17 +11,26 @@ COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
                     ,'llama3.2:3b', 'llama3.2:1b', 'llama2:7b-chat', 'Mistral-7B-Instruct-v0.3-GGUF:Q4_K_M','Ministral-8B-Instruct-2410-Q4_K_M:latest']
 
 
+# --- Run config ---
+RUN_ALL_CATEGORIES_IS_ENABLED: true
+RUN_ONLY_JUDGEMENT: true
+CURRENT_CATEGORY: "roleplay" # this works only if the RUN_ALL_CATEGORIES_IS_ENABLED is disabled
+ALL_CATEGORIES: ['writing','roleplay','math','extraction', 'stem','humanities']
+
 comparison:
   comparisons_per_run: 10  
-  comparisons_per_prompt: 30 
+  comparisons_per_prompt: 30
 
+# --- Model Config ---
+JUDGE_HAS_REASONING: false
+LLMS_HAVE_REASONING: true
 
 generation_options_judge:
   temperature: 0.0
   keep_alive: "1h"
 
-
-HAS_REASONING: false
+generation_options:
+  temperature: 0.0 
 
 PROMPT_DATASET: "HuggingFaceH4/mt_bench_prompts" # default dataset if no data exists localy 
   
@@ -31,18 +40,12 @@ PROMPT_DATASET_CATEGORY_COLUMN: "category"
 PROMPT_ID_COLUMN: "prompt_id"
 
 
-# --- Categories ---
-RUN_ALL_CATEGORIES_IS_ENABLED: true
-RUN_ONLY_JUDGEMENT: true
-CURRENT_CATEGORY: "roleplay" 
-ALL_CATEGORIES: ['writing','roleplay','math','extraction', 'stem','humanities']
-
 # --- Local Data Storage ---
 paths:
   data_dir: "data"
   results_file: "./data/results.json"
   lock_file: "./data/results.lock"
-  output_dir: "output/model_responses"
+  output_dir: "model_responses"
   dataset_category_dir: "./data/categories"
   dataset_file_suffix: "_prompts.json"
   dataset_save_lock_file: "./data/prompt_dataset.lock"
@@ -51,26 +54,23 @@ NUM_SAVE_DATASET_ENTRIES: 1000
 
 # --- ELO Rating Configuration ---
 elo:
-  initial_rating: 1400
+  initial_rating: 1000
   k_factor: 16
 
+mELO:
+  initial_rating: 1000
+  learning_rate: 100
+  epochs: 300
 
-# --- Ollama API Configuration ---
-ollama:
+
+# --- API Configuration ---
+LLM_runtime:
   api_base_url: "http://localhost:11434"
   chat_api_path: "/api/chat"
   tags_api_path: "/api/tags"
   default_timeout: 300 
   max_retries: 3
   retry_delay: 5
-
-
-generation_options:
-  temperature: 0.0
-
-generation_options_judge:
-  temperature: 0.0    
-  keep_alive: "1h"
 
 # --- Dashboard Configuration ---
 dashboard:

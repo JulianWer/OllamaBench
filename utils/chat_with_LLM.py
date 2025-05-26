@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_REQUEST_TIMEOUT = 400
 
-def chat_with_ollama(
+def chat_with_LLM(
     api_url: str,
     model: str,
     prompt: str,
@@ -60,14 +60,10 @@ def chat_with_ollama(
         "options": options.copy() if options else {}, # Use a copy to avoid modifying the original
     }
 
-    # Add temperature to options if not already present by the user
     if "temperature" not in payload["options"]:
         payload["options"]["temperature"] = temperature
 
     if max_tokens is not None:
-        # Ollama doesn't have a direct 'max_tokens' like OpenAI.
-        # 'num_predict' is the closest, controlling max tokens to generate.
-        # User can also pass 'num_predict' directly in 'options'.
         if 'num_predict' not in payload["options"]:
             payload["options"]["num_predict"] = max_tokens
             logger.debug(f"'max_tokens' ({max_tokens}) was mapped to 'num_predict' in options.")
@@ -150,9 +146,6 @@ def chat_with_ollama(
             logger.error(f"An unexpected error occurred during chat with Ollama: {e}", exc_info=True)
             return None
         finally:
-            # If not streaming and an error occurred after response but before .json(), or if stream is True but error before generator is fully consumed.
-            # The stream_generator's finally block handles closing for successful streaming.
-            # For non-streaming, requests typically closes the connection unless an error prevents .json()
             if not stream and api_response_obj and not api_response_obj.raw.closed:
                 api_response_obj.close()
                 logger.debug("Non-stream response object closed in outer finally.")

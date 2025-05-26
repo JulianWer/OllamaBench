@@ -1,21 +1,12 @@
-# OllamaBench_01/models/judge_llm.py
-"""
-Defines the JudgeLLM class for evaluating and comparing model responses
-using a specific prompt format that expects a simple verdict (A, B, or C).
-"""
-
 import json
 import logging
 import re
 from typing import Any, Dict, Optional, Tuple, Union
 
-# Relative import from sibling directory 'utils'
-# Ensure this path is correct based on your project structure
 try:
-    from ..utils.chat_with_ollama import chat_with_ollama
+    from ..utils.chat_with_LLM import chat_with_LLM
 except ImportError:
-    # Fallback for running script directly or different structure
-    from utils.chat_with_ollama import chat_with_ollama
+    from utils.chat_with_LLM import chat_with_LLM
 
 
 logger = logging.getLogger(__name__)
@@ -74,9 +65,6 @@ def _build_judge_prompt(
     formatted_prompt = judge_prompt
     return formatted_prompt.strip()
 
-
-# --- JudgeLLM Class ---
-
 class JudgeLLM:
     """
     A class to use an LLM as a judge for comparing two model responses,
@@ -126,12 +114,12 @@ class JudgeLLM:
 
         cleaned_response = response_text.strip()
 
-        # 1. Check for exact match first (most reliable)
+        # Check for exact match first (most reliable)
         if cleaned_response == "[[A]]": return 1.0
         if cleaned_response == "[[B]]": return 0.0
         if cleaned_response == "[[C]]": return 0.5
 
-        # 2. Use regex to find the pattern [[A]], [[B]], or [[C]], ignoring case and surrounding text
+        # Use regex to find the pattern [[A]], [[B]], or [[C]], ignoring case and surrounding text
         # This regex looks for [[ followed by A, B, or C (case-insensitive), followed by ]]
         match = re.search(r'\[\[\s*(A|B|C)\s*\]\]', cleaned_response, re.IGNORECASE)
         if match:
@@ -179,7 +167,7 @@ class JudgeLLM:
 
         logger.info(f"Requesting judgment from model {self.model_name}...")
 
-        api_response = chat_with_ollama(
+        api_response = chat_with_LLM(
             api_url=self.api_url,
             model=self.model_name,
             prompt=judge_prompt,
@@ -189,7 +177,6 @@ class JudgeLLM:
             stream=False, 
         )
 
-        # Check the response type (should be dict if stream=False)
         if not isinstance(api_response, dict):
              logger.error(f"Failed to get a valid dictionary response from the judge LLM API. Got type: {type(api_response)}")
              return None

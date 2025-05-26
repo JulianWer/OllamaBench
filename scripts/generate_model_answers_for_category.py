@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional, List, Union
 
 from models.llms import LLM
 from utils.get_data import _load_prompt_dataset
-from utils.file_operations import save_json_file, load_json_file
+from utils.file_operations import _deep_merge_dicts, save_json_file, load_json_file
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def _ensure_dir(file_path: str):
             logger.info(f"Created directory: {directory}")
         except OSError as e:
             logger.error(f"Failed to create directory {directory}: {e}")
-            raise # Re-raise if directory creation is critical
+            raise 
 
 def _load_and_validate_dataset(config: Dict[str, Any], category: str) -> Optional[Any]: 
     """
@@ -44,8 +44,8 @@ def _load_and_validate_dataset(config: Dict[str, Any], category: str) -> Optiona
     logger.info(f"Successfully loaded dataset '{PROMPT_DATASET_NAME}' for '{category}'. It contains {len(dataset)} prompts.")
 
     # Validate necessary columns
-    prompt_id_column_name = "prompt_id" # Standardized
-    actual_prompt_content_column_name = PROMPT_COLUMN # From get_data
+    prompt_id_column_name = "prompt_id" 
+    actual_prompt_content_column_name = PROMPT_COLUMN 
 
     if actual_prompt_content_column_name not in dataset.column_names:
         logger.error(f"Prompt content column '{actual_prompt_content_column_name}' not found in dataset. Available: {dataset.column_names}.")
@@ -123,14 +123,14 @@ def _process_single_prompt(
     )
 
     if response_text is not None:
-        new_answer_entry = {
-            "answer": response_text,
+        new_response_entry = {
+            "response": response_text,
             "model": model.model_name,
             "prompt_id": prompt_id 
         }
         
         existing_answers = load_json_file(output_file_path) 
-        
+        is_answer_replaced = False
         all_answers = []
         if isinstance(existing_answers, list):
             all_answers.extend(existing_answers)
@@ -141,9 +141,20 @@ def _process_single_prompt(
             logger.warning(f"Existing answer file for prompt_id '{prompt_id}' is not a list. Wrapping it. Content: {type(existing_answers)}")
             all_answers.append(existing_answers) # This might need adjustment based on actual old format
 
-        all_answers.append(new_answer_entry)
         
-        # Save the potentially augmented list of answers
+        for i, existing_answer in enumerate(all_answers):
+            if isinstance(existing_answer, dict) and \
+            existing_answer.get("model") == new_response_entry["model"] and \
+            existing_answer.get("prompt_id") == new_response_entry["prompt_id"]:
+                
+                logger.info(f"Replacing existing answer for model '{new_response_entry['model']}' and prompt_id '{new_response_entry['prompt_id']}'.")
+                all_answers[i] = new_response_entry  
+                is_answer_replaced = True
+                break
+        if not is_answer_replaced:
+            all_answers.append(new_response_entry)
+        
+        
         if save_json_file(all_answers, output_file_path, lock_file_path=None): 
             logger.info(f"Saved/Appended JSON response for prompt_id '{prompt_id}' from '{model.model_name}' to '{output_file_path}'. Total answers: {len(all_answers)}.")
             return True
@@ -168,11 +179,13 @@ def _process_prompts_for_model(
     generating and saving/appending responses.
     """
     logger.info(f"Processing prompts for model: '{model_name}' in category directory '{category_specific_output_dir}'")
-    ollama_api_url = config.get("ollama", {}).get("api_base_url", {})
+    llm_runtime_api_url = config.get("LLM_runtime", {}).get("api_base_url", {})
     model_temp = config.get("generation_options", {}).get("temperature", 0.0)
+    model_has_reasoning = config.get("LLMS_HAVE_REASONING", True)
 
 
-    model = LLM(api_url=ollama_api_url,model_name=model_name, temperature=model_temp)
+
+    model = LLM(api_url=llm_runtime_api_url,model_name=model_name,has_reasoning=model_has_reasoning, temperature=model_temp)
     try:
         # Ensure the base directory for this category's responses exists.
         # The file name part is not strictly necessary here if category_specific_output_dir is already just the dir.
@@ -184,7 +197,7 @@ def _process_prompts_for_model(
     prompts_processed_count = 0
     prompts_failed_count = 0
 
-    for prompt_entry in dataset: # Iterating through dataset entries
+    for prompt_entry in dataset: 
         # Note: The third argument to _process_single_prompt is the output directory for this category.
         # Individual prompt files (e.g. <prompt_id>.json) will be created inside this directory.
         if _process_single_prompt(
@@ -208,22 +221,22 @@ def generate_and_save_model_answers_for_category(config: Dict[str, Any], categor
     """
     logger.info(f"Starting JSON answer generation process for category: '{category}'")
 
-    # 1. Get Model Configuration
+    # Get Model Configuration
     models_to_run: Optional[List[str]] = config.get("COMPARISON_MODELS")
     if not models_to_run:
         logger.error("No models in config under 'COMPARISON_MODELS'. Aborting.")
         return
 
-    # 2. Load and Validate Dataset
+    # Load and Validate Dataset
     dataset = _load_and_validate_dataset(config, category)
     if dataset is None:
         return 
 
-    from utils.get_data import PROMPT_COLUMN # type: ignore
+    from utils.get_data import PROMPT_COLUMN 
     prompt_id_column_name = "prompt_id"
     actual_prompt_content_column_name = PROMPT_COLUMN
     
-    # 3. Define Base Output Directory
+    # Define Base Output Directory
     paths_config = config.get("paths", {})
     base_output_dir = paths_config.get("output_dir", {})
     logger.info(f"Base directory for saving JSON responses: '{base_output_dir}'")
@@ -237,7 +250,7 @@ def generate_and_save_model_answers_for_category(config: Dict[str, Any], categor
             model_name,
             dataset,
             config,
-            category_specific_output_dir, # Pass the category-specific directory
+            category_specific_output_dir,
             prompt_id_column_name,
             actual_prompt_content_column_name,
         )

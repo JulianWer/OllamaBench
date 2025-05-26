@@ -9,7 +9,7 @@ from utils.config import load_config, DEFAULT_CONFIG_PATH
 from scripts.run_comparison import run_judge_comparison
 
 CONFIG: Dict[str, Any] = {}
-# halllooo
+
 def setup_logging(config: Dict[str, Any]):
     """Configures logging based on the loaded configuration."""
     log_level_str = config.get("logging", {}).get("level", "INFO").upper()
@@ -24,12 +24,12 @@ def setup_logging(config: Dict[str, Any]):
 def run_evaluation_cli(config: Dict[str, Any]):
     """
     Runs the configured number of comparison cycles sequentially from the command line.
-
     Args:
         config: The loaded application configuration.
     """
     logger = logging.getLogger(__name__) 
     try:
+        # --- config ---
         default_category = config.get("CURRENT_CATEGORY")
         all_categories = config.get("ALL_CATEGORIES")
         run_all_categories_is_enabled = config.get("RUN_ALL_CATEGORIES_IS_ENABLED")
@@ -39,9 +39,9 @@ def run_evaluation_cli(config: Dict[str, Any]):
         if run_all_categories_is_enabled:
             for category in all_categories:
                 try:
-                    # firstly gerneate all answers from all models and then judge
                     if not run_only_judgement:
                         generate_and_save_model_answers_for_category(config=config, category=category)
+                        run_judge_comparison(config,category) 
                     else:
                         run_judge_comparison(config,category) 
                 except Exception as e:
@@ -51,6 +51,7 @@ def run_evaluation_cli(config: Dict[str, Any]):
             try:
                 if not run_only_judgement:
                     generate_and_save_model_answers_for_category(config=config, category=default_category)
+                    run_judge_comparison(config,default_category)
                 else:
                     run_judge_comparison(config,default_category)                      
 
@@ -61,21 +62,21 @@ def run_evaluation_cli(config: Dict[str, Any]):
     except Exception as e:
         logger.exception(f"An unexpected error occurred during the main evaluation task: {e}")
 
-# --- Main Execution Block ---
+
 if __name__ == "__main__":
     print("--- OllamaBench CLI Execution Start ---")
     try:
-        # 1. Load Configuration
+        # --- Load Configuration ---
         print(f"Loading configuration from: {DEFAULT_CONFIG_PATH}")
         CONFIG = load_config(DEFAULT_CONFIG_PATH)
         print("Configuration loaded.")
 
-        # 2. Setup Logging (using loaded config)
+        # --- Setup Logging ---
         print("Setting up logging...")
         setup_logging(CONFIG)
         main_logger = logging.getLogger(__name__) 
 
-        # 3. Run Evaluation
+        # --- Run Evaluation ---
         main_logger.info("Starting evaluation process...")
         run_evaluation_cli(CONFIG)
         main_logger.info("Evaluation process finished.")
