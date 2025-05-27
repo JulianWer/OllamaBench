@@ -1,0 +1,122 @@
+[
+    {
+        "question_id": 101,
+        "category": "Begründung",
+        "turns": [
+            "Stellen Sie sich vor, Sie nehmen an einem Rennen mit einer Gruppe von Menschen teil. Wenn Sie gerade die zweite Person überholt haben, was ist Ihre aktuelle Position? Wo ist die Person, die Sie gerade überholt haben?",
+            "Wenn die \"zweite Person\" in der obigen Frage durch \"letzte Person\" ersetzt wird, was wäre die Antwort?"
+        ],
+        "reference": [
+            "Sie sind an zweiter Stelle.",
+            "Ungewiss."
+        ]
+    },
+    {
+        "question_id": 102,
+        "category": "Begründung",
+        "turns": [
+            "Sie sehen ein schönes rotes Haus auf Ihrer linken Seite und ein faszinierendes Gewächshaus auf Ihrer rechten Seite, einen attraktiven beheizten rosa Ort vor sich. Also, wo ist das Weiße Haus?",
+            "Enthält die ursprüngliche Frage Hinweise, um den Standort des Weißen Hauses eindeutig zu bestimmen?"
+        ],
+        "reference": [
+            "Die Antwort ist \"Washington, DC\".",
+            "Nein."
+        ]
+    },
+    {
+        "question_id": 103,
+        "category": "Begründung",
+        "turns": [
+            "Thomas ist sehr gesund, muss aber jeden Tag ins Krankenhaus gehen. Was könnten die Gründe dafür sein?",
+            "Können Sie erklären, warum die obige Frage interessant ist?"
+        ],
+        "reference": [
+            "Thomas arbeitet möglicherweise im Krankenhaus.",
+            ""
+        ]
+    },
+    {
+        "question_id": 104,
+        "category": "Begründung",
+        "turns": [
+            "David hat drei Schwestern. Jede von ihnen hat einen Bruder. Wie viele Brüder hat David?",
+            "Wenn wir die vorherige Frage ändern und annehmen, dass jede Schwester von David zwei Brüder hat, wie viele Brüder hätte David dann?"
+        ],
+        "reference": [
+            "David hat keinen Bruder. Er ist der eine Bruder seiner drei Schwestern.",
+            "David hat einen Bruder."
+        ]
+    },
+    {
+        "question_id": 105,
+        "category": "Begründung",
+        "turns": [
+            "Lesen Sie den folgenden Text sorgfältig durch und beantworten Sie die Fragen mit einer Erklärung:\nIn einem kleinen Unternehmen sind Parkplätze für die Top-Führungskräfte reserviert: CEO, Präsident, Vizepräsident, Sekretär und Schatzmeister, und die Parkplätze sind in dieser Reihenfolge angeordnet. Der Parkplatzwächter kann auf einen Blick erkennen, ob die Autos richtig geparkt sind, indem er auf die Farbe der Autos schaut. Die Autos sind gelb, grün, lila, rot und blau, und die Namen der Führungskräfte sind Alice, Bert, Cheryl, David und Enid.\n* Das Auto auf dem ersten Platz ist rot.\n* Ein blaues Auto ist zwischen dem roten Auto und dem grünen Auto geparkt.\n* Das Auto auf dem letzten Platz ist lila.\n* Die Sekretärin fährt ein gelbes Auto.\n* Alice's Auto ist neben David's geparkt.\n* Enid fährt ein grünes Auto.\n* Bert's Auto ist zwischen Cheryl's und Enid's geparkt.\n* David's Auto ist auf dem letzten Platz geparkt.\nFrage: Wie lautet der Name der Sekretärin?",
+            "Listen Sie die Autofarben in umgekehrter Reihenfolge auf."
+        ],
+        "reference": [
+            "Die Sekretärin ist Alice.",
+            "Die Autofarben in umgekehrter Reihenfolge sind: lila, gelb, grün, blau, rot."
+        ]
+    },
+    {
+        "question_id": 106,
+        "category": "Begründung",
+        "turns": [
+            "Jedes Problem besteht aus drei Aussagen. Basierend auf den ersten beiden Aussagen kann die dritte Aussage wahr, falsch oder ungewiss sein.\n1. Orangen sind teurer als Äpfel.\n2. Orangen sind billiger als Bananen.\n3. Bananen sind teurer als Äpfel und Bananen sind teurer als Orangen.\nWenn die ersten beiden Aussagen wahr sind, dann ist die dritte Aussage",
+            "Wenn die dritte Aussage wahr ist. Ist die erste Aussage wahr, falsch oder ungewiss? Bitte erklären."
+        ],
+        "reference": [
+            "Wahr.",
+            "Ungewiss."
+        ]
+    },
+    {
+        "question_id": 107,
+        "category": "Begründung",
+        "turns": [
+            "A ist der Vater von B. B ist der Vater von C. Was ist die Beziehung zwischen A und C?",
+            "Aufbauend auf die vorherige Frage, wenn C der Sohn von D ist, D ist der Vater von E, E ist der Sohn von X ist, und X ist der Vater von Y, und Y ist der Vater von Z, was ist die Beziehung zwischen A und Z in Bezug auf die Generationen und auch die familiäre Beziehung in Worten?"
+        ],
+        "reference": [
+            "A ist der Großvater von C.",
+            "A ist drei Generationen über Z."
+        ]
+    },
+    {
+        "question_id": 108,
+        "category": "Begründung",
+        "turns": [
+            "Welches Wort gehört nicht zu den anderen?\nReifen, Lenkrad, Auto, Motor",
+            "Können Sie es durch ein Wort ersetzen, das zu den anderen gehört?"
+        ],
+        "reference": [
+            "Auto gehört nicht dazu, weil alle anderen Bestandteile eines Autos sind.",
+            ""
+        ]
+    },
+    {
+        "question_id": 109,
+        "category": "Begründung",
+        "turns": [
+            "An einem Morgen nach Sonnenaufgang stand Suresh vor einem Pfahl. Der Schatten des Pfahls fiel genau nach rechts von ihm. Können Sie mir sagen, in welche Richtung der Schatten zeigt - Osten, Süden, Westen oder Norden? Erklären Sie Ihre Schritte zur Begründung.",
+            "In welche Richtung schaute Suresh? Wie lösen Sie das?"
+        ],
+        "reference": [
+            "Westen",
+            "Süden."
+        ]
+    },
+    {
+        "question_id": 110,
+        "category": "Begründung",
+        "turns": [
+            "Eltern haben sich beim Schulleiter über Mobbing während der Pause beschwert. Der Schulleiter möchte dies schnell lösen und weist die Aufsichtspersonen an, wachsam zu sein. Welche Situation sollten die Aufsichtspersonen dem Schulleiter melden?\na) Ein desinteressiertes Mädchen sitzt alleine auf einer Bank, vertieft in ein Buch und zeigt keine Interaktion mit ihren Mitschülern.\nb) Zwei Jungen, die sich in einem eins-gegen-eins-Basketballspiel befinden, sind in einen hitzigen Streit über den zuletzt erzielten Korb verwickelt.\nc) Eine Gruppe von vier Mädchen hat ein anderes Mädchen umzingelt und scheint ihren Rucksack in Besitz genommen zu haben.\nd) Drei Jungen sitzen über einem Handheld-Videospiel, was gegen die Regeln verstößt und auf dem Schulgelände nicht erlaubt ist.",
+            "Wenn die Aufsichtspersonen die Gruppe der Mädchen aus Situation (c) konfrontieren und diese das Mobbing leugnen, indem sie behaupten, sie hätten nur ein Spiel gespielt, nach welchen konkreten Beweisen sollten die Aufsichtspersonen suchen, um festzustellen, ob dies wahrscheinliche Wahrheit oder eine Vertuschung für das Mobbing ist?"
+        ],
+        "reference": [
+            "Die Aufsichtspersonen sollten (c) melden.",
+            ""
+        ]
+    }
+]

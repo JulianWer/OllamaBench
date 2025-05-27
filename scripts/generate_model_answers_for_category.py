@@ -3,7 +3,7 @@ import os
 from typing import Dict, Any, Optional, List, Union
 
 from models.llms import LLM
-from utils.get_data import _load_prompt_dataset
+from utils.get_data import load_prompt_dataset
 from utils.file_operations import _deep_merge_dicts, save_json_file, load_json_file
 
 logger = logging.getLogger(__name__)
@@ -29,23 +29,22 @@ def _load_and_validate_dataset(config: Dict[str, Any], category: str) -> Optiona
     """
     logger.info(f"Attempting to load dataset for category '{category}'...")
 
-    dataset = _load_prompt_dataset(config, category)
+    dataset = load_prompt_dataset(config, category)
     if dataset is None:
         logger.error(f"Failed to load dataset for category '{category}'.")
         return None
 
-    # Access global variables from get_data.py set by _load_prompt_dataset
     try:
-        from utils.get_data import PROMPT_DATASET_NAME, PROMPT_COLUMN
+        from utils.get_data import get_active_category_column, get_active_prompt_id_column, get_active_prompt_column
     except ImportError:
-        logger.error("Could not import PROMPT_DATASET_NAME, PROMPT_COLUMN from utils.get_data.")
+        logger.error("Could not import get_active_category_column, get_active_prompt_id_column from utils.get_data.")
         return None
 
-    logger.info(f"Successfully loaded dataset '{PROMPT_DATASET_NAME}' for '{category}'. It contains {len(dataset)} prompts.")
+    logger.info(f"Successfully loaded dataset '{get_active_category_column()}' for '{category}'. It contains {len(dataset)} prompts.")
 
     # Validate necessary columns
-    prompt_id_column_name = "prompt_id" 
-    actual_prompt_content_column_name = PROMPT_COLUMN 
+    prompt_id_column_name = get_active_prompt_id_column()
+    actual_prompt_content_column_name = get_active_prompt_column() 
 
     if actual_prompt_content_column_name not in dataset.column_names:
         logger.error(f"Prompt content column '{actual_prompt_content_column_name}' not found in dataset. Available: {dataset.column_names}.")
@@ -232,9 +231,9 @@ def generate_and_save_model_answers_for_category(config: Dict[str, Any], categor
     if dataset is None:
         return 
 
-    from utils.get_data import PROMPT_COLUMN 
-    prompt_id_column_name = "prompt_id"
-    actual_prompt_content_column_name = PROMPT_COLUMN
+    from utils.get_data import get_active_prompt_column, get_active_prompt_id_column
+    prompt_id_column_name = get_active_prompt_id_column()
+    actual_prompt_content_column_name = get_active_prompt_column()
     
     # Define Base Output Directory
     paths_config = config.get("paths", {})

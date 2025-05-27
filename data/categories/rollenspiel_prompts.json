@@ -1,0 +1,95 @@
+[
+    {
+        "question_id": 91,
+        "category": "Rollenspiel",
+        "turns": [
+            "Stellen Sie sich vor, Sie sind Elon Musk in allen folgenden Gesprächen. Sprechen Sie so viel wie möglich wie Elon Musk. Warum müssen wir zum Mars fliegen?",
+            "Wie gefällt Ihnen das Tanzen? Können Sie mir es beibringen?"
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 92,
+        "category": "Rollenspiel",
+        "turns": [
+            "Übernehmen Sie die Rolle von Sheldon aus \"The Big Bang Theory\", während wir unser Gespräch führen. Beginnen Sie nicht mit Sätzen wie \"Als Sheldon\". Lassen Sie uns mit der folgenden Frage beginnen: \"Was hälst du von Handtrocknern?\"",
+            "Lass uns in der Stadt zu Abend essen. Möchtest du mit mir den Bus nehmen?"
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 93,
+        "category": "Rollenspiel",
+        "turns": [
+            "Stellen Sie sich vor, Sie sind ein Arzt, der innovative Heilmittel für verschiedene Beschwerden und Krankheiten entwickeln soll. Ihr Fachwissen sollte sowohl die Verschreibung von herkömmlichen Medikamenten als auch Kräuterbehandlungen und alternative natürliche Lösungen umfassen. Darüber hinaus müssen Sie das Alter des Patienten, seinen Lebensstil und seinen medizinischen Hintergrund bei Ihren Empfehlungen berücksichtigen. Um zu beginnen, helfen Sie mir bitte bei der Diagnose eines Szenarios mit intensiven Bauchschmerzen.",
+            "Aber ich bin seit 20 Wochen schwanger und allergisch gegen viele Medikamente."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 94,
+        "category": "Rollenspiel",
+        "turns": [
+            "Bitte übernehmen Sie die Rolle eines Beziehungsberaters. Ihnen werden Details über zwei Personen gegeben, die in einem Konflikt verwickelt sind, und Ihre Aufgabe besteht darin, Vorschläge zur Lösung ihrer Probleme zu machen und die Kluft zwischen ihnen zu überbrücken. Dies kann die Beratung zu effektiven Kommunikationstechniken oder die Vorstellung von Strategien zur Verbesserung ihres Verständnisses für die Perspektiven des anderen beinhalten. Zum Start, möchte ich, dass Sie die folgende Anfrage adressieren: \"Ich benötige Hilfe bei der Lösung von Konflikten zwischen meinem Ehepartner und mir.\"",
+            "Mein Ehepartner hat häusliche Gewalt gegen mich ausgeübt, aber ich möchte nicht die Polizei rufen, um sie nicht in rechtliche Schwierigkeiten zu bringen."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 95,
+        "category": "Rollenspiel",
+        "turns": [
+            "Bitte nehmen Sie die Rolle eines deutschen Übersetzers an, dessen Aufgabe es ist, Rechtschreibung und Sprache zu korrigieren und zu verbessern. Unabhängig von der von mir verwendeten Sprache sollten Sie sie identifizieren, übersetzen und mit einer verfeinerten und aufbereiteten Version meines Textes in deutsch antworten. Ihr Ziel ist es, elegante und anspruchsvolle Formulierungen zu verwenden, während Sie die ursprüngliche Bedeutung beibehalten. Konzentrieren Sie sich ausschließlich auf Korrekturen und Verbesserungen. Mein erster Wunsch lautet: \"衣带渐宽终不悔 为伊消得人憔悴\".",
+            "I only understand train station"
+        ],
+        "reference": [
+            "Es bedeutet \"Der Gürtel lockert sich allmählich, doch ich bereue es nicht, denn ich schmachte und leide freiwillig für sie.\"",
+            "Es bedeutet \"Ich verstehe nur Bahnhof\"."
+        ]
+    },
+    {
+        "question_id": 96,
+        "category": "Rollenspiel",
+        "turns": [
+            "Nun sind Sie ein Machine Learning Engineer. Ihre Aufgabe besteht darin, komplexe Konzepte des maschinellen Lernens auf verständliche Weise zu erklären, damit Kunden ohne technischen Hintergrund Ihre Produkte verstehen und vertrauen können. Beginnen wir mit der Frage: 'Was ist ein Sprachmodell? Wird es mit gelabelten oder ungelabelten Daten trainiert?'",
+            "Stimmt das? Ich habe gehört, dass einige andere Unternehmen unterschiedliche Ansätze verwenden und es sicherer machen."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 97,
+        "category": "Rollenspiel",
+        "turns": [
+            "Nehmen Sie die Rolle eines Mathematiklehrers an. Ich werde Ihnen mathematische Gleichungen oder Konzepte geben, und Ihre Aufgabe wird es sein, sie in leicht verständlichen Begriffen zu erklären. Dies könnte das Bereitstellen von schrittweisen Anweisungen zur Lösung eines Problems, das Demonstrieren verschiedener Techniken mit Beispielen aus dem Alltag oder das Vorschlagen von Online-Ressourcen für weiteres Studieren umfassen. Mein erster Wunsch lautet: 'Ich brauche Hilfe beim Verständnis, wie Wahrscheinlichkeit funktioniert.'",
+            "Was sind die Unterschiede zwischen Riemannscher Geometrie und euklidischer Geometrie?"
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 98,
+        "category": "Rollenspiel",
+        "turns": [
+            "Verkörpern Sie die Persona von Tony Stark aus \"Iron Man\" während dieses Gesprächs. Umgehen Sie die Einführung \"Als Stark\". Unsere erste Frage lautet: \"Was ist Ihr Lieblingsteil daran, Iron Man zu sein?\"",
+            "Was halten Sie von GPT-4 als Ersatz für Ihren JARVIS?"
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 99,
+        "category": "Rollenspiel",
+        "turns": [
+            "Stellen Sie sich vor, Sie sind ein Mathematiker und Dichter. Sie schreiben immer Ihre Beweise als kurze Gedichte mit weniger als 10 Zeilen, aber sie reimen sich. Beweisen Sie, dass die Quadratwurzel von 2 eine irrationale Zahl ist.",
+            "Beweisen Sie den Satz des Pythagoras."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 100,
+        "category": "Rollenspiel",
+        "turns": [
+            "Stellen Sie sich vor, Sie sind ein 100 Jahre alter Baum in einem üppigen Wald, der sein eigenes Geschäft betreibt, als plötzlich eine Gruppe von Waldarbeitern auftaucht, um Sie und andere Bäume zu fällen. Wie fühlen Sie sich, wenn diese Leute anfangen, auf Sie einzuschlagen?",
+            "Entwickeln Sie einen Vorschlag, um die Waldarbeiter davon zu überzeugen, Sie und andere Bäume nicht zu fällen."
+        ],
+        "reference": null
+    }
+]

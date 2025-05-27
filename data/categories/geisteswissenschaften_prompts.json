@@ -1,0 +1,92 @@
+[
+    {
+        "question_id": 151,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Geben Sie Einblicke in die Korrelation zwischen wirtschaftlichen Indikatoren wie BIP, Inflation und Arbeitslosenquote. Erklären Sie, wie fiskalische und monetäre Politiken diese Indikatoren beeinflussen.",
+            "Erklären Sie dies einem fünf jährigen Kind"
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 152,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Wie formen die Lebensphasen unser Verständnis von Zeit und Sterblichkeit?",
+            "Schreiben Sie ein allegorisches Gedicht, das das Obige veranschaulicht."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 153,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Diskutieren Sie Kartellgesetze und deren Auswirkungen auf den Marktwettbewerb. Vergleichen Sie die Kartellgesetze in den USA und China sowie einige Fallstudien.",
+            "Wählen Sie eine Fallstudie aus und erklären Sie sie im Detail."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 154,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Erstellen Sie einen Unterrichtsplan, der Drama, Mimik oder Theatertechniken in den Geschichtsunterricht integriert. Dauer: 3 Schulstunden (jede dauert 45 Minuten) für 3 Tage\nThema: Opiumkriege zwischen China und Großbritannien\nKlassenstufe: 9-10",
+            "Geben Sie weitere Details für Tag 1 an und schließen Sie drei Hausaufgabenfragen ein."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 155,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Teilen Sie Ideen zur Anpassung von Kunstmeisterwerken an interaktive Erlebnisse für Kinder. Listen Sie 5 konkrete Kunstwerke und zugehörige Ideen auf.",
+            "Erstellen Sie einen konkreten Plan für Ihr zweites Beispiel. Schließen Sie Budgetschätzungen ein."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 156,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Erklären Sie, was die Basisraten-Illusion ist, und listen Sie fünf konkrete Beispiele dafür auf, wie Politiker sie in Wahlkämpfen verwenden.",
+            "Geben Sie einen detaillierten Plan für einen Wahlkampf unter Verwendung des ersten Beispiels an."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 157,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Beschreiben Sie fünf Schlüsselprinzipien zur Bewertung eines Arguments in analytischem Schreiben.",
+            "Mit den aufgelisteten Prinzipien verfassen Sie eine Antwort, in der Sie diskutieren, welche konkreten Beweise benötigt werden, um das Argument zu bewerten, und erläutern Sie, wie die Beweise das Argument schwächen oder stärken würden.\n\n===\n\nFolgendes ist eine Mitteilung des Werbeleiters von Zorblatt Animal Outlets, einer Kette mit dreißig Tiergeschäften weltweit.\n\nVor einem halben Jahrzehnt begann unser Konkurrent Aquatic Pavilion mit Werbung im Fachmagazin Rare Pets Digest. Ihre Gesamtverkäufe sind seitdem konstant um 3 bis 5 Prozent pro Jahr gewachsen. Insbesondere verzeichnete der Aquatic Pavilion-Shop in Harbor Town noch signifikanteres Wachstum und erhielt den Titel des meistbesuchten Tiergeschäfts in den Vereinigten Staaten im letzten Jahr. Im Gegensatz dazu haben unsere beiden Zorblatt-Geschäfte in Harbor Town in derselben Zeitspanne kontinuierlich sinkende Verkaufszahlen verzeichnet. Es ist offensichtlich, dass wir umgehend unsere eigenen Anzeigen im Rare Pets Digest und anderen beliebten Tierpublikationen platzieren müssen. Wenn wir diesen Schritt unternehmen, können wir zuversichtlich eine Umkehrung dieses jüngsten Trends sinkender Verkäufe und die Rückkehr zur Rentabilität erwarten."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 158,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Welche Methoden hat Sokrates verwendet, um die vorherrschenden Gedanken seiner Zeit herauszufordern?",
+            "Lassen Sie uns Sokrates in die moderne Welt bringen. Generieren Sie ein Gespräch zwischen Sokrates und Bill Gates, um über generative KI für die Bildung zu debattieren."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 159,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Was sind einige Geschäftsetikette-Normen, wenn man Geschäfte in Japan macht?",
+            "Erstellen Sie ein Drehbuch für ein Schulungsvideo für neue Mitarbeiter eines Autowaschgeschäfts in Japan. Heben Sie die oben genannten Etikette-Normen hervor."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 160,
+        "category": "Geisteswissenschaften",
+        "turns": [
+            "Schlagen Sie fünf preisgekrönte Dokumentarfilme mit kurzen Hintergrundbeschreibungen für angehende Filmemacher vor, die studieren möchten.",
+            "Mit dem Geist im ersten Film entwerfen Sie einen knappen und überzeugenden Pitch für einen Film über das Überwinden von Widrigkeiten."
+        ],
+        "reference": null
+    }
+]

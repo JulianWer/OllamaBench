@@ -1,0 +1,107 @@
+[
+    {
+        "question_id": 131,
+        "category": "Extraktion",
+        "turns": [
+            "Bewerten Sie die folgenden Filmkritiken auf einer Skala von 1 bis 5, wobei 1 sehr negativ ist, 3 neutral und 5 sehr positiv:\n1. Dieser Film, der am 18. November 2019 veröffentlicht wurde, war phänomenal. Die Kameraführung, die schauspielerische Leistung, die Handlung - alles war erstklassig.\n2. Noch nie zuvor war ich so enttäuscht von einem Film. Die Handlung war vorhersehbar und die Charaktere waren eindimensional. Meiner Meinung nach ist dieser Film der schlechteste, der 2022 veröffentlicht wurde.\n3. Der Film war okay. Es gab Teile, die mir gefallen haben, aber es gab auch Teile, die enttäuschend waren. Dies ist ein Film, der im Februar 2018 veröffentlicht wurde und ziemlich gewöhnlich zu sein scheint.\nGeben Sie die Antwort als JSON-Array von Ganzzahlen zurück.",
+            "Aktualisieren Sie Ihre vorherige Antwort, indem Sie das Veröffentlichungsdatum als Teil des JSON-Inhalts einschließen."
+        ],
+        "reference": [
+            "Die Antwort auf die erste Frage sollte [5, 1, 3] sein.",
+            ""
+        ]
+    },
+    {
+        "question_id": 132,
+        "category": "Extraktion",
+        "turns": [
+            "Angesichts dieser Kategorien - Literatur, Geschichte, Wissenschaft und Kunst. Bitte analysieren Sie die folgenden Fragen und ordnen Sie sie einer dieser Kategorien zu. In Ihrer Antwort vermeiden Sie bitte überflüssige Wörter. Listen Sie nur ein Thema pro Satz auf und halten Sie sich strikt an das Zeilenformat.\n1. Diskutieren Sie die Hauptthemen und stilistischen Techniken, die von Leo Tolstoi in \"Krieg und Frieden\" verwendet wurden. Wie passen sie zur breiteren sozialen Situation im Russland des 19. Jahrhunderts?\n2. Analysieren Sie die geopolitischen Strategien und Innenpolitik des US-Präsidenten während des Zweiten Weltkriegs. Wie haben diese Maßnahmen die internationale Ordnung nach dem Krieg geprägt?\n3. Zeichnen Sie die Lewis-Struktur für Wasser und erklären Sie die Natur seiner Polarität. Wie beeinflusst dies seine einzigartigen Eigenschaften wie den hohen Siedepunkt und die Fähigkeit, viele Substanzen zu lösen?\n4. Untersuchen Sie kritisch die künstlerischen Techniken und stilistischen Entscheidungen, die Leonardo da Vinci in der \"Mona Lisa\" verwendet hat. Wie spiegelt das Gemälde die kulturelle und philosophische Umgebung der italienischen Renaissance wider?",
+            "Ändern Sie Ihre frühere Antwort, indem Sie eine Person erwähnen, die am relevantesten für jeden Punkt ist."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 133,
+        "category": "Extraktion",
+        "turns": [
+            "Extrahieren Sie die folgenden Informationen aus den präsentierten Texten: Der Name des Buches, der Autor, die Hauptfigur, das Erscheinungsjahr. Geben Sie im Format \"Hauptfigur, Buch, Autor, Erscheinungsjahr\" aus, ein Buch pro Zeile.\na) In der Welt der Zauberliteratur sticht das Werk von J.K. Rowling wirklich heraus. Eines ihrer Bücher, das einen bleibenden Eindruck hinterlassen hat, ist \"Harry Potter und der Stein der Weisen\". Diese ikonische Geschichte, die 1997 veröffentlicht wurde, erzählt die Geschichte von Harry, einem jungen Waisenkind, das an seinem 11. Geburtstag seine magischen Fähigkeiten entdeckt. Bald findet er sich in der Hogwarts-Schule für Hexerei und Zauberei wieder, einem Ort voller Magie und Abenteuer, irgendwo in Schottland.\nb) Die Magie von Mittelerde hat Leser weltweit verzaubert, dank des Genies von J.R.R. Tolkien. In einem seiner bahnbrechenden Werke, 'Der Herr der Ringe: Die Gefährten', veröffentlicht 1954, treffen wir auf Frodo Beutlin, einen tapferen Hobbit, dem die gefährliche Aufgabe auferlegt wurde, den Einen Ring zu zerstören. Die epische Reise führt ihn von der friedlichen Auenland zu den tumultartigen Regionen von Mittelerde.\nc) In einer weit, weit entfernten Galaxie gibt uns die Vorstellungskraft von L.E. Starlighter \"Die Prismen-Galaxie-Chroniken: Das Erwachen des Sternenfängers\". Veröffentlicht im Jahr 2028 handelt die Geschichte von Zylo, einem bescheidenen Raumschiffmechaniker, der unerwartet entdeckt, dass er ein Sternenfänger ist - ein seltener Einzelgänger mit der Kraft, Sternenstaub zu manipulieren. Vor dem Hintergrund eines interstellaren Reiches in Aufruhr entfaltet sich Zylons Schicksal auf zahlreichen fremden Welten, von denen jede ihren eigenen einzigartigen kosmischen Charme hat.",
+            "Reformulieren Sie Ihre frühere Antwort, geben Sie sie im JSON-Format aus und schließen Sie nur Bücher ein, die nach 1980 veröffentlicht wurden."
+        ],
+        "reference": [
+            "",
+            "Die Antwort sollte nur \"Harry Potter und der Stein der Weisen\" und \"Die Prismen-Galaxie-Chroniken: Das Erwachen des Sternenfängers\" enthalten."
+        ]
+    },
+    {
+        "question_id": 134,
+        "category": "Extraktion",
+        "turns": [
+            "Basierend auf den folgenden Daten, identifizieren Sie das Unternehmen mit dem höchsten Gewinn im Jahr 2021 und geben Sie den Namen seines CEO an:\na) Unternehmen X, mit CEO Amy Williams, meldete im Jahr 2021 einen Umsatz von 30 Milliarden US-Dollar und einen Gewinn von 3 Milliarden US-Dollar.\nb) Unternehmen Y, unter der Leitung von CEO Mark Thompson, verzeichnete im selben Jahr einen Umsatz von 60 Milliarden US-Dollar und einen Gewinn von 6 Milliarden US-Dollar.\nc) Unternehmen Z, unter CEO Sarah Johnson, kündigte im Jahr 2021 einen Umsatz von 20 Milliarden US-Dollar und einen Gewinn von 7 Milliarden US-Dollar an.\nd) Unternehmen W, unter der Leitung von CEO James Smith, gab im Jahr 2021 einen Umsatz von 300 Milliarden US-Dollar und einen Gewinn von 21 Milliarden US-Dollar bekannt.\ne) Unternehmen V, mit CEO Lisa Brown, berichtete über einen Umsatz von 200 Milliarden US-Dollar und einen Gewinn von 25 Milliarden US-Dollar im Jahr 2021.\nf) Unternehmen U, unter CEO John White, verzeichnete im selben Jahr einen Umsatz von 180 Milliarden US-Dollar und einen Gewinn von 20 Milliarden US-Dollar.",
+            "Welches Unternehmen hatte die höchste Gewinnmarge (Gewinn/Umsatz-Verhältnis)?"
+        ],
+        "reference": [
+            "Unternehmen V ($25 Milliarden).",
+            "Unternehmen Z (35%)."
+        ]
+    },
+    {
+        "question_id": 135,
+        "category": "Extraktion",
+        "turns": [
+            "Identifizieren Sie die Länder, ihre Hauptstädte und die in den folgenden Sätzen gesprochenen Sprachen. Ausgabe im JSON-Format.\na) Inmitten idyllischer Aussichten verzaubert Kopenhagen, die Hauptstadt Dänemarks, Besucher mit ihrer blühenden Kunstszene und der bezaubernden dänischen Sprache, die von ihren Bewohnern gesprochen wird.\nb) In der bezaubernden Welt von Eldoria entdeckt man Avalore, eine prächtige Stadt, die eine ätherische Aura ausstrahlt. Lumina, eine melodiöse Sprache, dient als Hauptsprache innerhalb dieses mystischen Ortes.\nc) Eingebettet in eine harmonische Mischung aus jahrhundertealten Bräuchen und zeitgenössischen Wundern steht Buenos Aires, die Hauptstadt Argentiniens, als pulsierende Metropole. Es ist ein lebhafter Mittelpunkt, in dem die ausdrucksstarke spanische Sprache über die Bewohner der Stadt herrscht.",
+            "Erstellen Sie 3 ähnliche Beispiele im YAML-Format."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 136,
+        "category": "Extraktion",
+        "turns": [
+            "Bitte lesen Sie den folgenden Absatz und zählen Sie, wie oft die Wörter \"Amazon\", \"Fluss\" und \"du\" vorkommen. Präsentieren Sie die Ergebnisse im Format \"Wort, Anzahl der Vorkommen\", wobei jedes Wort in einer separaten Zeile steht. Sortieren Sie die Zeilen nach der Anzahl der Vorkommen.\nDer Amazonas, eine faszinierende Weite der Wunder der Natur, ist die Heimat des legendären Amazonas-Flusses. Durch atemberaubende Landschaften wie den Amazonas-Regenwald fließt der Fluss durch Brasilien, Kolumbien und Peru und gibt zahlreichen Kreaturen Leben. In den tiefen Strömungen des Flusses gleiten prächtige rosa Flussdelfine neben Piranhas und elektrischen Aalen. An den Ufern des Flusses finden Sie lebendige Städte wie Manaus, wo das Urbane auf das Wilde trifft, und Iquitos, ein Tor zum Herzen des Amazonas-Regenwaldes. Wenn Sie sich weiter wagen, enthüllt der Amazonas-Fluss verborgene Schätze wie den fesselnden Anavilhanas-Archipel, ein Mosaik von Inseln, das von seltenen Arten nur so wimmelt. Machen Sie sich auf ein Abenteuer, erkunden Sie den bezaubernden Amazonas-Fluss und tauchen Sie ein in eine Welt, die vor Leben und unberührter Schönheit nur so strotzt.",
+            "Bitte führen Sie dieselbe Aufgabe mit den Wörtern \"der\", \"und\" und \"zu\" aus."
+        ],
+        "reference": [
+            "Amazon, 7; Fluss, 6; du, 2",
+            "der, 17; und, 5; zu, 4"
+        ]
+    },
+    {
+        "question_id": 137,
+        "category": "Extraktion",
+        "turns": [
+            "Identifizieren Sie die genannten Entitäten (Personen, Organisationen, Orte) im gegebenen Nachrichtenartikel. Erstellen Sie ein JSON-Dictionary, das die benannten Entitäten in drei separaten Gruppen basierend auf ihren Entitätstypen auflistet. Der Schlüssel ist der Entitätstyp und der Wert ist eine Liste von Zeichenfolgen.\n\nGestern kündigten Adamson Emerson, der CEO von Faraday, und Dieter Zetsche, der CEO von Daimler AG, Pläne für den Bau einer neuen Gigafactory in Berlin an. Die Anlage wird ein Joint Venture zwischen Faraday und Daimler sein und elektrische Fahrzeuge und Batteriepacks für beide Unternehmen produzieren, was Tausende von Arbeitsplätzen in der Region schaffen wird. Emerson und Zetsche gaben an, dass die strategische Lage von Berlin in Verbindung mit seiner qualifizierten Belegschaft und seiner starken Infrastruktur es zu einer idealen Wahl für die Expansion macht. Die neue Gigafactory soll die wachsende Nachfrage nach Elektrofahrzeugen in Europa befriedigen und zu einer nachhaltigen Zukunft beitragen. Volkswagen CEO Herbert Diess begrüßte die Nachricht und sagte, dass eine engere Zusammenarbeit der Automobilindustrie bei ihrem Übergang zur E-Mobilität zugutekommen werde.",
+            "Machen Sie das JSON-Objekt kürzer, indem Sie jeden Wert durch seinen ersten Buchstaben ersetzen. Geben Sie alles in einer einzelnen Zeile ohne Einrückung oder das Erstellen neuer Zeilen aus."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 138,
+        "category": "Extraktion",
+        "turns": [
+            "Analysieren Sie die folgenden Kundenbewertungen von verschiedenen Quellen für drei verschiedene Smartphones - das neueste iPhone, das Samsung Galaxy und das Google Pixel - und geben Sie für jedes Telefon eine Gesamtbewertung auf einer Skala von 1 bis 10 an. Berücksichtigen Sie die folgenden komplexen und widersprüchlichen Bewertungen:\n- Die Bewertung von TechRadar zum neuesten iPhone: Das neue iPhone ist ein atemberaubender Triumph der Ingenieurkunst, der einen neuen Maßstab für die Leistung von Smartphones und die Qualität der Kamera setzt. Die inkrementelle Gestaltung und der hohe Preis bedeuten jedoch, dass es an dem \"Wow\"-Faktor früherer iPhones mangelt. Dennoch sind seine Leistung und Intelligenz unübertroffen.\n- Die Bewertung von CNET zum neuesten Samsung Galaxy: Das Samsung Galaxy-Telefon hat viele Höhepunkte, darunter einen erstaunlichen Bildschirm, schnelle Leistung, solide Akkulaufzeit und eine beeindruckende Auswahl an Kameraoptionen. Dennoch bleibt Bixby enttäuschend, AR-Emoji fällt flach und das Design des Telefons insgesamt hat sich nicht viel geändert. Das neue Galaxy ist insgesamt ein erstaunliches Telefon, hat aber einige lästige Schwächen, die es davon abhalten, echte Größe zu erreichen.\n- Die Bewertung von The Verge zum neuesten Google Pixel: Googles Pixel bietet Spitzenleistungen, innovative KI-gesteuerte Software und eine erstklassige Kamera in einem schlanken Design. Das Telefon hat jedoch eine enttäuschende Akkulaufzeit, fehlenden erweiterbaren Speicher und gelegentliche Leistungseinbrüche, insbesondere angesichts seines hohen Preises. Wenn nahtlose Software, erstklassige Fotografie und Googles Art der KI-Unterstützung am wichtigsten sind, werden Sie das Pixel lieben. Aber das Gesamterlebnis ist nicht so ausgewogen wie bei einigen Konkurrenten. Geben Sie die Antwort als JSON-Objekt mit den Gesamtbewertungen für jedes Telefon auf einer Skala von 1 bis 10 an, auf eine Dezimalstelle genau.",
+            "Können Sie die Bewertungen von Zahlen in Buchstaben ändern? Verwenden Sie beim Schreiben der Namen der Telefone unbedingt Großbuchstaben."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 139,
+        "category": "Extraktion",
+        "turns": [
+            "Gegeben sind eine Reihe von komplexen Gleichungen. Extrahiere alle eindeutigen Variablennamen aus jeder Gleichung. Gib die Ergebnisse als JSON-Zeichenfolge zurück, wobei für jede Gleichung eine Zeile reserviert ist.\n```\n1) y = (3/4)x^3 - e^(2x) + sin(pi*x) - sqrt(7)\n2) 2A - B/(3+C) * sum(N=1 bis 5; ln(N)^2) = 5D*integral(a=0 bis pi; cos(comb(N=1 bis 10; N*a)))\n3) E = m(c^2) + gamma*(v/d)/(-(alpha/2) + sqrt(beta^2 + (alpha/2)^2))\n```",
+            "Bitte ordnen Sie die Gleichungen um und verwenden Sie 'a', 'b', 'c', 'd', usw. als Variablen."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 140,
+        "category": "Extraktion",
+        "turns": [
+            "Anhand der folgenden Aufzeichnungen von Aktienkursen extrahieren Sie die höchsten und niedrigsten Schlusskurse für jeden Monat im Jahr 2022. Geben Sie die Ergebnisse als CSV-Zeichenfolge zurück, wobei für jeden Monat eine Zeile vorgesehen ist.\nDatum,Offen,Hoch,Tief,Nah,Volumen\n2022-01-01,150.02,155.28,148.50,153.80,15678900\n2022-01-02,154.32,157.25,153.48,156.25,19874500\n2022-02-01,160.50,163.28,159.50,161.80,14326700\n2022-02-02,161.80,164.25,161.30,163.90,17689200\n2022-03-01,165.40,168.35,163.10,166.80,16253400\n2022-03-02,167.00,169.85,165.50,168.20,19568100",
+            "Führen Sie dieselbe Aufgabe erneut mit dem JSON-Format durch und runden Sie alle Zahlen in Ihrer Antwort auf die nächstgelegenen Ganzzahlen."
+        ],
+        "reference": [
+            "\nMonat,Hoch,Tief\n01,156.25,153.80\n02,163.90,161.80\n03,168.20,166.80",
+            "\n\n{ \"Januar\": { \"Hoch\": 156, \"Tief\": 154 }, \"Februar\": { \"Hoch\": 164, \"Tief\": 162 }, \"März\": { \"Hoch\": 168, \"Tief\": 167 } }\n"
+        ]
+    }
+]

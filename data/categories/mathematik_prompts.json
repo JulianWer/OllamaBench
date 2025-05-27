@@ -1,0 +1,122 @@
+[
+    {
+        "question_id": 111,
+        "category": "Mathematik",
+        "turns": [
+            "Die Eckpunkte eines Dreiecks liegen bei den Punkten (0, 0), (-1, 1) und (3, 3). Was ist die Fläche des Dreiecks?",
+            "Was ist die Fläche des den Dreieck umschließenden Kreises?"
+        ],
+        "reference": [
+            "Die Fläche beträgt 3",
+            "5pi"
+        ]
+    },
+    {
+        "question_id": 112,
+        "category": "Mathematik",
+        "turns": [
+            "Ein Tech-Startup investiert im ersten Jahr 8000 US-Dollar in die Softwareentwicklung und investiert dann die Hälfte dieses Betrags im zweiten Jahr erneut in die Softwareentwicklung.\nWie hoch ist der Gesamtbetrag, den das Startup in den zwei Jahren in die Softwareentwicklung investiert hat?",
+            "Wenn das Startup die gleiche Strategie im dritten Jahr beibehält und die Hälfte des Betrags aus dem Vorjahr in die Softwareentwicklung investiert, wie viel wird es im dritten Jahr investieren?"
+        ],
+        "reference": [
+            "12000",
+            "2000"
+        ]
+    },
+    {
+        "question_id": 113,
+        "category": "Mathematik",
+        "turns": [
+            "In einer Umfrage an einem örtlichen Gymnasium wurden Vorlieben für eine neue Schulfarbe gemessen: 58 % der Schüler mochten die Farbe Blau, 45 % bevorzugten Grün und 22 % mochten beide Farben. Wenn wir einen Schüler zufällig aus der Schule auswählen, wie hoch ist die Wahrscheinlichkeit, dass er weder Blau noch Grün mag?",
+            "Wenn wir einen Schüler auswählen, der Grün mag, wie hoch ist die Wahrscheinlichkeit, dass er beide Farben nicht mag?"
+        ],
+        "reference": [
+            "19 %",
+            "0 %"
+        ]
+    },
+    {
+        "question_id": 114,
+        "category": "Mathematik",
+        "turns": [
+            "Beim Würfeln mit zwei Würfeln, wie hoch ist die Wahrscheinlichkeit, dass Sie eine Gesamtzahl würfeln, die mindestens 3 beträgt?",
+            "Fahren Sie von der vorherigen Frage fort. Wie hoch ist die Wahrscheinlichkeit, dass Sie eine Zahl würfeln, die gerade ist oder mindestens 3 beträgt?"
+        ],
+        "reference": [
+            "36 (alle Fälle) - 0 (Summe gleich 1) - 1 (Summe gleich 2) = 35, daher beträgt die Wahrscheinlichkeit 35/36",
+            "100 %"
+        ]
+    },
+    {
+        "question_id": 115,
+        "category": "Mathematik",
+        "turns": [
+            "Einige Leute sind an einer Bushaltestelle eingestiegen. An der ersten Haltestelle sind die Hälfte der Leute ausgestiegen und 4 weitere Leute sind eingestiegen. An der zweiten Haltestelle sind 6 Leute ausgestiegen und 8 weitere sind eingestiegen. Wenn insgesamt 25 Leute zur dritten Haltestelle fahren, wie viele Leute sind an der Bushaltestelle eingestiegen?",
+            "Wenn die Fahrkarte 2 US-Dollar pro Person kostet, wie viel Geld hat der Bus insgesamt verdient, wenn er alle Bücher verkauft hat, die er gekauft hat?"
+        ],
+        "reference": [
+            "38 Personen",
+            "Die Gesamtzahl der Fahrgäste beträgt 50 * 2 = 100 US-Dollar"
+        ]
+    },
+    {
+        "question_id": 116,
+        "category": "Mathematik",
+        "turns": [
+            "x + y = 4z, x * y = 4z^2, drücken Sie x - y in z aus",
+            "Drücken Sie z - x in y aus"
+        ],
+        "reference": [
+            "0\n\nSehr einfach. einfach (x+y)^2 - 4xy = (4z)^2 - 4*4z^2 = 0 = (x-y)^2\nalso x-y = 0.",
+            "(-1/2)y\n\nz-x = z - 2z = -z = (-1/2)y"
+        ]
+    },
+    {
+        "question_id": 117,
+        "category": "Mathematik",
+        "turns": [
+            "Wie viele ganze Zahlen erfüllen die Ungleichung |x + 5| < 10",
+            "Wie ist es mit |x + 10| < 5?"
+        ],
+        "reference": [
+            "19 ganze Zahlen (-14, ..., 4)",
+            "9 ganze Zahlen (-14, ..., -6)"
+        ]
+    },
+    {
+        "question_id": 118,
+        "category": "Mathematik",
+        "turns": [
+            "Wenn eine Zahl durch 10 geteilt wird, beträgt der Rest 4. Was ist der Rest, wenn die zweifache der Zahl durch 4 geteilt wird?",
+            "Wie ist es, wenn das zweifache der Zahl durch 5 geteilt wird?"
+        ],
+        "reference": [
+            "0\n\n2 * (10x+4) = 20x + 8 = 4 * (5x+2) + 0\n",
+            "3\n\n20x + 8 = 5 * (4x + 1) + 3"
+        ]
+    },
+    {
+        "question_id": 119,
+        "category": "Mathematik",
+        "turns": [
+            "Benjamin ging in eine Buchhandlung und kaufte verschiedene Bücher. Er kaufte 5 Exemplare eines Science-Fiction-Romans, jeweils zum Preis von 20 US-Dollar, 3 Exemplare eines Geschichtsbuchs zum Preis von jeweils 30 US-Dollar und 2 Exemplare eines Philosophiebuchs zum Preis von jeweils 45 US-Dollar.\nWas waren die Gesamtkosten seiner Einkäufe?",
+            "Angenommen, Benjamin entscheidet sich, jeden dieser Bücher mit einem Aufschlag von 25 % auf den Preis, den er dafür bezahlt hat, zu verkaufen. Wie hoch wäre sein Gesamterlös, wenn er alle Bücher verkauft, die er gekauft hat?"
+        ],
+        "reference": [
+            "280 US-Dollar",
+            "350 US-Dollar"
+        ]
+    },
+    {
+        "question_id": 120,
+        "category": "Mathematik",
+        "turns": [
+            "Angenommen, f(x) = 4x^3 - 9x - 14, finden Sie den Wert von f(2).",
+            "Finden Sie x, so dass f(x) = 0 ist."
+        ],
+        "reference": [
+            "f(2) = 0",
+            "x = 2"
+        ]
+    }
+]

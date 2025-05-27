@@ -5,7 +5,7 @@ import random
 from typing import Dict, Any, List, Optional
 
 from evaluation.ranking import MatchType, calculate_mELO_ratings_by_gradient_descent
-from utils.get_data import _load_prompt_dataset, extract_information_from_dataset_prompt
+from utils.get_data import load_prompt_dataset, extract_prompt_info_from_dataset_item
 
 try:
     from evaluation.ranking import update_elo, ModelRatingsType
@@ -102,7 +102,7 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
     
     overall_run_success = True
     
-    dataset = _load_prompt_dataset(config, category)
+    dataset = load_prompt_dataset(config, category)
     
     logger.info(f"Starting comparisons for category '{category}'.")
 
@@ -111,7 +111,7 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
         prompt_processing_details = {"prompt_id": "N/A", "status": "Skipped", "pairs_processed_attempts": 0, "pairs_succeeded": 0}
         
         try:
-            prompt_data_tuple = extract_information_from_dataset_prompt(dataset_item=prompt)
+            prompt_data_tuple = extract_prompt_info_from_dataset_item(dataset_item=prompt)
 
             if prompt_data_tuple is None:
                 logger.error("Failed to retrieve a valid prompt/ground truth tuple. Skipping this cycle.")

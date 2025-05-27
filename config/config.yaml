@@ -4,7 +4,7 @@
 
 
 # --- Core Models ---
-JUDGE_MODEL: "qwen3:30b-a3b"
+JUDGE_MODEL: 'gemma3:27b' #"qwen3:30b-a3b"
 SECOND_JUDGE_MODEL: "qwq:32b"
 COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
                     'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
@@ -14,8 +14,8 @@ COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
 # --- Run config ---
 RUN_ALL_CATEGORIES_IS_ENABLED: true
 RUN_ONLY_JUDGEMENT: true
-CURRENT_CATEGORY: "roleplay" # this works only if the RUN_ALL_CATEGORIES_IS_ENABLED is disabled
-ALL_CATEGORIES: ['writing','roleplay','math','extraction', 'stem','humanities']
+CURRENT_CATEGORY: "schreiben" # this works only if the RUN_ALL_CATEGORIES_IS_ENABLED is disabled
+ALL_CATEGORIES: ['schreiben','rollenspiel','mathematik','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
   comparisons_per_run: 10  
@@ -32,12 +32,12 @@ generation_options_judge:
 generation_options:
   temperature: 0.0 
 
-PROMPT_DATASET: "HuggingFaceH4/mt_bench_prompts" # default dataset if no data exists localy 
+PROMPT_DATASET: "VAGOsolutions/MT-Bench-TrueGerman"  #"HuggingFaceH4/mt_bench_prompts" # default dataset if no data exists localy 
   
-PROMPT_DATASET_COLUMN: "prompt"
+PROMPT_DATASET_COLUMN: "turns"
 GROUND_TRUTH_DATASET_COLUMN: "reference"
 PROMPT_DATASET_CATEGORY_COLUMN: "category"
-PROMPT_ID_COLUMN: "prompt_id"
+PROMPT_ID_COLUMN: "question_id"
 
 
 # --- Local Data Storage ---

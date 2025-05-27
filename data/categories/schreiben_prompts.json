@@ -1,0 +1,92 @@
+[
+    {
+        "question_id": 81,
+        "category": "Schreiben",
+        "turns": [
+            "Verfassen Sie einen fesselnden Reiseblogbeitrag über eine kürzliche Reise nach Hawaii, in dem kulturelle Erlebnisse und Sehenswürdigkeiten hervorgehoben werden.",
+            "Überarbeiten Sie Ihre vorherige Antwort. Beginnen Sie jeden Satz mit dem Buchstaben A."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 82,
+        "category": "Schreiben",
+        "turns": [
+            "Verfassen Sie eine professionelle E-Mail, in der Sie um das Feedback Ihres Vorgesetzten zum von Ihnen erstellten 'Quartalsfinanzbericht' bitten. Fragen Sie speziell nach der Datenanalyse, der Präsentationsweise und der Klarheit der gezogenen Schlussfolgerungen. Halten Sie die E-Mail kurz und prägnant.",
+            "Nehmen Sie sich einen Moment Zeit, um Ihre vorherige Antwort zu bewerten und kritisch zu hinterfragen."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 83,
+        "category": "Schreiben",
+        "turns": [
+            "Stellen Sie sich vor, Sie verfassen einen Blogbeitrag, in dem Sie zwei beliebte Smartphone-Modelle vergleichen. Entwickeln Sie eine Gliederung für den Blogbeitrag, einschließlich der Hauptpunkte und Unterkapitel, um die Merkmale, die Leistung und die Benutzererfahrung der beiden Modelle effektiv zu vergleichen und gegenüberzustellen. Bitte antworten Sie in weniger als 200 Wörtern.",
+            "Nehmen Sie Ihre vorherige Antwort und formulieren Sie sie als Limerick um."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 84,
+        "category": "Schreiben",
+        "turns": [
+            "Verfassen Sie eine überzeugende E-Mail, um Ihren introvertierten Freund, der öffentliches Sprechen nicht mag, dazu zu bewegen, sich als Gastredner bei einer örtlichen Veranstaltung zu engagieren. Verwenden Sie überzeugende Argumente und gehen Sie auf mögliche Einwände ein. Bitte seien Sie prägnant.",
+            "Können Sie Ihre vorherige Antwort umformulieren und in jedem Satz eine Metapher oder einen Vergleich verwenden?"
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 85,
+        "category": "Schreiben",
+        "turns": [
+            "Beschreiben Sie eine lebhafte und einzigartige Figur unter Verwendung bildhafter und kreativer Sprache. Bitte antworten Sie in weniger als zwei Absätzen.",
+            "Überarbeiten Sie Ihre vorherige Antwort und integrieren Sie in jedem Satz eine Anspielung auf ein berühmtes literarisches Werk oder historisches Ereignis."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 86,
+        "category": "Schreiben",
+        "turns": [
+            "Schreiben Sie einen Absatz über einen belebten Markt, indem Sie Sinnesdetails wie Gerüche, Geräusche und visuelle Elemente integrieren, um eine immersive Erfahrung für den Leser zu schaffen.",
+            "Überarbeiten Sie Ihre vorherige Antwort. Beginnen Sie jeden Satz mit dem darauf folgenden Buchstaben des Alphabets, beginnend mit B."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 87,
+        "category": "Schreiben",
+        "turns": [
+            "Könnten Sie eine fesselnde Kurzgeschichte schreiben, die mit dem Satz beginnt: 'Das alte verlassene Haus am Ende der Straße barg ein Geheimnis, das niemand je entdeckt hatte.'",
+            "Jetzt führen Sie dieselbe Aufgabe erneut aus, aber verwenden Sie nur vier-Wort-Sätze."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 88,
+        "category": "Schreiben",
+        "turns": [
+            "Verfassen Sie einen faszinierenden Eröffnungsabsatz für eine fiktive Kurzgeschichte. Die Geschichte sollte eine Figur involvieren, die eines Morgens feststellt, dass sie in die Zeit reisen kann.",
+            "Fassen Sie die Geschichte in drei Stichpunkten zusammen, wobei Sie nur Substantive und Adjektive verwenden, ohne Verben."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 89,
+        "category": "Schreiben",
+        "turns": [
+            "Helfen Sie mir dabei, eine einprägsame, aber wissenschaftlich genaue Überschrift für einen Artikel über die neueste Entdeckung im Bereich erneuerbarer Bioenergie zu erstellen, während Sie die ethischen Dilemmata im Zusammenhang mit Bioenergiequellen sorgfältig behandeln. Schlagen Sie 4 Optionen vor.",
+            "Ändern Sie Ihre vorherige Antwort. Nehmen Sie die folgenden Anpassungen an der 2. Option vor: 1. Lassen Sie den Ton leger klingen 2. Binden Sie eine Werbung für ein Unternehmen namens 'FlexPower' ein 3. Weniger als 10 Wörter."
+        ],
+        "reference": null
+    },
+    {
+        "question_id": 90,
+        "category": "Schreiben",
+        "turns": [
+            "Bearbeiten Sie den folgenden Absatz, um alle grammatikalischen Fehler zu korrigieren:\nSie erinerte sich nischt, wo ihre Tasche ist, also denken ich, sie ist in Auto, aber er sagt, sie ist auf den Küschentisch, aber er ist sisch nicht sicher, und dann batten sie mir, danach zu suche. Sie sage: 'Kannst du?' und ich antworten: 'Vieleicht, aber sicher nicht.' und er hat mich nicht gehörte und fragen: 'Was? Hast du es gefunden?'",
+            "Ändern Sie Ihre vorherige Antwort und eliminieren Sie die Verwendung von geschlechtsspezifischen Pronomen."
+        ],
+        "reference": null
+    }
+]
