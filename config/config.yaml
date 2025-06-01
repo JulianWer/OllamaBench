@@ -4,7 +4,7 @@
 
 
 # --- Core Models ---
-JUDGE_MODEL: 'gemma3:27b' #"qwen3:30b-a3b"
+JUDGE_MODEL: 'qwen3:30b-a3b' #"qwen3:30b-a3b"
 SECOND_JUDGE_MODEL: "qwq:32b"
 COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
                     'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
@@ -18,7 +18,7 @@ CURRENT_CATEGORY: "schreiben" # this works only if the RUN_ALL_CATEGORIES_IS_ENA
 ALL_CATEGORIES: ['schreiben','rollenspiel','mathematik','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
-  comparisons_per_run: 10  
+  comparisons_per_run: 10
   comparisons_per_prompt: 30
 
 # --- Model Config ---
