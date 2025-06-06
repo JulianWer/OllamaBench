@@ -1,0 +1,53 @@
+# --- Python ---
+# Byte-compiled / optimized / C-extensions
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# --- Virtual Environment ---
+# Standard virtual environment directory
+venv/
+*.venv
+.env
+env/
+
+# --- Project-Specific ---
+# Directory for generated model answers, can become very large
+model_responses/
+
+# Lock files created by filelock
+*.lock
+
+# Temporary or backup results files
+# Keep results.json, but ignore backups or specific run results
+data/old_results.json
+data/results_gemma3.json
+
+# --- Build, Distribution, and Packaging ---
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+pip-wheel-metadata/
+
+# --- IDEs and Editors ---
+# Visual Studio Code
+.vscode/
+# PyCharm
+.idea/
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# --- Operating System Files ---
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+
+# --- Logging ---
+*.log
+logs/
