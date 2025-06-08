@@ -1,14 +1,27 @@
+import argparse
 import logging
 import sys
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 import yaml
 
+from scripts.engine import run_benchmark
 from scripts.generate_model_answers_for_category import generate_and_save_model_answers_for_category
 from utils.config import load_config, DEFAULT_CONFIG_PATH
 from scripts.run_comparison import run_judge_comparison
 
 CONFIG: Dict[str, Any] = {}
+
+# --- Configuration Loading ---
+CONFIG = None
+try:
+    CONFIG = load_config(DEFAULT_CONFIG_PATH)
+    ALL_CATEGORIES = CONFIG.get("ALL_CATEGORIES")
+
+except (FileNotFoundError, KeyError, ValueError, Exception) as e:
+    logging.basicConfig(level=logging.ERROR)
+    logging.critical(f"FATAL: Failed to load or validate configuration from '{DEFAULT_CONFIG_PATH}': {e}", exc_info=True)
+    exit(1)
 
 def setup_logging(config: Dict[str, Any]):
     """Configures logging based on the loaded configuration."""
@@ -21,51 +34,64 @@ def setup_logging(config: Dict[str, Any]):
                         handlers=log_handlers)
 
 
-def run_evaluation_cli(config: Dict[str, Any]):
+def run_evaluation_cli(args: argparse.Namespace ,config: Dict[str, Any]):
     """
     Runs the configured number of comparison cycles sequentially from the command line.
     Args:
         config: The loaded application configuration.
     """
     logger = logging.getLogger(__name__) 
+    categories_to_run: List[str]
     try:
-        # --- config ---
-        default_category = config.get("CURRENT_CATEGORY")
-        all_categories = config.get("ALL_CATEGORIES")
-        run_all_categories_is_enabled = config.get("RUN_ALL_CATEGORIES_IS_ENABLED")
-        run_only_judgement = config.get("RUN_ONLY_JUDGEMENT")
-
-        
-        if run_all_categories_is_enabled:
-            for category in all_categories:
-                try:
-                    if not run_only_judgement:
-                        generate_and_save_model_answers_for_category(config=config, category=category)
-                        run_judge_comparison(config,category) 
-                    else:
-                        run_judge_comparison(config,category) 
-                except Exception as e:
-                    logger.exception(f"Critical error during comparison cycle: {e}")
-                    break 
+        if args.category:
+            categories_to_run = [args.category]
+            logger.info(f"Preparing to run for a single specified category: {args.category}")
         else:
-            try:
-                if not run_only_judgement:
-                    generate_and_save_model_answers_for_category(config=config, category=default_category)
-                    run_judge_comparison(config,default_category)
-                else:
-                    run_judge_comparison(config,default_category)                      
+            if not args.all_categories:
+                logger.info("No category specified, defaulting to --all-categories.")
+            
+            categories_to_run = ALL_CATEGORIES # Fallback
 
-            except Exception as e:
-                logger.exception(f"Critical error: {e}")
-                 
+        complete_run = not args.generate_only and not args.judge_only
+        generate_answers = not args.judge_only and args.generate_only or complete_run
+        run_judgement =  not args.generate_only and args.judge_only or complete_run
+        run_benchmark(config=config, categories_to_run=categories_to_run, generate_answers= generate_answers , run_judgement= run_judgement)
 
     except Exception as e:
         logger.exception(f"An unexpected error occurred during the main evaluation task: {e}")
 
 
 if __name__ == "__main__":
-    print("--- OllamaBench CLI Execution Start ---")
+    print("--- LocalBench CLI Execution Start ---")
     try:
+        parser = argparse.ArgumentParser(description="OllamaBench: A benchmark tool for local LLMs.")
+
+        category_group = parser.add_mutually_exclusive_group()
+        category_group.add_argument(
+            '--all-categories', 
+            action='store_true', 
+            help='Run benchmark for all categories defined in config.yaml.'
+        )
+        category_group.add_argument(
+            '--category', 
+            type=str, 
+            help='Run benchmark for a single specified category.'
+        )
+
+        step_group = parser.add_mutually_exclusive_group()
+        step_group.add_argument(
+            '--generate-only',
+            action='store_true',
+            help='Only generate model answers, do not run judgement.'
+        )
+        step_group.add_argument(
+            '--judge-only',
+            action='store_true',
+            help='Only run judgement on existing answers, do not generate new ones.'
+        )
+
+        args = parser.parse_args()
+        
         # --- Load Configuration ---
         print(f"Loading configuration from: {DEFAULT_CONFIG_PATH}")
         CONFIG = load_config(DEFAULT_CONFIG_PATH)
@@ -78,7 +104,7 @@ if __name__ == "__main__":
 
         # --- Run Evaluation ---
         main_logger.info("Starting evaluation process...")
-        run_evaluation_cli(CONFIG)
+        run_evaluation_cli(args,CONFIG)
         main_logger.info("Evaluation process finished.")
 
     except FileNotFoundError as e:
@@ -97,5 +123,5 @@ if __name__ == "__main__":
              pass 
         sys.exit(1)
 
-    print("--- OllamaBench CLI Execution End ---")
+    print("--- LocalBench CLI Execution End ---")
     sys.exit(0) 
