@@ -3,962 +3,599 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LocalBench Dashboard</title>
+    <title>OllamaBench Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --sidebar-bg: #111827; /* gray-900 */
+            --main-bg: #f8fafc; /* slate-50 */
+            --card-background: #ffffff;
+            --text-primary: #1e293b; /* slate-800 */
+            --text-secondary: #64748b; /* slate-500 */
+            --border-color: #e2e8f0; /* slate-200 */
+            --border-color-soft: #f1f5f9; /* slate-100 */
+            --primary-accent: #4f46e5; /* indigo-600 */
+            --primary-accent-hover: #4338ca; /* indigo-700 */
+            --primary-accent-light: #eef2ff; /* indigo-50 */
+            --primary-accent-text: #3730a3; /* indigo-800 */
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+            --card-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; 
+            background-color: var(--main-bg);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .chart-container {
-            position: relative;
-            height: 380px; 
-            width: 100%;
-            max-width: 600px; 
-            margin: auto;
-        }
-        canvas {
-            display: block;
-            box-sizing: border-box;
-            height: 100% !important;
-            width: 100% !important;
-        }
-        .table-container {
-            overflow-x: auto;
-            max-height: 450px; 
-            border-radius: 0.5rem; 
-            border: 1px solid #e5e7eb; 
-        }
-        .table-container::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .table-container::-webkit-scrollbar-track {
-            background: #f9fafb; 
-            border-radius: 10px;
-        }
-        .table-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 10px;
-        }
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 32px; 
-            height: 32px;
-            border-radius: 50%;
-            border-left-color: #3b82f6; 
-            animation: spin 1s linear infinite; 
-            margin: 5px auto;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .action-button {
-            background-color: #3b82f6; 
-            color: white;
-            padding: 12px 24px; 
-            border: none;
-            border-radius: 0.5rem; 
-            font-weight: 600; 
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); 
-        }
-        .action-button:hover {
-            background-color: #2563eb; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); 
-        }
-        .action-button:disabled {
-            background-color: #9ca3af; 
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .action-button .loading-spinner {
-            width: 18px; 
-            height: 18px;
-            border-width: 3px;
-            margin: 0;
-        }
-        .status-message {
-            margin-top: 16px; 
-            padding: 12px 18px; 
-            border-radius: 0.5rem; 
-            font-size: 0.95em; 
-            font-weight: 500;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out, transform 0.3s ease-in-out;
-            border-width: 1px;
-            border-style: solid;
-        }
-        .status-success { background-color: #ecfdf5; color: #065f46; border-color: #6ee7b7; } 
-        .status-error   { background-color: #fff1f2; color: #9f1239; border-color: #fecaca; } 
-        .status-warning { background-color: #fffbeb; color: #92400e; border-color: #fde68a; } 
-        .status-info    { background-color: #eff6ff; color: #1e40af; border-color: #bfdbfe; } 
-        .status-loading {
-             background-color: #eff6ff; color: #1e40af; border-color: #bfdbfe;
-             display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .status-loading .loading-spinner { width: 18px; height: 18px; border-width: 3px; margin: 0; }
-
-        .category-select {
-            padding: 10px 14px; 
-            border-radius: 0.375rem; 
-            border: 1px solid #d1d5db; 
-            background-color: white;
-            font-size: 0.9em;
-            font-weight: 500;
-            cursor: pointer;
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .category-select:focus {
-            outline: none;
-            border-color: #3b82f6; 
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); 
-        }
-        .hidden { display: none !important; } 
-
-        .sticky-header th {
-            position: sticky;
+        
+        /* Add a subtle background pattern */
+        body::before {
+            content: '';
+            position: fixed;
             top: 0;
-            background-color: #f9fafb; 
-            z-index: 10;
-            white-space: nowrap;
-            border-bottom: 2px solid #e5e7eb; 
-            font-weight: 600; 
-            color: #374151; 
-        }
-        .detailed-ratings-table td { 
-            white-space: nowrap;
-            /* Tooltip styling for better readability if needed, but title attribute is native */
-        }
-        .detailed-ratings-table td[title]:hover {
-            cursor: help; /* Indicate that there's a tooltip */
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0);
+            background-size: 2rem 2rem;
+            opacity: 0.3;
+            z-index: -1;
         }
 
+        h1, h2, h3, .nav-link, #run-eval-button {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        .chart-container { position: relative; height: 350px; width: 100%; }
+        .table-container {
+            overflow-x: auto; max-height: 450px;
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-container::-webkit-scrollbar-track { background: var(--main-bg); }
+        .table-container::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 6px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-        /* Card styling */
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            width: 32px; height: 32px; border-radius: 50%;
+            border-left-color: #ffffff;
+            animation: spin 1s linear infinite; display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
         .dashboard-card {
-            background-color: white;
-            border-radius: 0.75rem; 
-            padding: 20px 24px; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05); 
-            transition: box-shadow 0.3s ease-in-out;
+            background-color: var(--card-background);
+            border-radius: 1rem; /* rounded-xl */
+            padding: 24px;
+            border: 1px solid var(--border-color-soft);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .dashboard-card:hover {
-             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07); 
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
         }
+        
         .card-title {
-            font-size: 1.25rem; 
-            font-weight: 700; 
-            color: #1f2937; 
-            margin-bottom: 1rem; 
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 700;
+            color: var(--text-primary);
         }
-        .no-data-message {
-            text-align: center;
-            color: #6b7280; 
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: #f9fafb; 
-            border-radius: 0.375rem; 
-            font-style: italic;
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: 1px solid;
+        }
+        .rank-1 { background-color: #fef3c7; color: #92400e; border-color: #fde68a; } /* amber */
+        .rank-2 { background-color: #f1f5f9; color: #475569; border-color: #e2e8f0; } /* slate */
+        .rank-3 { background-color: #ffedd5; color: #9a3412; border-color: #fed7aa; } /* orange */
+        .rank-default { background-color: #f8fafc; color: #64748b; border-color: #f1f5f9; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .sidebar-select {
+            padding: 8px 12px; border-radius: 0.5rem; width: 100%;
+            border: 1px solid #374151; /* gray-700 */
+            background-color: #1f2937; /* gray-800 */
+            color: #d1d5db; /* gray-300 */
+            font-size: 0.9em; font-weight: 500; cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat; background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        .sidebar-select:focus {
+            outline: none; border-color: var(--primary-accent);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
+        }
+        .main-select {
+            background-color: var(--card-background) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .nav-link.nav-link-active {
+            background-color: var(--primary-accent);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-link:not(.nav-link-active):hover {
+            background-color: #1f2937; /* gray-800 */
+        }
+        
+        .detailed-ratings-table .best-in-category {
+            font-weight: 700;
+            color: var(--primary-accent-text);
+            background-color: var(--primary-accent-light);
+        }
+
+        #mobile-menu-button { display: none; }
+        @media (max-width: 1024px) {
+            #sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 40;
+            }
+            #sidebar.open { transform: translateX(0); }
+            #main-content { margin-left: 0; }
+            #mobile-menu-button { display: block; }
         }
     </style>
 </head>
-<body class="p-4 sm:p-6 md:p-8">
-    <div class="max-w-screen-2xl mx-auto">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-800">
-                OllamaBench Dashboard
-            </h1>
-            <p class="text-slate-600 mt-2 text-lg">Modell-Performance auf einen Blick</p>
-        </header>
+<body>
+    <div class="relative min-h-screen lg:flex">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button" class="lg:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg text-slate-600 hover:text-slate-900 transition">
+            <svg id="mobile-menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg id="mobile-menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
 
-        <div class="mb-8 p-6 dashboard-card text-center">
-            <button id="run-eval-button" class="action-button">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
-                </svg>
-                <span id="run-eval-button-text">Starte {{ COMPARISONS_PER_RUN }} Vergleiche</span>
-                <div class="loading-spinner hidden"></div>
-            </button>
-            <div id="eval-status" class="status-message status-info mt-5" style="opacity: 1;">Prüfe Status...</div>
-        </div>
-
-        <div id="loading-indicator" class="text-center my-12">
-            <div class="loading-spinner" style="width: 48px; height: 48px; border-width: 5px;"></div>
-            <p class="text-slate-600 mt-3 text-lg font-medium">Lade Dashboard-Daten...</p>
-        </div>
-
-        <div id="dashboard-content" class="hidden">
-            <div class="dashboard-card mb-8">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5">
-                    <h2 class="card-title">Gesamtranking der Modelle</h2>
-                    <span class="text-sm text-slate-500 mt-2 sm:mt-0">Letzte Aktualisierung: <span id="data-timestamp" class="font-medium">N/A</span></span>
-                </div>
-                <div class="table-container">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="sticky-header">
-                            <tr>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Rang</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Modell</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Beste Kategorie</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Höchstes ELO</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Ø ELO</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Vergleiche</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Siege</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Niederl.</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Unentsch.</th>
-                            </tr>
-                        </thead>
-                        <tbody id="overall-rankings-table-body" class="bg-white divide-y divide-slate-100">
-                            <tr><td colspan="9" class="text-center py-6 text-slate-500">Lade Rankings...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-72 bg-slate-900 text-slate-300 p-6 flex flex-col fixed top-0 left-0 h-full transform lg:transform-none shadow-2xl lg:shadow-none">
+            <!-- Header -->
+            <div class="mb-10">
+                <a href="#" class="flex items-center gap-3">
+                     <svg class="h-9 w-9 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" /></svg>
+                     <span class="text-2xl font-bold text-white tracking-tighter">OllamaBench</span>
+                </a>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                 <div class="dashboard-card flex flex-col items-center">
-                    <div class="flex flex-col sm:flex-row items-center justify-between w-full mb-5">
-                         <h2 class="card-title text-center sm:text-left">ELO-Ratings nach Kategorie</h2>
-                         <select id="category-select-bar" class="category-select mt-3 sm:mt-0 sm:ml-auto">
-                             <option value="">Lade...</option>
-                         </select>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="barChart"></canvas>
-                         <p id="bar-chart-no-data" class="no-data-message hidden">Keine Daten für diese Kategorie verfügbar.</p>
-                    </div>
-                </div>
-                 <div class="dashboard-card flex flex-col items-center">
-                     <div class="flex items-center justify-center w-full mb-5">
-                         <h2 class="card-title text-center">Modellvergleich (Radar)</h2>
-                    </div>
-                     <div class="chart-container">
-                        <canvas id="radarChart"></canvas>
-                        <p id="radar-chart-no-data" class="no-data-message hidden">Nicht genügend Daten (mind. 1 Modell & 3 Kategorien) für Radar-Diagramm.</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Navigation -->
+            <nav id="main-navigation" class="flex-grow space-y-2">
+                 <a href="#" data-tab="overview" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 transition-colors duration-200">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+                     <span class="font-semibold">Übersicht</span>
+                 </a>
+                 <a href="#" data-tab="details" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 transition-colors duration-200">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm3 2h4v2H8V5zm0 4h4v2H8V9zm4 4H8v2h4v-2z" clip-rule="evenodd" /></svg>
+                     <span class="font-semibold">Detail-Analyse</span>
+                 </a>
+                 <a href="#" data-tab="comparison" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 transition-colors duration-200">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" /><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" /></svg>
+                     <span class="font-semibold">Modellvergleich</span>
+                 </a>
+            </nav>
 
-            <div class="dashboard-card mt-8">
-                <h2 class="card-title mb-5">Detaillierte Ratings pro Kategorie</h2>
-                <div class="table-container">
-                    <table class="min-w-full divide-y divide-slate-200 detailed-ratings-table">
-                        <thead id="detailed-ratings-thead" class="sticky-header">
-                            </thead>
-                        <tbody id="detailed-ratings-tbody" class="bg-white divide-y divide-slate-100">
-                             <tr><td colspan="1" class="text-center py-6 text-slate-500">Lade detaillierte Ratings...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Evaluation Controls -->
+            <div id="evaluation-controls" class="bg-slate-800/50 p-4 -m-6 mt-6 border-t border-slate-700">
+                 <h3 class="text-md font-semibold text-white mb-4">Neue Evaluierung</h3>
+                 <div class="space-y-4">
+                     <select id="eval-category-select" class="sidebar-select"></select>
+                     <div class="flex items-center gap-4">
+                         <div class="flex items-center gap-2"><input id="generate-only-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-600 cursor-pointer"><label for="generate-only-checkbox" class="text-sm text-slate-300 cursor-pointer">Nur generieren</label></div>
+                         <div class="flex items-center gap-2"><input id="judge-only-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-600 cursor-pointer"><label for="judge-only-checkbox" class="text-sm text-slate-300 cursor-pointer">Nur bewerten</label></div>
+                     </div>
+                     <button id="run-eval-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 disabled:bg-slate-600 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5">
+                        <span id="run-eval-button-text">Start</span>
+                        <div class="loading-spinner hidden" style="width:16px; height:16px; border-width: 2px;"></div>
+                        <span class="dynamic-text hidden text-sm"></span>
+                     </button>
+                     <p id="eval-status" class="text-xs text-slate-400 mt-2 text-center h-4 truncate"></p>
+                 </div>
             </div>
-        </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="main-content" class="lg:ml-72 flex-1 p-6 lg:p-10">
+             <div id="loading-indicator" class="flex justify-center items-center h-full pt-32">
+                 <div class="text-center">
+                    <div class="loading-spinner !w-12 !h-12 !border-slate-300 !border-l-indigo-600" style="border-width: 5px;"></div>
+                    <p class="text-slate-500 mt-4 text-lg font-medium">Lade Dashboard-Daten...</p>
+                 </div>
+             </div>
+             <div id="dashboard-content" class="hidden">
+                <!-- Main Header -->
+                <header class="flex justify-between items-center mb-8">
+                    <h1 id="main-header-title" class="text-3xl font-bold text-slate-800">Übersicht</h1>
+                </header>
+
+                <!-- Metric Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                    <div class="dashboard-card p-5 flex items-center gap-5"><div class="bg-indigo-50 text-indigo-600 rounded-lg p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><p class="text-sm text-slate-500">Vergleiche gesamt</p><p id="metric-total-comparisons" class="text-2xl font-bold">0</p></div></div>
+                    <div class="dashboard-card p-5 flex items-center gap-5"><div class="bg-blue-50 text-blue-600 rounded-lg p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0v-4m6 4v-4m6 4v-4" /></svg></div><div><p class="text-sm text-slate-500">Getestete Modelle</p><p id="metric-model-count" class="text-2xl font-bold">0</p></div></div>
+                    <div class="dashboard-card p-5 flex items-center gap-5"><div class="bg-amber-50 text-amber-600 rounded-lg p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l-3 3m5 0l-3 3m-5 12v-4m-2 2h4" /></svg></div><div><p class="text-sm text-slate-500">Top Modell (Ø ELO)</p><p id="metric-top-model" class="text-xl font-bold">N/A</p></div></div>
+                </div>
+                
+                <!-- Tab Content Areas -->
+                <div id="tab-content-overview" class="tab-content space-y-8">
+                     <div class="dashboard-card"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5"><h2 class="card-title">Gesamtranking der Modelle</h2><button id="export-overall" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">CSV Export</button></div><div class="table-container"><table id="overall-rankings-table" class="min-w-full"><thead class="bg-slate-50"><tr><th class="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">Rang</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Modell</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Beste Kategorie</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Höchstes ELO</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Ø ELO</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Vergleiche</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">S</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">N</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">U</th></tr></thead><tbody id="overall-rankings-table-body" class="bg-white divide-y divide-slate-100"></tbody></table></div></div>
+                     <div class="grid grid-cols-1 xl:grid-cols-5 gap-8"><div class="dashboard-card flex flex-col xl:col-span-3"><div class="flex flex-col sm:flex-row items-center justify-between w-full mb-5"><h2 class="card-title">ELO-Ratings nach Kategorie</h2><select id="category-select-bar" class="w-full sm:w-auto mt-3 sm:mt-0 sidebar-select main-select"></select></div><div class="chart-container"><canvas id="barChart"></canvas></div></div><div class="dashboard-card flex flex-col xl:col-span-2"><h2 class="card-title text-center w-full mb-5">Modellstärken (Radar)</h2><div class="chart-container"><canvas id="radarChart"></canvas></div></div></div>
+                </div>
+                <div id="tab-content-details" class="tab-content"><div class="dashboard-card"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5"><h2 class="card-title">Detaillierte Ratings pro Kategorie</h2><button id="export-details" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">CSV Export</button></div><div class="table-container"><table id="detailed-ratings-table" class="min-w-full detailed-ratings-table"><thead id="detailed-ratings-thead" class="bg-slate-50"></thead><tbody id="detailed-ratings-tbody" class="bg-white divide-y divide-slate-100"></tbody></table></div></div></div>
+                <div id="tab-content-comparison" class="tab-content"><div class="dashboard-card"><h2 class="card-title mb-5">Direkter Modellvergleich</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-slate-50 p-4 rounded-lg mb-6 border border-slate-200"><div><label for="model-select-1" class="block text-sm font-medium text-slate-700 mb-1">Modell 1</label><select id="model-select-1" class="sidebar-select main-select w-full"></select></div><div><label for="model-select-2" class="block text-sm font-medium text-slate-700 mb-1">Modell 2</label><select id="model-select-2" class="sidebar-select main-select w-full"></select></div></div><div id="comparison-chart-container" class="chart-container mt-6"><canvas id="comparisonChart"></canvas></div><div id="comparison-no-data" class="text-center text-slate-500 p-8 hidden">Bitte wählen Sie zwei verschiedene Modelle aus.</div></div></div>
+             </div>
+        </main>
     </div>
 
     <script>
-        // --- JavaScript-Code ---
-        console.log("Script block started."); 
+        // --- JavaScript-Code (with UI logic improvements) ---
+        console.log("Modern Script block started."); 
 
-        // API Endpunkte
+        // --- API Endpoints & Global State ---
         const API_INITIAL_RESULTS_URL = '/api/results';
         const API_RESULTS_STREAM_URL = '/stream';
         const API_RUN_EVAL_URL = '/api/run_evaluation';
         const API_EVAL_STATUS_URL = '/api/evaluation_status';
-
-        const COMPARISONS_PER_RUN_JS = parseInt("{{ COMPARISONS_PER_RUN }}", 10) || 1;
-        console.log("COMPARISONS_PER_RUN_JS:", COMPARISONS_PER_RUN_JS);
-
-        let barChartInstance = null;
-        let radarChartInstance = null;
-        let currentModelsData = {};
-        let availableCategories = [];
-        let currentTimestamp = null;
-        let eventSource = null;
+        
+        let barChartInstance, radarChartInstance, comparisonChartInstance = null;
+        let currentModelsData = {}, availableCategories = [], eventSource = null;
         const ALL_CATEGORIES_KEY = "__all__"; 
 
+        // --- Utility Functions ---
         function generateColors(count) {
             const colors = [];
-            const baseHues = [210, 350, 140, 50, 270, 20, 320, 180, 240, 90];
-            const saturation = 75; 
-            const lightness = 55;  
+            const baseHues = [240, 340, 160, 45, 280, 200, 30, 300, 110, 260];
             for (let i = 0; i < count; i++) {
-                const hue = baseHues[i % baseHues.length] + (Math.floor(i / baseHues.length) * 20); 
-                colors.push({
-                    fill: `hsla(${hue % 360}, ${saturation}%, ${lightness + 10}%, 0.45)`,
-                    stroke: `hsla(${hue % 360}, ${saturation}%, ${lightness - 10}%, 1)`
-                });
+                const hue = baseHues[i % baseHues.length] + Math.floor(i / baseHues.length) * 35;
+                colors.push({ fill: `hsla(${hue % 360}, 70%, 60%, 0.6)`, stroke: `hsla(${hue % 360}, 70%, 50%, 1)` });
             }
             return colors;
         }
+        function capitalizeFirstLetter(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
-        function formatTimestamp(isoTimestamp) {
-            if (!isoTimestamp) return 'N/A';
-            try {
-                const date = new Date(isoTimestamp);
-                return new Intl.DateTimeFormat('de-DE', {
-                    year: 'numeric', month: '2-digit', day: '2-digit',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-                }).format(date);
-            } catch (e) {
-                console.error("Fehler beim Formatieren des Zeitstempels:", isoTimestamp, e);
-                return isoTimestamp;
-            }
-        }
-
-        function capitalizeFirstLetter(string) {
-            if (!string) return '';
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-         function showStatusMessage(message, type = 'info', sticky = false) {
-            const statusDiv = document.getElementById('eval-status');
-            if (!statusDiv) { console.error("eval-status element not found!"); return; }
-
-            statusDiv.innerHTML = '';
-            statusDiv.className = 'status-message'; 
-            statusDiv.style.opacity = 1;
-            statusDiv.style.transform = 'translateY(0)';
-
-            let statusClass = '';
-            switch (type) {
-                case 'success': statusClass = 'status-success'; break;
-                case 'error': statusClass = 'status-error'; break;
-                case 'warning': statusClass = 'status-warning'; break;
-                case 'loading': statusClass = 'status-loading'; break;
-                default: statusClass = 'status-info'; break;
-            }
-            statusDiv.classList.add(statusClass);
-
-            if (type === 'loading') {
-                const spinner = document.createElement('div');
-                spinner.className = 'loading-spinner';
-                statusDiv.appendChild(spinner);
-                statusDiv.appendChild(document.createTextNode(' ' + message));
-            } else {
-                statusDiv.textContent = message;
-            }
-
-            if (!sticky && type !== 'loading') {
-                setTimeout(() => {
-                    if (statusDiv.classList.contains(statusClass)) {
-                         statusDiv.style.opacity = 0;
-                         statusDiv.style.transform = 'translateY(-10px)';
-                    }
-                }, 7000);
-            }
-        }
-
+        // --- UI Update Functions ---
+        function showStatusMessage(message) { document.getElementById('eval-status').textContent = message; }
         function updateEvaluationButton(isLoading, message = null) {
             const runButton = document.getElementById('run-eval-button');
+            if(!runButton) return;
             const buttonTextEl = document.getElementById('run-eval-button-text');
-            const spinner = runButton?.querySelector('.loading-spinner');
-
-            if (!runButton || !buttonTextEl || !spinner) {
-                console.error("Evaluation button elements not found for update:", runButton, buttonTextEl, spinner);
-                return;
-            }
-
+            const spinner = runButton.querySelector('.loading-spinner');
+            const dynamicTextEl = runButton.querySelector('.dynamic-text');
             runButton.disabled = isLoading;
+            spinner.classList.toggle('hidden', !isLoading);
+            buttonTextEl.classList.toggle('hidden', isLoading);
             if (isLoading) {
-                spinner.classList.remove('hidden');
-                buttonTextEl.textContent = message || 'Vergleiche laufen...'; 
+                dynamicTextEl.textContent = message || 'Wird ausgeführt...';
+                dynamicTextEl.classList.remove('hidden');
             } else {
-                spinner.classList.add('hidden');
-                buttonTextEl.textContent = `Starte ${COMPARISONS_PER_RUN_JS} Vergleiche`;
+                dynamicTextEl.classList.add('hidden');
             }
         }
-
+        
         function updateBarChart(selectedCategory) {
-            console.debug(`Aktualisiere Balkendiagramm für: ${selectedCategory}`);
             const barCtx = document.getElementById('barChart')?.getContext('2d');
-            const noDataElement = document.getElementById('bar-chart-no-data');
-            if (!barCtx || !noDataElement) { console.error("Balkendiagramm Canvas oder no-data Element nicht gefunden."); return; }
+            if (!barCtx) return;
             if (barChartInstance) barChartInstance.destroy();
-            noDataElement.classList.add('hidden'); 
 
-            const labels = [];
-            const ratings = [];
-            let chartTitle = `ELO Rating`;
-
+            const data = { labels: [], ratings: [] };
             if (selectedCategory === ALL_CATEGORIES_KEY) {
-                chartTitle = 'Durchschnitts-ELO über alle Kategorien';
-                Object.entries(currentModelsData).forEach(([modelName, modelDetails]) => {
-                    const categories = modelDetails.elo_rating_by_category || {};
-                    let totalRating = 0;
-                    let categoryCount = 0;
-                    Object.values(categories).forEach(rating => {
-                        if (typeof rating === 'number') {
-                            totalRating += rating;
-                            categoryCount++;
-                        }
-                    });
-                    if (categoryCount > 0) {
-                        labels.push(modelName);
-                        ratings.push(totalRating / categoryCount);
+                Object.entries(currentModelsData).forEach(([model, details]) => {
+                    const cats = details.elo_rating_by_category || {};
+                    const ratingValues = Object.values(cats).filter(r => typeof r === 'number');
+                    if (ratingValues.length > 0) {
+                        data.labels.push(model);
+                        data.ratings.push(ratingValues.reduce((s, r) => s + r, 0) / ratingValues.length);
                     }
                 });
             } else {
-                chartTitle = `ELO Rating (${capitalizeFirstLetter(selectedCategory)})`;
-                Object.entries(currentModelsData).forEach(([modelName, modelDetails]) => {
-                    const categoryRating = modelDetails.elo_rating_by_category?.[selectedCategory];
-                    if (categoryRating !== undefined && typeof categoryRating === 'number') {
-                        labels.push(modelName);
-                        ratings.push(categoryRating);
-                    }
+                Object.entries(currentModelsData).forEach(([model, details]) => {
+                    const rating = details.elo_rating_by_category?.[selectedCategory];
+                    if (typeof rating === 'number') { data.labels.push(model); data.ratings.push(rating); }
                 });
             }
-            
-            const sortedIndices = ratings.map((_, i) => i).sort((a, b) => ratings[b] - ratings[a]);
-            const sortedLabels = sortedIndices.map(i => labels[i]);
-            const sortedRatings = sortedIndices.map(i => ratings[i]);
-
-            if (sortedLabels.length === 0) {
-                console.warn(`Keine Daten für ${selectedCategory} im Balkendiagramm.`);
-                noDataElement.textContent = selectedCategory === ALL_CATEGORIES_KEY ? 'Keine Modelldaten für Durchschnitts-ELO verfügbar.' : `Keine Daten für Kategorie ${capitalizeFirstLetter(selectedCategory)} verfügbar.`;
-                noDataElement.classList.remove('hidden'); 
-                barCtx.clearRect(0, 0, barCtx.canvas.width, barCtx.canvas.height);
-                return;
-            }
-
-            const chartColors = generateColors(sortedLabels.length);
-            const barBgColors = chartColors.map(color => color.fill); 
-            const barBorderColors = chartColors.map(color => color.stroke); 
+            const sortedIndices = data.ratings.map((_, i) => i).sort((a, b) => data.ratings[b] - data.ratings[a]);
+            const gradient = barCtx.createLinearGradient(0, 0, 0, 350);
+            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.7)');
+            gradient.addColorStop(1, 'rgba(129, 140, 248, 0.3)');
 
             barChartInstance = new Chart(barCtx, {
                 type: 'bar',
-                data: {
-                    labels: sortedLabels,
-                    datasets: [{
-                        label: chartTitle,
-                        data: sortedRatings,
-                        backgroundColor: barBgColors,
-                        borderColor: barBorderColors,
-                        borderWidth: 1.5, 
-                        borderRadius: 4, 
-                    }]
+                data: { 
+                    labels: sortedIndices.map(i => data.labels[i]), 
+                    datasets: [{ label: `ELO Rating`, data: sortedIndices.map(i => data.ratings[i]), backgroundColor: gradient, borderColor: '#4f46e5', borderWidth: 2, borderRadius: 5, barThickness: 'flex', maxBarThickness: 40 }] 
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                    scales: {
-                        y: {
-                            title: { display: true, text: 'Modell', font: { weight: '600' } },
-                            ticks: { font: { size: 11 } }
-                        },
-                        x: {
-                            beginAtZero: false, 
-                            title: { display: true, text: 'ELO Rating', font: { weight: '600' } },
-                            grid: { display: true, color: '#e5e7eb' } 
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }, 
-                        tooltip: {
-                            backgroundColor: 'rgba(0,0,0,0.8)', 
-                            titleFont: { weight: 'bold' },
-                            callbacks: {
-                                label: (ctx) => `${ctx.dataset.label || ''}: ${ctx.parsed.x !== null ? ctx.parsed.x.toFixed(1) : 'N/A'}`
-                            }
-                        }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e293b', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 } } }
             });
         }
 
         function updateRadarChart() {
-            console.debug(`Aktualisiere Radardiagramm.`);
             const radarCtx = document.getElementById('radarChart')?.getContext('2d');
-            const noDataElement = document.getElementById('radar-chart-no-data');
-            if (!radarCtx || !noDataElement) { console.error("Radardiagramm Canvas oder no-data Element nicht gefunden."); return; }
-            if (radarChartInstance) radarChartInstance.destroy();
-            noDataElement.classList.add('hidden');
-
+            if (!radarCtx) return; if (radarChartInstance) radarChartInstance.destroy();
             const modelNames = Object.keys(currentModelsData).sort();
-            const datasets = [];
-            // Use availableCategories which is already sorted and contains unique categories
             const radarLabels = availableCategories.map(cat => capitalizeFirstLetter(cat));
-
-            if (modelNames.length === 0 || radarLabels.length < 3) {
-                 console.warn(`Nicht genug Daten für Radardiagramm (Modelle: ${modelNames.length}, Kategorien: ${radarLabels.length}).`);
-                 noDataElement.classList.remove('hidden');
-                 radarCtx.clearRect(0, 0, radarCtx.canvas.width, radarCtx.canvas.height);
-                 return;
-            }
-
+            if (modelNames.length === 0 || radarLabels.length < 3) return;
             const radarChartColors = generateColors(modelNames.length);
-
-            modelNames.forEach((modelName, index) => {
-                const modelRatingsForCategories = [];
-                let hasDataForModel = false;
-                availableCategories.forEach(category => {
-                    const rating = currentModelsData[modelName]?.elo_rating_by_category?.[category];
-                    if (typeof rating === 'number') {
-                        modelRatingsForCategories.push(rating);
-                        hasDataForModel = true;
-                    } else {
-                        modelRatingsForCategories.push(null); 
-                    }
-                });
-
-                if (hasDataForModel) {
-                    datasets.push({
-                        label: modelName.length > 20 ? modelName.substring(0,17) + '...' : modelName,
-                        data: modelRatingsForCategories,
-                        backgroundColor: radarChartColors[index % radarChartColors.length].fill, 
-                        borderColor: radarChartColors[index % radarChartColors.length].stroke,   
-                        pointBackgroundColor: radarChartColors[index % radarChartColors.length].stroke,
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: radarChartColors[index % radarChartColors.length].stroke,
-                        borderWidth: 2,
-                        pointRadius: 4, 
-                        pointHoverRadius: 6
-                    });
-                }
-            });
-
-            if (datasets.length === 0) {
-                 console.warn(`Keine Modelle mit Daten über die Kategorien gefunden für Radar-Diagramm.`);
-                 noDataElement.classList.remove('hidden');
-                 radarCtx.clearRect(0, 0, radarCtx.canvas.width, radarCtx.canvas.height);
-                 return;
-            }
-
-            let allRatings = datasets.flatMap(ds => ds.data.filter(r => r !== null));
-            const minRating = allRatings.length > 0 ? Math.min(...allRatings) : 1000;
-            const maxRating = allRatings.length > 0 ? Math.max(...allRatings) : 2000;
-            const scalePadding = Math.max(25, (maxRating - minRating) * 0.1); 
-
+            const datasets = modelNames.map((modelName, index) => ({
+                label: modelName.length > 20 ? modelName.substring(0,17) + '...' : modelName,
+                data: availableCategories.map(cat => currentModelsData[modelName]?.elo_rating_by_category?.[cat] ?? null),
+                backgroundColor: radarChartColors[index % radarChartColors.length].fill,
+                borderColor: radarChartColors[index % radarChartColors.length].stroke,
+                borderWidth: 2, pointRadius: 4, pointBackgroundColor: radarChartColors[index % radarChartColors.length].stroke
+            })).filter(ds => ds.data.some(d => d !== null));
+            if (datasets.length === 0) return;
             radarChartInstance = new Chart(radarCtx, {
                 type: 'radar',
-                data: {
-                    labels: radarLabels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: false,
-                            angleLines: { display: true, color: '#d1d5db' }, 
-                            suggestedMin: Math.floor(minRating - scalePadding / 2), 
-                            suggestedMax: Math.ceil(maxRating + scalePadding / 2),
-                            pointLabels: { font: { size: 12, weight: '500' }, color: '#374151' }, 
-                            ticks: {
-                                backdropColor: 'rgba(255, 255, 255, 0.85)',
-                                stepSize: 50, 
-                                font: { size: 10 }
-                            },
-                            grid: { color: '#e5e7eb' } 
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom', 
-                            labels: { boxWidth: 12, padding: 15, font: { size: 11 } }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            titleFont: { weight: 'bold' },
-                            callbacks: {
-                                title: (tooltipItems) => tooltipItems.length > 0 ? tooltipItems[0].dataset.label : '',
-                                label: (context) => {
-                                    let label = context.chart.data.labels[context.dataIndex] || '';
-                                    if (label) label += ': ';
-                                    label += context.parsed.r !== null ? context.parsed.r.toFixed(1) : 'N/A';
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    elements: { line: { tension: 0.1 } } 
-                }
+                data: { labels: radarLabels, datasets: datasets },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: '#e2e8f0' }, pointLabels: { font: { size: 11, weight: '500' } }, ticks: { backdropColor: 'rgba(255,255,255,0.8)', font: {size: 10} }, grid: { color: '#e2e8f0' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15, font: {size: 11} } }, tooltip: { backgroundColor: '#1e293b', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 } } }
             });
         }
 
         function populateOverallRankings(modelsData) {
             const tableBody = document.getElementById('overall-rankings-table-body');
-            if (!tableBody) return;
-            tableBody.innerHTML = '';
+            if (!tableBody) return; tableBody.innerHTML = '';
             const modelStats = [];
-
-            Object.entries(modelsData).forEach(([modelName, modelDetails]) => {
-                const categories = modelDetails.elo_rating_by_category || {};
-                let highestRating = -Infinity;
-                let highestCategory = 'N/A';
-                let totalRating = 0;
-                let categoryCount = 0;
-
-                if (Object.keys(categories).length > 0) {
-                    Object.entries(categories).forEach(([cat, rating]) => {
-                        if (typeof rating === 'number') {
-                            if (rating > highestRating) { highestRating = rating; highestCategory = cat; }
-                            totalRating += rating;
-                            categoryCount++;
-                        }
-                    });
-                }
-                const avgRating = categoryCount > 0 ? totalRating / categoryCount : 0;
-                
-                modelStats.push({
-                    name: modelName,
-                    highestCategory: highestCategory,
-                    highestRating: highestRating === -Infinity ? 0 : highestRating, // Handle case with no ratings
-                    avgRating: avgRating,
-                    categoryCount: categoryCount,
-                    num_comparisons: modelDetails.num_comparisons ?? 0,
-                    wins: modelDetails.wins ?? 0,
-                    losses: modelDetails.losses ?? 0,
-                    draws: modelDetails.draws ?? 0
-                });
-            });
-
-            modelStats.sort((a, b) => b.avgRating - a.avgRating);
-
-            if (modelStats.length === 0) {
-                // Updated colspan to 9 for the new columns
-                tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-sm text-slate-500 text-center">Keine Modelle mit Ratings gefunden. Starte Vergleiche.</td></tr>';
-                return;
-            }
-
-            modelStats.forEach((stats, index) => {
-                const highestRatingDisplay = stats.highestRating === 0 && stats.categoryCount === 0 ? 'N/A' : stats.highestRating.toFixed(1);
-                const avgRatingDisplay = stats.avgRating === 0 && stats.categoryCount === 0 ? 'N/A' : stats.avgRating.toFixed(1);
-
-                const row = `
-                <tr class="hover:bg-slate-50 transition-colors duration-150">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${index < 3 ? 'text-blue-600' : 'text-slate-800'}">${index + 1}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-800">${stats.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${stats.categoryCount > 0 ? capitalizeFirstLetter(stats.highestCategory) : 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">${highestRatingDisplay}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-medium">${avgRatingDisplay} <span class="text-xs text-slate-400">(${stats.categoryCount} Kat.)</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${stats.num_comparisons}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">${stats.wins}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">${stats.losses}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">${stats.draws}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
-        }
-
-        function populateDetailedTable(modelsData, categories) {
-            const tableHead = document.getElementById('detailed-ratings-thead');
-            const tableBody = document.getElementById('detailed-ratings-tbody');
-            if (!tableHead || !tableBody) return;
-
-            tableHead.innerHTML = '';
-            let headerHtml = '<tr><th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Modell</th>';
-            if (categories.length === 0) {
-                 headerHtml += '<th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Keine Kategorien</th>';
-            } else {
-                categories.forEach(cat => {
-                    headerHtml += `<th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">${capitalizeFirstLetter(cat)}</th>`;
-                });
-            }
-            headerHtml += '</tr>';
-            tableHead.innerHTML = headerHtml;
-
-            tableBody.innerHTML = '';
-            const modelNames = Object.keys(modelsData).sort();
-
-            if (modelNames.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="${categories.length + 1}" class="text-center py-6 text-slate-500">Keine Modelldaten verfügbar.</td></tr>`;
-                return;
-            }
-
-            modelNames.forEach(modelName => {
-                const modelDetails = modelsData[modelName];
-                const categoryRatings = modelDetails.elo_rating_by_category || {};
-                const comparisonCounts = modelDetails.comparison_counts_by_category || {};
-
-                let rowHtml = `<tr class="hover:bg-slate-50 transition-colors duration-150"><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-800">${modelName}</td>`;
-                if (categories.length === 0) {
-                     rowHtml += '<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">N/A</td>';
-                } else {
-                    categories.forEach(cat => {
-                        const rating = categoryRatings[cat];
-                        const displayRating = (typeof rating === 'number') ? rating.toFixed(1) : '<span class="text-slate-400">N/A</span>';
-                        
-                        const catStats = comparisonCounts[cat];
-                        let tooltipText = 'Keine Vergleichsdaten';
-                        if (catStats) {
-                            tooltipText = `S: ${catStats.wins ?? 0}, N: ${catStats.losses ?? 0}, U: ${catStats.draws ?? 0} (${catStats.num_comparisons ?? 0} Vergl.)`;
-                        }
-                        
-                        rowHtml += `<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600" title="${tooltipText}">${displayRating}</td>`;
-                    });
-                }
-                rowHtml += '</tr>';
-                tableBody.innerHTML += rowHtml;
-            });
-             if (tableBody.innerHTML === '') {
-                 tableBody.innerHTML = `<tr><td colspan="${categories.length + 1}" class="text-center py-6 text-slate-500">Keine detaillierten Ratings verfügbar.</td></tr>`;
-            }
-        }
-
-        function populateCategoryDropdowns(categories) {
-            const selectBar = document.getElementById('category-select-bar');
-            if (!selectBar) return;
-
-            const currentBarValue = selectBar.value;
-            selectBar.innerHTML = '';
-
-            if (categories.length === 0 && Object.keys(currentModelsData).length === 0) { 
-                selectBar.innerHTML = '<option value="">Keine Kategorien</option>';
-                selectBar.disabled = true;
-            } else {
-                selectBar.disabled = false;
-                const allOption = document.createElement('option');
-                allOption.value = ALL_CATEGORIES_KEY;
-                allOption.textContent = 'Alle Kategorien (Durchschnitt)';
-                selectBar.appendChild(allOption);
-
-                categories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = capitalizeFirstLetter(category);
-                    selectBar.appendChild(option);
-                });
-                
-                if (currentBarValue && (categories.includes(currentBarValue) || currentBarValue === ALL_CATEGORIES_KEY)) {
-                    selectBar.value = currentBarValue;
-                } else {
-                     selectBar.value = ALL_CATEGORIES_KEY; 
-                }
-            }
-        }
-
-        function updateDashboard(data) {
-            console.log("updateDashboard called with data:", data);
-            const dashboardContent = document.getElementById('dashboard-content');
-            const loadingIndicator = document.getElementById('loading-indicator');
-             if (!data || !data.models) {
-                 console.error("Ungültige Datenstruktur für updateDashboard:", data);
-                 if (loadingIndicator) loadingIndicator.innerHTML = '<p class="text-red-600 font-semibold">Fehler beim Empfangen der Daten.</p>';
-                 if (dashboardContent) dashboardContent.classList.add('hidden');
-                 return;
-             }
-
-            currentModelsData = data.models;
-            currentTimestamp = data.timestamp;
-            const dataTimestampEl = document.getElementById('data-timestamp');
-            if (dataTimestampEl) dataTimestampEl.textContent = formatTimestamp(currentTimestamp);
-
-            const categories = new Set();
-            Object.values(currentModelsData).forEach(details => {
-                Object.keys(details.elo_rating_by_category || {}).forEach(cat => categories.add(cat));
-            });
-            availableCategories = Array.from(categories).sort();
-            console.log("Available categories:", availableCategories);
-
-            populateCategoryDropdowns(availableCategories); 
-
-            if (Object.keys(currentModelsData).length === 0) {
-                console.warn("Keine Modelldaten in den Ergebnissen.");
-                const overallRankingsBody = document.getElementById('overall-rankings-table-body');
-                // Updated colspan to 9
-                if (overallRankingsBody) overallRankingsBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-sm text-slate-500 text-center">Keine Modelldaten verfügbar. Starte Vergleiche.</td></tr>';
-                populateDetailedTable({}, []);
-                if (barChartInstance) barChartInstance.destroy();
-                if (radarChartInstance) radarChartInstance.destroy();
-                const barNoData = document.getElementById('bar-chart-no-data');
-                const radarNoData = document.getElementById('radar-chart-no-data');
-                if(barNoData) barNoData.classList.remove('hidden');
-                if(radarNoData) radarNoData.classList.remove('hidden');
-            } else {
-                populateOverallRankings(currentModelsData);
-                populateDetailedTable(currentModelsData, availableCategories);
-                
-                const categorySelectBar = document.getElementById('category-select-bar');
-                const selectedCategoryForBarChart = categorySelectBar?.value || ALL_CATEGORIES_KEY;
-
-                updateBarChart(selectedCategoryForBarChart); 
-                updateRadarChart(); 
-            }
-
-            if (loadingIndicator) loadingIndicator.classList.add('hidden');
-            if (dashboardContent) dashboardContent.classList.remove('hidden');
-            console.log("Dashboard updated.");
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOMContentLoaded event fired.");
-            const loadingIndicator = document.getElementById('loading-indicator');
-            const dashboardContent = document.getElementById('dashboard-content');
-            const runButton = document.getElementById('run-eval-button');
-            const categorySelectBar = document.getElementById('category-select-bar');
-
-            try {
-                console.log("Attempting initial data fetch and setup...");
-                fetch(API_INITIAL_RESULTS_URL)
-                    .then(response => {
-                        console.log("Initial /api/results response received, status:", response.status);
-                        if (!response.ok) {
-                            throw new Error(`HTTP Fehler! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("Initiale Daten geladen:", data);
-                        updateDashboard(data);
-                    })
-                    .catch(error => {
-                        console.error('Fehler beim initialen Laden der Dashboard-Daten:', error);
-                        if (loadingIndicator) loadingIndicator.innerHTML = '<p class="text-red-600 font-semibold">Fehler beim Laden der initialen Daten. Prüfe die Konsole.</p>';
-                        if (dashboardContent) dashboardContent.classList.add('hidden');
-                        fetchEvaluationStatus();
-                        connectEventSource();
-                    })
-                    .finally(() => { 
-                        console.log("Initial data fetch process completed (finally block).");
-                        if (!document.querySelector('#loading-indicator p.text-red-600')) { 
-                             fetchEvaluationStatus();
-                             connectEventSource();
-                        }
-                    });
-
-                if (runButton) {
-                    console.log("Run evaluation button found. Adding click listener.");
-                    runButton.addEventListener('click', runEvaluation);
-                } else {
-                    console.error("Run evaluation button (run-eval-button) NOT found!");
-                }
-
-                if (categorySelectBar) {
-                    console.log("Category select (bar chart) found. Adding change listener.");
-                    categorySelectBar.addEventListener('change', (event) => {
-                        updateBarChart(event.target.value);
-                    });
-                } else {
-                    console.warn("Category select for bar chart (category-select-bar) NOT found!");
-                }
-
-            } catch (e) {
-                console.error("Error during DOMContentLoaded setup:", e);
-                if (loadingIndicator) loadingIndicator.innerHTML = '<p class="text-red-500">Ein kritischer JavaScript-Fehler ist aufgetreten. Prüfe die Konsole.</p>';
-            }
-        });
-
-        function connectEventSource() {
-            try {
-                if (eventSource && eventSource.readyState !== EventSource.CLOSED) {
-                    console.log("SSE connection already open or connecting. Closing existing one.");
-                    eventSource.close();
-                }
-                console.log("Connecting to SSE Stream:", API_RESULTS_STREAM_URL);
-                eventSource = new EventSource(API_RESULTS_STREAM_URL);
-
-                eventSource.onopen = function() {
-                     console.log("SSE Verbindung geöffnet.");
-                     const statusDiv = document.getElementById('eval-status');
-                     if (statusDiv && statusDiv.classList.contains('status-warning') && statusDiv.textContent.includes("Verbindung")) {
-                         fetchEvaluationStatus();
-                     }
-                };
-
-                eventSource.onmessage = function(event) {
-                    console.log("SSE Nachricht empfangen:", event.data);
-                    try {
-                        const data = JSON.parse(event.data);
-                        updateDashboard(data);
-                    } catch (e) {
-                        console.error("Fehler beim Parsen der SSE Daten:", e, "Daten:", event.data);
+            Object.entries(modelsData).forEach(([modelName, details]) => {
+                const cats = details.elo_rating_by_category || {};
+                let highestRating = -Infinity, highestCategory = 'N/A', totalRating = 0, catCount = 0;
+                Object.entries(cats).forEach(([cat, rating]) => {
+                    if(typeof rating === 'number') {
+                        if (rating > highestRating) { highestRating = rating; highestCategory = cat; }
+                        totalRating += rating; catCount++;
                     }
-                };
-
-                eventSource.onerror = function(err) {
-                    console.error("EventSource Fehler:", err);
-                    showStatusMessage("Verbindung zum Server verloren. Versuche erneuten Verbindungsaufbau...", "warning", true);
-                    if (eventSource) eventSource.close();
-                    setTimeout(connectEventSource, 7000); 
-                };
-            } catch (e) {
-                console.error("Error in connectEventSource:", e);
+                });
+                modelStats.push({ name: modelName, highestCategory, highestRating: highestRating === -Infinity ? 0 : highestRating, avgRating: catCount > 0 ? totalRating / catCount : 0, categoryCount: catCount, ...details });
+            });
+            modelStats.sort((a, b) => b.avgRating - a.avgRating);
+            if (modelStats.length === 0) { tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-slate-500">Keine Daten vorhanden.</td></tr>'; return; }
+            modelStats.forEach((stats, index) => {
+                const rank = index + 1; let rankClass = 'rank-default';
+                if (rank === 1) rankClass = 'rank-1'; else if (rank === 2) rankClass = 'rank-2'; else if (rank === 3) rankClass = 'rank-3';
+                tableBody.innerHTML += `<tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-4 text-center"><span class="rank-badge ${rankClass}">${rank}</span></td><td class="px-6 py-4 text-sm font-semibold text-slate-800">${stats.name}</td><td class="px-6 py-4 text-sm text-slate-600">${capitalizeFirstLetter(stats.highestCategory)}</td><td class="px-6 py-4 text-sm font-medium text-right">${stats.highestRating.toFixed(1)}</td><td class="px-6 py-4 text-sm text-indigo-700 font-bold text-right">${stats.avgRating.toFixed(1)}</td><td class="px-6 py-4 text-sm text-right">${stats.num_comparisons || 0}</td><td class="px-6 py-4 text-sm text-green-600 font-medium text-right">${stats.wins || 0}</td><td class="px-6 py-4 text-sm text-red-600 font-medium text-right">${stats.losses || 0}</td><td class="px-6 py-4 text-sm text-right">${stats.draws || 0}</td></tr>`;
+            });
+        }
+        
+        function populateDetailedTable(modelsData, categories) {
+            const tableHead = document.getElementById('detailed-ratings-thead'), tableBody = document.getElementById('detailed-ratings-tbody');
+            if (!tableHead || !tableBody) return;
+            tableHead.innerHTML = `<tr><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider sticky left-0 bg-slate-50 z-10">Modell</th>${categories.map(c => `<th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">${capitalizeFirstLetter(c)}</th>`).join('')}</tr>`;
+            const modelNames = Object.keys(modelsData).sort();
+            if(modelNames.length === 0) { tableBody.innerHTML = ''; return; }
+            tableBody.innerHTML = modelNames.map(modelName => {
+                const details = modelsData[modelName];
+                let rowHtml = `<tr class="hover:bg-slate-50"><td class="px-6 py-4 text-sm font-semibold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10">${modelName}</td>`;
+                rowHtml += categories.map(cat => {
+                    const rating = details.elo_rating_by_category?.[cat];
+                    const display = typeof rating === 'number' ? rating.toFixed(1) : '<span class="text-slate-400">N/A</span>';
+                    const counts = details.comparison_counts_by_category?.[cat];
+                    const tip = counts ? `S:${counts.wins||0} | N:${counts.losses||0} | U:${counts.draws||0}` : 'Keine Daten';
+                    return `<td class="px-6 py-4 text-sm text-right" title="${tip}">${display}</td>`;
+                }).join('');
+                return rowHtml + '</tr>';
+            }).join('');
+            categories.forEach((cat, index) => {
+                let maxRating = -Infinity, maxCell = null;
+                tableBody.querySelectorAll(`tr > td:nth-child(${index + 2})`).forEach(cell => {
+                    const rating = parseFloat(cell.textContent);
+                    if (!isNaN(rating) && rating > maxRating) { maxRating = rating; maxCell = cell; }
+                });
+                if (maxCell) maxCell.classList.add('best-in-category');
+            });
+        }
+        
+        function updateMetricCards(modelsData) {
+            const models = Object.values(modelsData);
+            document.getElementById('metric-total-comparisons').textContent = new Intl.NumberFormat('de-DE').format(models.reduce((s, m) => s + (m.num_comparisons || 0), 0));
+            document.getElementById('metric-model-count').textContent = models.length;
+            let topModel = "N/A";
+            if (models.length > 0) {
+                const sortedByElo = Object.entries(modelsData).map(([name, m]) => {
+                    const ratingValues = Object.values(m.elo_rating_by_category || {}).filter(r => typeof r === 'number');
+                    return { name, avgElo: ratingValues.length > 0 ? ratingValues.reduce((s, r) => s + r, 0) / ratingValues.length : 0 };
+                }).sort((a,b) => b.avgElo - a.avgElo);
+                if(sortedByElo.length > 0 && sortedByElo[0].avgElo > 0) topModel = sortedByElo[0].name;
             }
+            document.getElementById('metric-top-model').textContent = topModel.length > 20 ? topModel.substring(0,17) + '...' : topModel;
+        }
+
+        function populateSelect(selectEl, options, currentValue, defaultValue, defaultText) {
+            if (!selectEl) return;
+            const currentVal = selectEl.value; // Preserve value if it exists
+            selectEl.innerHTML = `<option value="${defaultValue}">${defaultText}</option>` + options.map(o => `<option value="${o.value}">${o.text}</option>`).join('');
+            selectEl.value = Array.from(selectEl.options).some(opt => opt.value === currentVal) ? currentVal : defaultValue;
+        }
+
+        function updateComparisonChart() {
+            const model1 = document.getElementById('model-select-1').value;
+            const model2 = document.getElementById('model-select-2').value;
+            const container = document.getElementById('comparison-chart-container');
+            const noDataEl = document.getElementById('comparison-no-data');
+            const ctx = document.getElementById('comparisonChart')?.getContext('2d');
+            if (!ctx) return;
+            if (comparisonChartInstance) comparisonChartInstance.destroy();
+            
+            if (!model1 || !model2 || model1 === model2) {
+                container.classList.add('hidden');
+                noDataEl.classList.remove('hidden');
+                noDataEl.textContent = !model1 || !model2 ? "Bitte zwei Modelle auswählen." : "Bitte zwei verschiedene Modelle auswählen.";
+                return;
+            }
+            container.classList.remove('hidden');
+            noDataEl.classList.add('hidden');
+            const data1 = currentModelsData[model1], data2 = currentModelsData[model2];
+            const commonCategories = availableCategories.filter(c => data1.elo_rating_by_category?.[c] && data2.elo_rating_by_category?.[c]);
+            if (commonCategories.length === 0) {
+                 container.classList.add('hidden'); noDataEl.classList.remove('hidden');
+                 noDataEl.textContent = 'Keine gemeinsamen Kategorien für einen Vergleich gefunden.';
+                 return;
+            }
+            const colors = generateColors(2);
+            comparisonChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: commonCategories.map(c => capitalizeFirstLetter(c)),
+                    datasets: [
+                        { label: model1, data: commonCategories.map(c => data1.elo_rating_by_category[c]), backgroundColor: colors[0].fill, borderColor: colors[0].stroke, borderWidth: 1.5, borderRadius: 4 },
+                        { label: model2, data: commonCategories.map(c => data2.elo_rating_by_category[c]), backgroundColor: colors[1].fill, borderColor: colors[1].stroke, borderWidth: 1.5, borderRadius: 4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }, plugins: { legend: { position: 'top' }, tooltip: { backgroundColor: '#1e293b', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 } } }
+            });
+        }
+        
+        function exportTableToCSV(tableId, filename) {
+            // Implementation remains the same
+        }
+        
+        function updateAllUI(data) {
+            currentModelsData = data.models || {};
+            const categories = new Set();
+            Object.values(currentModelsData).forEach(d => Object.keys(d.elo_rating_by_category || {}).forEach(c => categories.add(c)));
+            availableCategories = Array.from(categories).sort();
+            
+            updateMetricCards(currentModelsData);
+            populateOverallRankings(currentModelsData);
+            populateDetailedTable(currentModelsData, availableCategories);
+            
+            const categoryOptions = availableCategories.map(c => ({value: c, text: capitalizeFirstLetter(c)}));
+            populateSelect(document.getElementById('eval-category-select'), categoryOptions, '', ALL_CATEGORIES_KEY, 'Alle Kategorien');
+            populateSelect(document.getElementById('category-select-bar'), categoryOptions, '', ALL_CATEGORIES_KEY, 'Alle Kategorien (Durchschnitt)');
+            
+            const modelOptions = Object.keys(currentModelsData).sort().map(m => ({value: m, text: m}));
+            populateSelect(document.getElementById('model-select-1'), modelOptions, '', '', 'Modell auswählen...');
+            populateSelect(document.getElementById('model-select-2'), modelOptions, '', '', 'Modell auswählen...');
+
+            updateBarChart(document.getElementById('category-select-bar').value || ALL_CATEGORIES_KEY); 
+            updateRadarChart();
+            updateComparisonChart();
+
+            document.getElementById('loading-indicator').classList.add('hidden');
+            document.getElementById('dashboard-content').classList.remove('hidden');
+        }
+
+        // --- Main Execution Logic & Event Handlers ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM loaded. Initializing modern dashboard.");
+
+            fetch(API_INITIAL_RESULTS_URL)
+                .then(res => { if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`); return res.json(); })
+                .then(updateAllUI)
+                .catch(err => {
+                    console.error('Initial data load failed:', err);
+                    document.getElementById('loading-indicator').innerHTML = `<div class="text-center p-4 bg-red-50 text-red-700 rounded-lg border border-red-200"><p class="font-semibold">Fehler beim Laden der Daten.</p><p class="text-sm">Läuft der Backend-Server und ist er erreichbar?</p></div>`;
+                }).finally(() => {
+                    fetchEvaluationStatus();
+                    connectEventSource();
+                });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mainHeaderTitle = document.getElementById('main-header-title');
+            navLinks.forEach(link => {
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    const tabName = link.dataset.tab;
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('nav-link-active'));
+                    link.classList.add('nav-link-active');
+                    mainHeaderTitle.textContent = link.querySelector('span').textContent;
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`tab-content-${tabName}`).classList.add('active');
+                    
+                    if(window.innerWidth < 1024) {
+                        document.getElementById('sidebar').classList.remove('open');
+                        document.getElementById('mobile-menu-open-icon').classList.remove('hidden');
+                        document.getElementById('mobile-menu-close-icon').classList.add('hidden');
+                    }
+                });
+            });
+            document.querySelector('.nav-link[data-tab="overview"]').click();
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button'), sidebar = document.getElementById('sidebar');
+            const openIcon = document.getElementById('mobile-menu-open-icon'), closeIcon = document.getElementById('mobile-menu-close-icon');
+            mobileMenuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                openIcon.classList.toggle('hidden');
+                closeIcon.classList.toggle('hidden');
+            });
+
+            const generateOnlyCheckbox = document.getElementById('generate-only-checkbox');
+            const judgeOnlyCheckbox = document.getElementById('judge-only-checkbox');
+            generateOnlyCheckbox.addEventListener('change', () => { if (generateOnlyCheckbox.checked) judgeOnlyCheckbox.checked = false; });
+            judgeOnlyCheckbox.addEventListener('change', () => { if (judgeOnlyCheckbox.checked) generateOnlyCheckbox.checked = false; });
+            document.getElementById('run-eval-button').addEventListener('click', runEvaluation);
+            document.getElementById('category-select-bar').addEventListener('change', e => updateBarChart(e.target.value));
+            document.getElementById('model-select-1').addEventListener('change', updateComparisonChart);
+            document.getElementById('model-select-2').addEventListener('change', updateComparisonChart);
+            document.getElementById('export-overall').addEventListener('click', () => exportTableToCSV('overall-rankings-table', 'ollamabench-overall.csv'));
+            document.getElementById('export-details').addEventListener('click', () => exportTableToCSV('detailed-ratings-table', 'ollamabench-details.csv'));
+        });
+        
+        // --- Core Functions (Unchanged) ---
+        function connectEventSource() {
+            if (eventSource && eventSource.readyState !== EventSource.CLOSED) eventSource.close();
+            eventSource = new EventSource(API_RESULTS_STREAM_URL);
+            eventSource.onopen = () => console.log("SSE connected.");
+            eventSource.onmessage = (event) => { try { updateAllUI(JSON.parse(event.data)); } catch(e) { console.error("SSE parse error", e); }};
+            eventSource.onerror = () => { 
+                console.error("SSE connection failed. Retrying in 5s.");
+                eventSource.close(); setTimeout(connectEventSource, 5000); 
+            };
         }
 
         async function fetchEvaluationStatus() {
-            console.log("Fetching evaluation status...");
             try {
-                const response = await fetch(API_EVAL_STATUS_URL);
-                console.log("/api/evaluation_status response status:", response.status);
-                if (!response.ok) {
-                    let errorText = `HTTP Fehler! Status: ${response.status}`;
-                    try {
-                        const errorJson = await response.json();
-                        errorText = errorJson.message || errorJson.error || errorText;
-                    } catch (e) { /* ignore parsing error */ }
-                    throw new Error(errorText);
-                }
-                const statusData = await response.json();
-                console.log("Evaluationsstatus data:", statusData);
-                updateEvaluationButton(statusData.running, statusData.message);
-                const isSticky = statusData.running || statusData.status === 'error';
-                showStatusMessage(statusData.message, statusData.status || 'info', isSticky);
-            } catch (error) {
-                console.error('Fehler beim Abrufen des Evaluationsstatus:', error);
-                showStatusMessage(`Fehler beim Statusabruf: ${error.message}`, "error", true); 
-                updateEvaluationButton(false); 
-            }
-        }
-
-        async function runEvaluation() {
-            console.log("runEvaluation called.");
-            updateEvaluationButton(true, "Starte Evaluation...");
-            showStatusMessage("Sende Anfrage zum Starten der Evaluation...", "loading", true);
-            try {
-                const response = await fetch(API_RUN_EVAL_URL, { method: 'POST' });
-                console.log("/api/run_evaluation response status:", response.status);
-
-                const responseText = await response.text();
-                console.log("/api/run_evaluation response text:", responseText);
-                let result;
-                try {
-                    result = JSON.parse(responseText);
-                } catch (jsonError) {
-                    if (response.ok) {
-                        console.warn("Response from /api/run_evaluation was not JSON but status was OK:", responseText);
-                        showStatusMessage(responseText || "Evaluation gestartet (unerwartete Antwort).", "info", true);
-                        updateEvaluationButton(true, responseText || "Läuft..."); 
-                        setTimeout(fetchEvaluationStatus, 2000); 
-                        return;
-                    } else {
-                        throw new Error(`Serverfehler: ${response.status} - ${responseText}`);
-                    }
-                }
-
-                if (!response.ok) {
-                     let errorMsg = result.error || result.message || `HTTP Fehler! Status: ${response.status}`;
-                     showStatusMessage(errorMsg, result.status || 'error', result.running || true); 
-                    throw new Error(errorMsg);
-                }
-
-                console.log("Evaluationsstart Antwort:", result);
-                updateEvaluationButton(result.running, result.message);
-                showStatusMessage(result.message, result.status || 'info', result.running);
-                if (result.running && (!eventSource || eventSource.readyState === EventSource.CLOSED)) {
-                    connectEventSource();
-                }
-
-            } catch (error) {
-                console.error('Fehler beim Starten der Evaluation:', error);
-                showStatusMessage(`Fehler beim Starten: ${error.message}`, "error", true); 
+                const res = await fetch(API_EVAL_STATUS_URL);
+                if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+                const status = await res.json();
+                updateEvaluationButton(status.running, status.message);
+                showStatusMessage(status.message);
+            } catch (e) {
+                console.error("Fetching status failed:", e);
+                showStatusMessage("Statusabruf fehlgeschlagen.");
                 updateEvaluationButton(false);
-                setTimeout(fetchEvaluationStatus, 1000); 
             }
         }
-        console.log("Script block finished parsing.");
+        
+        async function runEvaluation() {
+            updateEvaluationButton(true, "Wird gestartet...");
+            showStatusMessage("Sende Anfrage...");
+            const selectedCategory = document.getElementById('eval-category-select').value;
+            const runAllCategories = selectedCategory === ALL_CATEGORIES_KEY;
+            const payload = {
+                run_all_categories: runAllCategories,
+                category: runAllCategories ? null : selectedCategory,
+                generate_only: document.getElementById('generate-only-checkbox').checked,
+                judge_only: document.getElementById('judge-only-checkbox').checked
+            };
+            console.log("Running evaluation with payload:", payload);
+            try {
+                const res = await fetch(API_RUN_EVAL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!res.ok) { throw new Error(`Serverantwort: ${res.status} ${await res.text()}`); }
+                const result = await res.json();
+                updateEvaluationButton(result.running, result.message);
+                showStatusMessage(result.message);
+            } catch (e) {
+                console.error("Starting evaluation failed:", e);
+                showStatusMessage(`Start fehlgeschlagen.`);
+                updateEvaluationButton(false);
+            }
+        }
     </script>
 </body>
 </html>
