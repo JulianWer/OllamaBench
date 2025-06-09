@@ -3,20 +3,17 @@ import json
 import logging
 import datetime as dt
 from typing import Dict, Any, Optional, Union, List, TypeAlias
-import time # For robust temporary file naming and logging long operations
-import filelock # For process-safe file access
+import time 
+import filelock 
 from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
-# BasicConfig should ideally be set up in the main application entry point.
 if not logger.hasHandlers():
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
-# Type alias for the structure of model ratings.
-# Example: Dict[ModelName, Dict["categorie", Dict[CategoryName, EloRatingFloat]]]
 ModelRatingsType: TypeAlias = Dict[str, Dict[str, Dict[str, float]]]
 
 
@@ -25,7 +22,6 @@ def _json_serial(obj: Any) -> str:
     """JSON serializer for objects not serializable by default (e.g., datetime)."""
     if isinstance(obj, (dt.datetime, dt.date)):
         return obj.isoformat()
-    # Add other custom types here if needed
     raise TypeError(f"Type {type(obj)} not serializable for JSON.")
 
 # --- Locking Context Manager ---
@@ -37,12 +33,11 @@ def file_lock_manager(lock_file_path: Optional[str], timeout: int = 10):
     """
     if not lock_file_path:
         logger.debug("No lock file path provided; proceeding without file lock.")
-        yield None # Indicate no lock was acquired/needed
+        yield None 
         return
 
-    # Ensure directory for lock file exists
     lock_dir = os.path.dirname(lock_file_path)
-    if lock_dir and not os.path.exists(lock_dir): # Create only if a directory part exists
+    if lock_dir and not os.path.exists(lock_dir):
         try:
             os.makedirs(lock_dir, exist_ok=True)
             logger.debug(f"Created directory for lock file: '{lock_dir}'")
@@ -70,7 +65,14 @@ def file_lock_manager(lock_file_path: Optional[str], timeout: int = 10):
                 logger.error(f"Error releasing lock on '{lock_file_path}': {e_release}", exc_info=True)
 
 
-# --- Core File Operations (Internal functions assuming lock is handled by caller) ---
+
+
+
+
+
+
+
+# --- Core File Operations ---
 def _read_json_internal(file_path: str) -> Optional[Any]:
     """Reads JSON from a file. Assumes caller handles locking and existence checks if critical before call."""
     if not os.path.exists(file_path):
@@ -96,9 +98,8 @@ def _write_json_internal(data: Any, file_path: str) -> bool:
     """Writes data to a JSON file atomically. Assumes caller handles locking."""
     temp_file_path = "" # Initialize for potential use in finally block
     try:
-        # Ensure directory exists before writing
         dir_name = os.path.dirname(file_path)
-        if dir_name: # Only try to create if there's a directory part in the path
+        if dir_name:
             os.makedirs(dir_name, exist_ok=True)
 
         # Write to a temporary file first for atomicity
@@ -116,7 +117,7 @@ def _write_json_internal(data: Any, file_path: str) -> bool:
     except Exception as e: # Catch other write/rename errors
         logger.error(f"Error writing JSON file '{file_path}': {e}", exc_info=True)
     finally:
-        # Clean up temporary file if it exists and an error occurred before os.replace
+        # Clean up temporary file 
         if temp_file_path and os.path.exists(temp_file_path):
             try:
                 os.remove(temp_file_path)
@@ -226,9 +227,9 @@ def save_elo_results(new_ratings_fragment: ModelRatingsType, config: Dict[str, A
         logger.error(f"Unexpected error during ELO results save operation for '{result_file_path}': {e}", exc_info=True)
         return False
 
-# --- Dataset Saving (Handles list or Hugging Face Dataset, with append/overwrite logic) ---
+# --- Dataset Saving ---
 def save_dataset_to_json(
-    dataset_to_save: Union[List[Dict[str, Any]], Any], # Accepts list or HF Dataset-like object
+    dataset_to_save: Union[List[Dict[str, Any]], Any], 
     file_path: str,
     lock_file_path: Optional[str] = None, # Lock for this specific dataset file
     lock_timeout: int = 10
@@ -256,7 +257,7 @@ def save_dataset_to_json(
         try:
             operation_start_time = time.monotonic()
             logger.debug(f"Converting Hugging Face Dataset-like object to list for saving to '{file_path}'. This might take time for large datasets.")
-            new_data_list = dataset_to_save.to_list() # This can be memory intensive
+            new_data_list = dataset_to_save.to_list()
             duration = time.monotonic() - operation_start_time
             logger.debug(f"Converted dataset to list with {len(new_data_list)} entries in {duration:.2f}s.")
         except Exception as e:

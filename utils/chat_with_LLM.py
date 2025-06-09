@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_REQUEST_TIMEOUT = 400
 
-def chat_with_LLM(
+def chat_with_model(
     api_url: str,
     model: str,
     prompt: str,

@@ -8,14 +8,13 @@ from evaluation.ranking import MatchType, calculate_mELO_ratings_by_gradient_des
 from utils.get_data import load_prompt_dataset, extract_prompt_info_from_dataset_item
 
 try:
-    from evaluation.ranking import update_elo, ModelRatingsType
+    from evaluation.ranking import ModelRatingsType
     from models.judge_llm import JudgeLLM
     from utils.file_operations import save_elo_results, load_json_file
 except ImportError:
     logger = logging.getLogger(__name__)
     logger.warning("Could not import all necessary modules. Using placeholders. Ensure your project structure and PYTHONPATH are correct.")
     ModelRatingsType = Dict[str, Any]
-    def update_elo(*args, **kwargs): return None, None
     class JudgeLLM:
         def __init__(self, *args, **kwargs): pass
         def evaluate(self, *args, **kwargs): return None
@@ -74,10 +73,12 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
     initial_rating = config.get("elo", {}).get("initial_rating", 1000.0)
     
     llm_runtime_api_url = config.get("LLM_runtime", {}).get("api_base_url")
-    judge_model_name = config.get("JUDGE_MODEL")
-    judge_temp = config.get("generation_options_judge", {}).get("temperature", 0.0) 
-    judge_has_reasoning = config.get("JUDGE_HAS_REASONING", True) 
-    judge_options = config.get("generation_options_judge", {})
+    judge_model_name = config.get('judge_llm',{}).get("name")
+    judge_temp = config.get("judge_llm", {}).get('generation_options',{}).get("temperature", 0.0) 
+    judge_has_reasoning = config.get('judge_llm',{}).get("has_reasoning", True) 
+    judge_options = config.get("judge_llm", {}).get('generation_options',{})
+    judge_system_prompt = config.get("judge_llm", {}).get('system_prompt')
+
     
     mELO_config = config.get("mELO", {}) 
     initial_rating = mELO_config.get("initial_rating", 1000.0)
@@ -89,7 +90,7 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
         logger.error("API base URL ('api_base_url') not configured.")
         return None
     if not judge_model_name:
-        logger.error("Judge model ('JUDGE_MODEL') not configured.")
+        logger.error("Judge model not configured.")
         return None
 
     judge = JudgeLLM(
@@ -97,7 +98,8 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
         model_name=judge_model_name,
         temperature=judge_temp,
         has_reasoning=judge_has_reasoning,
-        options=judge_options
+        options=judge_options,
+        system_prompt=judge_system_prompt
     )
     
     overall_run_success = True
@@ -111,7 +113,7 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
         prompt_processing_details = {"prompt_id": "N/A", "status": "Skipped", "pairs_processed_attempts": 0, "pairs_succeeded": 0}
         
         try:
-            prompt_data_tuple = extract_prompt_info_from_dataset_item(dataset_item=prompt)
+            prompt_data_tuple = extract_prompt_info_from_dataset_item(config,dataset_item=prompt)
 
             if prompt_data_tuple is None:
                 logger.error("Failed to retrieve a valid prompt/ground truth tuple. Skipping this cycle.")

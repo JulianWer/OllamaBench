@@ -1,43 +1,49 @@
 # ==================================================
-# OllamaBench Configuration
+# LocalBench Configuration
 # ==================================================
 
 
 # --- Core Models ---
-JUDGE_MODEL: 'qwen3:30b-a3b' #"qwen3:30b-a3b"
-SECOND_JUDGE_MODEL: "qwq:32b"
 COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
                     'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
                     ,'llama3.2:3b', 'llama3.2:1b', 'llama2:7b-chat', 'Mistral-7B-Instruct-v0.3-GGUF:Q4_K_M','Ministral-8B-Instruct-2410-Q4_K_M:latest']
 
 
-# --- Run config ---
-RUN_ALL_CATEGORIES_IS_ENABLED: true
-RUN_ONLY_JUDGEMENT: true
-CURRENT_CATEGORY: "schreiben" # this works only if the RUN_ALL_CATEGORIES_IS_ENABLED is disabled
 ALL_CATEGORIES: ['schreiben','rollenspiel','mathematik','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
-  comparisons_per_run: 10
   comparisons_per_prompt: 30
 
 # --- Model Config ---
-JUDGE_HAS_REASONING: false
-LLMS_HAVE_REASONING: true
+comparison_llm:
+  has_reasoning: true
+  generation_options:
+    temperature: 0.0
 
-generation_options_judge:
-  temperature: 0.0
-  keep_alive: "1h"
+judge_llm:
+  name: 'qwen3:30b-a3b' # change this for a different judge model
+  has_reasoning: false
+  generation_options:
+    temperature: 0.0
+    keep_alive: "1h"
+  system_prompt: "You are an automated evaluation system. Your SOLE task is to determine which AI assistant's response is better based on the user's query and potentially a ground truth answer. 
+                  \n**Evaluation Criteria:**
+                  * Helpfulness and relevance to the user's query.
+                  * Accuracy and correctness of information.
+                  * Depth, detail, and creativity.
+                  * Adherence to instructions in the user query."
 
-generation_options:
-  temperature: 0.0 
-
-PROMPT_DATASET: "VAGOsolutions/MT-Bench-TrueGerman"  #"HuggingFaceH4/mt_bench_prompts" # default dataset if no data exists localy 
   
-PROMPT_DATASET_COLUMN: "turns"
-GROUND_TRUTH_DATASET_COLUMN: "reference"
-PROMPT_DATASET_CATEGORY_COLUMN: "category"
-PROMPT_ID_COLUMN: "question_id"
+# --- Dataset ---  
+dataset:
+  name: "VAGOsolutions/MT-Bench-TrueGerman" #"HuggingFaceH4/mt_bench_prompts" # default dataset if no data exists localy 
+  data_files:
+    train: "question_de.jsonl" # specific for MT-Bench-TrueGerman 
+  columns:
+    prompt: "turns"
+    ground_truth: "reference"
+    category: "category"
+    id: "question_id"
 
 
 # --- Local Data Storage ---

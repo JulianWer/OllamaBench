@@ -1,6 +1,6 @@
 import logging
 from typing import Any, Dict, Optional
-from utils.chat_with_LLM import chat_with_LLM
+from utils.chat_with_LLM import chat_with_model
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class LLM:
 
         logger.info(f"Generating response using model {self.model_name} with prompt: '{prompt[:50]}...'")
 
-        api_response = chat_with_LLM(
+        api_response = chat_with_model(
             api_url=self.api_url,
             model=self.model_name,
             prompt=prompt,

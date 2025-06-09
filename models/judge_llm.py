@@ -4,9 +4,9 @@ import re
 from typing import Any, Dict, Optional, Tuple, Union
 
 try:
-    from ..utils.chat_with_LLM import chat_with_LLM
+    from ..utils.chat_with_LLM import chat_with_model
 except ImportError:
-    from utils.chat_with_LLM import chat_with_LLM
+    from utils.chat_with_LLM import chat_with_model
 
 
 logger = logging.getLogger(__name__)
@@ -22,13 +22,7 @@ def _build_judge_prompt(
     """Constructs the prompt for the judge LLM."""
     
     judge_prompt_parts = [
-        custom_system_prompt,
-        "You are an automated evaluation system. Your SOLE task is to determine which AI assistant's response is better based on the user's query and potentially a ground truth answer.",
-        "\n**Evaluation Criteria:**",
-        "* Helpfulness and relevance to the user's query.",
-        "* Accuracy and correctness of information.",
-        "* Depth, detail, and creativity.",
-        "* Adherence to instructions in the user query.",
+        custom_system_prompt
     ]
 
     if ground_truth:
@@ -167,7 +161,7 @@ class JudgeLLM:
 
         logger.info(f"Requesting judgment from model {self.model_name}...")
 
-        api_response = chat_with_LLM(
+        api_response = chat_with_model(
             api_url=self.api_url,
             model=self.model_name,
             prompt=judge_prompt,
