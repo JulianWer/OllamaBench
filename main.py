@@ -6,9 +6,7 @@ from typing import Dict, Any, List
 import yaml
 
 from scripts.engine import run_benchmark
-from scripts.generate_model_answers_for_category import generate_and_save_model_answers_for_category
 from utils.config import load_config, DEFAULT_CONFIG_PATH
-from scripts.run_comparison import run_judge_comparison
 
 CONFIG: Dict[str, Any] = {}
 
@@ -16,7 +14,7 @@ CONFIG: Dict[str, Any] = {}
 CONFIG = None
 try:
     CONFIG = load_config(DEFAULT_CONFIG_PATH)
-    ALL_CATEGORIES = CONFIG.get("ALL_CATEGORIES")
+    ALL_CATEGORIES = CONFIG.get("categories")
 
 except (FileNotFoundError, KeyError, ValueError, Exception) as e:
     logging.basicConfig(level=logging.ERROR)

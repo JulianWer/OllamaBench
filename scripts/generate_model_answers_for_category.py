@@ -106,14 +106,15 @@ def _process_prompts_for_model(
     """
     logger.info(f"Processing prompts for model: '{model_name}' in category: '{os.path.basename(category_output_dir)}'")
     
-    runtime_cfg = config.get("LLM_runtime", {})
-    gen_opts = config.get("generation_options", {})
+    api_url = config.get("LLM_runtime", {}).get("api_base_url")
+    temperature = config.get('comparison_llms',{}).get("generation_options", {}).get("temperature", 0.0)
+    has_reasoning = config.get('comparison_llms',{}).get("has_reasoning", True) 
     
     model = LLM(
-        api_url=runtime_cfg.get("api_base_url"),
+        api_url=api_url,
         model_name=model_name,
-        has_reasoning=config.get("LLMS_HAVE_REASONING", True),
-        temperature=gen_opts.get("temperature", 0.0)
+        has_reasoning=has_reasoning,
+        temperature=temperature
     )
 
     try:
@@ -141,9 +142,9 @@ def generate_and_save_model_answers_for_category(config: Dict[str, Any], categor
     """
     logger.info(f"--- Starting answer generation for category: '{category}' ---")
 
-    models_to_run: Optional[List[str]] = config.get("COMPARISON_MODELS")
+    models_to_run: Optional[List[str]] = config.get('comparison_llms',{}).get("names") 
     if not models_to_run:
-        logger.error("No models configured under 'COMPARISON_MODELS'. Aborting.")
+        logger.error("No models configured under 'comparison_llms'. Aborting.")
         return
 
     dataset = load_prompt_dataset(config, category)

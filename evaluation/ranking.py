@@ -20,9 +20,6 @@ CATEGORY_DICT_KEY = "categorie" # The fixed key used in the dictionary structure
 C_ELO_CONSTANT = math.log(10) / 400 # Constant C from the paper's probability formula, derived from standard Elo
 
 
-
-
-
 MatchType: TypeAlias = Tuple[str, str, str, float] # (model_a, model_b, category, score_a)
 
 def _initialize_ratings_for_mELO(
@@ -79,13 +76,13 @@ def _update_match_statistics(
                         'wins': 0, 'losses': 0, 'draws': 0, 'num_comparisons': 0
                     }
                 else:
-                    logger.warning(f"Kategorie {cat_l} für Modell {model_name} nicht in comparison_counts_by_category gefunden "
-                                   f"während des Zurücksetzens. Initialisiere sie jetzt.")
+                    logger.warning(f"Category {cat_l} for model {model_name} not in comparison_counts_by_category found "
+                                   f"while reset. Initialize.")
                     model_ratings[model_name]['comparison_counts_by_category'][cat_l] = {
                         'wins': 0, 'losses': 0, 'draws': 0, 'num_comparisons': 0
                     }
         else:
-            logger.warning(f"Modell {model_name} nicht in model_ratings gefunden während des Zurücksetzens der Kategoriestatistiken.")
+            logger.warning(f"Model {model_name} not found in model_ratings, while resetting the Statistics.")
 
 
     for model_a_name, model_b_name, category, score_a in current_matches_being_processed:
@@ -93,15 +90,15 @@ def _update_match_statistics(
 
         if model_a_name not in model_ratings or model_b_name not in model_ratings:
             logger.warning(f"Statistic-Update: Model {model_a_name} or {model_b_name} not found. "
-                           f"Überspringe Statistiken für dieses Match.")
+                           f"Skip Statistics for this match.")
             continue
         
         stats_a = model_ratings[model_a_name]['comparison_counts_by_category'].get(cat_str)
         stats_b = model_ratings[model_b_name]['comparison_counts_by_category'].get(cat_str)
 
         if stats_a is None or stats_b is None:
-            logger.error(f"Kritischer Fehler: Kategoriestatistiken für {cat_str} nicht für {model_a_name} oder {model_b_name} gefunden "
-                         f"nach dem Zurücksetz-Schritt. Überspringe dieses Match für die Statistik.")
+            logger.error(f"Critical Error: Categorize found for {cat_str} not for {model_a_name} or {model_b_name} "
+                         f"after resetting. Skip this match for the statistic.")
             continue
 
 
@@ -118,8 +115,8 @@ def _update_match_statistics(
             stats_a['draws'] += 1
             stats_b['draws'] += 1
         else:
-            logger.warning(f"Statistik-Update: Unbekannter Score {score_a} für Match. "
-                           f"Win/Loss/Draw-Statistiken für dieses Ergebnis nicht aktualisiert.")
+            logger.warning(f"Statistic-Update: Unknown Score {score_a} for match. "
+                           f"Win/Loss/Draw-Statistics for this result not updated.")
 
     for model_name, model_data in model_ratings.items():
         model_data['num_comparisons'] = 0
@@ -132,11 +129,11 @@ def _update_match_statistics(
                 model_data['wins'] += cat_stats_dict.get('wins', 0)
                 model_data['losses'] += cat_stats_dict.get('losses', 0)
                 model_data['draws'] += cat_stats_dict.get('draws', 0)
-    logger.debug("Aktualisierung der Match-Statistiken abgeschlossen.")
+    logger.debug("Update Match-statistics finished.")
 
 
 
-# --- ELO Calculation Logic (Shared and Traditional) ---
+# --- ELO Calculation Logic ---
 def _calculate_expected_score(rating_a: float, rating_b: float) -> float:
     """
     Calculates the expected score for player A against player B.
@@ -146,68 +143,51 @@ def _calculate_expected_score(rating_a: float, rating_b: float) -> float:
     """
     return 1 / (1 + math.pow(10, (rating_b - rating_a) / 400))
 
-def update_elo(
+
+def update_elo_iteratively(
     model_ratings: ModelRatingsType,
-    model_a: str,
-    model_b: str,
-    category: str,
-    score_a: float, # 1.0 (A wins), 0.0 (B wins), 0.5 (Tie)
+    all_matches: List[MatchType],
     k_factor: int,
     initial_rating: float
-) -> Tuple[Optional[float], Optional[float]]:
+) -> None:
     """
-    Updates the ELO ratings for two models within a specific category based on a single comparison result (Traditional Iterative Elo).
-    Modifies the `model_ratings` dictionary *in place*.
+    Updates ELO ratings for all matches iteratively.
+    This is the traditional Elo approach, applied one match at a time.
+    The function modifies `model_ratings` in place.
 
     Args:
         model_ratings: The dictionary containing all current model ratings.
-        model_a: Name of the first model.
-        model_b: Name of the second model.
-        category: The category string (e.g., "math", "coding").
-        score_a: Outcome score for model A (1.0 for win, 0.5 for tie, 0.0 for loss).
+        all_matches: A list of all matches to process.
         k_factor: The K-factor determining rating change sensitivity.
         initial_rating: The rating assigned if a model/category doesn't exist yet.
-
-    Returns:
-        A tuple containing the new ELO ratings (new_rating_a, new_rating_b) after the update.
-        Returns (None, None) if the input is invalid.
     """
-    if not model_a or not model_b:
-        logger.error("Traditional ELO update failed: Model names cannot be empty.")
-        return None, None
-    if not category:
-        logger.error("Traditional ELO update failed: Category string cannot be empty.")
-        return None, None
-    if score_a not in [0.0, 0.5, 1.0]:
-        logger.error(f"Traditional ELO update failed: Invalid score_a value '{score_a}'. Must be 0.0, 0.5, or 1.0.")
-        return None, None
+    _initialize_ratings(model_ratings, all_matches, initial_rating)
 
-    category_str = category.lower()
+    logger.info(f"Starting iterative ELO update for {len(all_matches)} matches...")
+    for model_a, model_b, category, score_a in all_matches:
+        if not all([model_a, model_b, category]) or score_a not in [0.0, 0.5, 1.0]:
+            logger.warning(f"Skipping invalid match data: {(model_a, model_b, category, score_a)}")
+            continue
 
-    ratings_a_all = model_ratings.setdefault(model_a, {CATEGORY_DICT_KEY: {}})
-    ratings_a_cat = ratings_a_all.setdefault(CATEGORY_DICT_KEY, {})
-    rating_a = ratings_a_cat.setdefault(category_str, initial_rating)
+        cat_str = category.lower()
 
-    ratings_b_all = model_ratings.setdefault(model_b, {CATEGORY_DICT_KEY: {}})
-    ratings_b_cat = ratings_b_all.setdefault(CATEGORY_DICT_KEY, {})
-    rating_b = ratings_b_cat.setdefault(category_str, initial_rating)
+        rating_a = model_ratings[model_a]['elo_rating_by_category'][cat_str]
+        rating_b = model_ratings[model_b]['elo_rating_by_category'][cat_str]
 
-    logger.debug(f"Traditional ELO Pre-Update ({category_str}): {model_a}={rating_a:.1f}, {model_b}={rating_b:.1f}")
+        expected_a = _calculate_expected_score(rating_a, rating_b)
+        score_b = 1.0 - score_a
+        expected_b = 1.0 - expected_a
 
-    expected_a = _calculate_expected_score(rating_a, rating_b)
-    expected_b = 1.0 - expected_a # Or _calculate_expected_score(rating_b, rating_a)
+        new_rating_a = rating_a + k_factor * (score_a - expected_a)
+        new_rating_b = rating_b + k_factor * (score_b - expected_b)
 
-    score_b = 1.0 - score_a
+        model_ratings[model_a]['elo_rating_by_category'][cat_str] = new_rating_a
+        model_ratings[model_b]['elo_rating_by_category'][cat_str] = new_rating_b
 
-    new_rating_a = rating_a + k_factor * (score_a - expected_a)
-    new_rating_b = rating_b + k_factor * (score_b - expected_b)
+    logger.info("Iterative ELO updates complete.")
+    # Update all statistics once at the end
+    _update_match_statistics(model_ratings, all_matches)
 
-    ratings_a_cat[category_str] = new_rating_a
-    ratings_b_cat[category_str] = new_rating_b
-
-    logger.info(f"Traditional ELO Update ({category_str}): {model_a} ({rating_a:.1f} -> {new_rating_a:.1f}), {model_b} ({rating_b:.1f} -> {new_rating_b:.1f}), Score A: {score_a}, K: {k_factor}")
-
-    return new_rating_a, new_rating_b
 
 
 # --- Core m-ELO Functions ---
@@ -262,7 +242,6 @@ def calculate_mELO_ratings_by_gradient_descent(
     Adapted to use model_ratings[model_name]['elo_rating_by_category'][cat_str].
     """
     _initialize_ratings_for_mELO(model_ratings, all_matches, initial_rating)
-    _update_match_statistics(model_ratings, all_matches)
 
 
     logger.info(f"Starting m-ELO calculation: {epochs} epochs, learning rate {learning_rate}")
@@ -278,8 +257,6 @@ def calculate_mELO_ratings_by_gradient_descent(
                 rating_a = model_ratings[model_a_name]['elo_rating_by_category'][cat_str]
                 rating_b = model_ratings[model_b_name]['elo_rating_by_category'][cat_str]
             except KeyError:
-                # Log, wenn eine Kategorie/Modell, das in all_matches ist, nicht in model_ratings gefunden wird.
-                # _initialize_ratings_for_mELO sollte dies verhindern.
                 logger.error(f"m-ELO Gradient: Rating not found for '{model_a_name}' or '{model_b_name}' "
                                f"in category '{cat_str}' during epoch {epoch}. This is unexpected.")
                 continue
@@ -303,6 +280,9 @@ def calculate_mELO_ratings_by_gradient_descent(
         if (epoch + 1) % (epochs // 10 if epochs >= 10 else 1) == 0 or epoch == epochs -1 :
             current_log_likelihood = calculate_log_likelihood_mELO(model_ratings, all_matches) 
             logger.info(f"m-ELO Epoch {epoch+1}/{epochs} completed. Log-Likelihood: {current_log_likelihood:.4f}")
+            
+    _update_match_statistics(model_ratings, all_matches)
+
 
 
 

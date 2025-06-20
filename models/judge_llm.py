@@ -21,17 +21,36 @@ def _build_judge_prompt(
 ) -> str:
     """Constructs the prompt for the judge LLM."""
     
-    judge_prompt_parts = [
-        custom_system_prompt
-    ]
+    if not ground_truth:
+        judge_prompt_parts = ["Please act as an impartial judge and evaluate the quality of the responses provided by two AI assistants to the user question displayed below.",
+                              "You should choose the assistant that follows the user’s instructions and answers the user’s question better.",
+                              "Your evaluation should consider factors such as the helpfulness, relevance, accuracy, depth, creativity, and level of detail of their responses. ",
+                              "Begin your evaluation by comparing the two responses and provide a short explanation. ",
+                              "Avoid any position biases and ensure that the order in which the responses were presented does not influence your decision. ",
+                              "Do not allow the length of the responses to influence your evaluation. ",
+                              "Do not favor certain names of the assistants. ",
+                              "Be as objective as possible. ",
+                              "After providing your explanation, output your final verdict by strictly following this format: '[[A]]' if assistant A is better, '[[B]]' if assistant B is better, and '[[C]]' for a tie."
+        ]
 
     if ground_truth:
-        judge_prompt_parts.extend([
-            "* Closeness to the provided Ground Truth Answer (if applicable).",
-            "\n**[Ground Truth Answer]**",
+        judge_prompt_parts = [
+            "* Please act as an impartial judge and evaluate the correctness of the responses provided by two AI assistants to the user question displayed below.",
+            "* Your evaluation should consider only correctness.",
+            "* You will be given a reference answer, assistant A’s answer, and assistant B’s answer.",
+            "* The reference answer is always correct.",
+            "* Your job is to evaluate which assistant’s answer is more correct.",
+            "* Begin your evaluation by comparing both assistants’ answers with the reference answer.",
+            "Your evaluation should also consider factors such as the helpfulness, relevance, accuracy, depth, creativity, and level of detail of their responses. "
+            "* Identify any mistakes.",
+            "* Avoid any position biases and ensure that the order in which the responses were presented does not influence your decision. Do not allow the length of the responses to influence your evaluation.",
+            "* Do not favor certain names of the assistants.",
+            "* Be as objective as possible.",
+            "* After providing your explanation, output your final verdict by strictly following this format: '[[A]]' if assistant A is more correct, '[[B]]' if assistant B is more correct and '[[C]]' if comparable quality or tied.",
+            "\n**[The Start of Reference Answer]**",
             ground_truth,
-            "**[End of Ground Truth Answer]**"
-        ])
+            "**[The End of Reference Answer]**"
+        ]
 
     judge_prompt_parts.extend([
         "\n**[User Question]**",
@@ -42,18 +61,7 @@ def _build_judge_prompt(
         "**[The Start of Assistant B’s Answer]**",
         response2,
         "**[The End of Assistant B’s Answer]**",
-        "\n**Output Format:**",
-        "Your output MUST be exactly one of the following three options, and ABSOLUTELY NOTHING ELSE:",
-        "* `[[A]]` if Assistant A provided the better response.",
-        "* `[[B]]` if Assistant B provided the better response.",
-        "* `[[C]]` if the responses are of comparable quality or tied.",
-        "\n**IMPORTANT RULES:**",
-        "* Do NOT provide any explanation or justification.",
-        "* Do NOT include any text before or after the verdict (`[[A]]`, `[[B]]`, or `[[C]]`).",
-        "* Be objective. Do not let response length, assistant names, or the order of presentation influence your decision.",
-        "* If a Ground Truth Answer was provided, consider it in your evaluation, but the primary focus remains on answering the User Question effectively.",
         "* Your ENTIRE response must be ONLY `[[A]]` OR `[[B]]` OR `[[C]]`.",
-        "\nNow, evaluate the provided query, responses (and ground truth, if available) and output your verdict in the required format."
     ])
     judge_prompt = "\n".join(filter(None, judge_prompt_parts))
     formatted_prompt = judge_prompt

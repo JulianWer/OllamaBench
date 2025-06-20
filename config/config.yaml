@@ -1,21 +1,18 @@
 # ==================================================
-# LocalBench Configuration
+# OllamaBench Configuration
 # ==================================================
 
 
-# --- Core Models ---
-COMPARISON_MODELS : ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
-                    'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
-                    ,'llama3.2:3b', 'llama3.2:1b', 'llama2:7b-chat', 'Mistral-7B-Instruct-v0.3-GGUF:Q4_K_M','Ministral-8B-Instruct-2410-Q4_K_M:latest']
-
-
-ALL_CATEGORIES: ['schreiben','rollenspiel','mathematik','begründung', 'extraktion','stamm','geisteswissenschaften']
+categories: ['schreiben','rollenspiel','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
   comparisons_per_prompt: 30
 
 # --- Model Config ---
-comparison_llm:
+comparison_llms:
+  names: ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
+                    'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
+                    ,'llama3.2:3b', 'llama3.2:1b', 'llama3.1:8b', 'mistral:7b','Ministral-8B-Instruct-2410-Q4_K_M:latest']
   has_reasoning: true
   generation_options:
     temperature: 0.0
@@ -25,7 +22,6 @@ judge_llm:
   has_reasoning: false
   generation_options:
     temperature: 0.0
-    keep_alive: "1h"
   system_prompt: "You are an automated evaluation system. Your SOLE task is to determine which AI assistant's response is better based on the user's query and potentially a ground truth answer. 
                   \n**Evaluation Criteria:**
                   * Helpfulness and relevance to the user's query.
@@ -59,6 +55,9 @@ paths:
 NUM_SAVE_DATASET_ENTRIES: 1000 
 
 # --- ELO Rating Configuration ---
+
+used_rating_method: mElo # mElo or elo
+
 elo:
   initial_rating: 1000
   k_factor: 16

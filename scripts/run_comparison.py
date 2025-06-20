@@ -70,7 +70,7 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
     base_output_dir = paths_config.get("output_dir", "model_responses") 
     
     k_factor = config.get("elo", {}).get("k_factor", 32)
-    initial_rating = config.get("elo", {}).get("initial_rating", 1000.0)
+    initial_rating_elo = config.get("elo", {}).get("initial_rating", 1000.0)
     
     llm_runtime_api_url = config.get("LLM_runtime", {}).get("api_base_url")
     judge_model_name = config.get('judge_llm',{}).get("name")
@@ -282,7 +282,7 @@ def run_judge_comparison(config: Dict[str, Any], category: str) -> Optional[Mode
     logger.info(f"Updated ELO ratings for category '{category}' saved to '{config["paths"]["results_file"]}'.")
 
     if not overall_run_success:
-        logger.error(f"One or more errors occurred during the run for category '{category}'. Check logs.")
+        logger.error(f"One or more errors occurred during the run for category '{category}'.")
     
     return mELO_model_ratings_store
 

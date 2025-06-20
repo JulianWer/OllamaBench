@@ -19,7 +19,7 @@ try:
     DASHBOARD_HOST = CONFIG.get("dashboard", {}).get("host", "127.0.0.1")
     DASHBOARD_PORT = CONFIG.get("dashboard", {}).get("port", 5001)
     DASHBOARD_DEBUG = CONFIG.get("dashboard", {}).get("debug", False)
-    ALL_CATEGORIES = CONFIG.get("ALL_CATEGORIES")
+    ALL_CATEGORIES = CONFIG.get("categories")
 
 
 except (FileNotFoundError, KeyError, ValueError, Exception) as e:
