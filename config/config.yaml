@@ -6,7 +6,7 @@
 categories: ['schreiben','rollenspiel','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
-  comparisons_per_prompt: 30
+  comparisons_per_prompt: 40
 
 # --- Model Config ---
 comparison_llms:
@@ -47,7 +47,7 @@ paths:
   data_dir: "data"
   results_file: "./data/results.json"
   lock_file: "./data/results.lock"
-  output_dir: "model_responses"
+  output_dir: "./data/model_responses"
   dataset_category_dir: "./data/categories"
   dataset_file_suffix: "_prompts.json"
   dataset_save_lock_file: "./data/prompt_dataset.lock"

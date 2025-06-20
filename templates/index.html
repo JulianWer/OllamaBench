@@ -10,246 +10,222 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        /* --- ULTRA-MODERNES DESIGN SYSTEM (FLOATING PILL) --- */
         :root {
-            --sidebar-bg: #111827; /* gray-900 */
-            --main-bg: #f8fafc; /* slate-50 */
-            --card-background: #ffffff;
-            --text-primary: #1e293b; /* slate-800 */
-            --text-secondary: #64748b; /* slate-500 */
-            --border-color: #e2e8f0; /* slate-200 */
-            --border-color-soft: #f1f5f9; /* slate-100 */
-            --primary-accent: #4f46e5; /* indigo-600 */
-            --primary-accent-hover: #4338ca; /* indigo-700 */
-            --primary-accent-light: #eef2ff; /* indigo-50 */
-            --primary-accent-text: #3730a3; /* indigo-800 */
-            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-            --card-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+            --bg-primary: hsl(220, 30%, 98%);
+            --bg-secondary: #ffffff;
+            
+            /* Helles Glas für die Navbar */
+            --navbar-bg: hsla(0, 0%, 100%, 0.4);
+            --navbar-border: hsla(0, 0%, 100%, 0.6);
+            
+            --text-primary: hsl(220, 25%, 15%);
+            --text-secondary: hsl(220, 10%, 50%);
+            
+            /* Dunkler Akzent für aktiven Nav-Link */
+            --nav-active-bg: hsl(220, 25%, 15%);
+            --nav-active-text: #ffffff;
+
+            --accent-primary: hsl(210, 90%, 55%);
+            --accent-primary-hover: hsl(210, 90%, 50%);
+            --accent-primary-light: hsl(210, 90%, 96%);
+            --accent-primary-text: hsl(210, 90%, 45%);
+
+            --card-shadow: 0 1px 2px rgba(30, 41, 59, 0.04), 0 2px 4px rgba(30, 41, 59, 0.04), 0 4px 8px rgba(30, 41, 59, 0.04);
+            --card-shadow-hover: 0 1px 2px rgba(30, 41, 59, 0.04), 0 6px 12px rgba(30, 41, 59, 0.06), 0 15px 25px rgba(30, 41, 59, 0.06);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--main-bg);
+            background-color: var(--bg-primary);
             color: var(--text-primary);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
         
-        /* Add a subtle background pattern */
         body::before {
             content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0);
-            background-size: 2rem 2rem;
-            opacity: 0.3;
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 10% 20%, hsla(210, 90%, 80%, 0.2), transparent 50%),
+                        radial-gradient(circle at 90% 80%, hsla(280, 80%, 80%, 0.15), transparent 50%);
             z-index: -1;
         }
 
-        h1, h2, h3, .nav-link, #run-eval-button {
+        h1, h2, h3, #run-eval-button {
             font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.02em;
         }
-        
-        .chart-container { position: relative; height: 350px; width: 100%; }
-        .table-container {
-            overflow-x: auto; max-height: 450px;
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem; /* rounded-xl */
-        }
-        .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
-        .table-container::-webkit-scrollbar-track { background: var(--main-bg); }
-        .table-container::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 6px; }
-        .table-container::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            width: 32px; height: 32px; border-radius: 50%;
-            border-left-color: #ffffff;
-            animation: spin 1s linear infinite; display: inline-block;
+        /* --- STYLES FÜR DIE NEUE FLOATING PILL NAVBAR --- */
+        #top-navbar-container {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding-top: 1.5rem; /* 24px */
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .dashboard-card {
-            background-color: var(--card-background);
-            border-radius: 1rem; /* rounded-xl */
-            padding: 24px;
-            border: 1px solid var(--border-color-soft);
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        #floating-nav {
+            margin-left: auto;
+            margin-right: auto;
+            background-color: var(--navbar-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--navbar-border);
+            border-radius: 9999px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            padding: 0.5rem; /* 8px */
+            display: flex;
+            align-items: center;
+            width: max-content;
         }
-        .dashboard-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--card-shadow-hover);
+        .nav-link {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.875rem; /* 14px */
+            padding: 0.5rem 1rem; /* 8px 16px */
+            border-radius: 9999px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-secondary);
+            white-space: nowrap;
         }
-        
-        .card-title {
-            font-size: 1.125rem; /* text-lg */
-            font-weight: 700;
+        .nav-link.nav-link-active {
+            background-color: var(--nav-active-bg);
+            color: var(--nav-active-text);
+            box-shadow: 0 2px 8px -1px rgba(0,0,0,0.2);
+        }
+        .nav-link:not(.nav-link-active):hover {
             color: var(--text-primary);
         }
-
-        .rank-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            font-weight: 700;
-            font-size: 0.8rem;
-            border: 1px solid;
+        /* Responsivität der Navbar */
+        @media (max-width: 768px) {
+            #floating-nav {
+                width: calc(100% - 2rem);
+                border-radius: 1.25rem;
+                padding: 0.75rem;
+                justify-content: space-between;
+            }
+            #main-navigation { display: none !important; }
+            #mobile-menu-toggle { display: flex !important; }
         }
-        .rank-1 { background-color: #fef3c7; color: #92400e; border-color: #fde68a; } /* amber */
-        .rank-2 { background-color: #f1f5f9; color: #475569; border-color: #e2e8f0; } /* slate */
-        .rank-3 { background-color: #ffedd5; color: #9a3412; border-color: #fed7aa; } /* orange */
-        .rank-default { background-color: #f8fafc; color: #64748b; border-color: #f1f5f9; }
+
+        .chart-container { position: relative; height: 380px; width: 100%; }
+        .table-container { overflow-x: auto; max-height: 480px; border: 1px solid var(--border-color); border-radius: 0.75rem; }
+        .table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-container::-webkit-scrollbar-track { background: transparent; }
+        .table-container::-webkit-scrollbar-thumb { background: hsl(220, 20%, 85%); border-radius: 6px; }
+
+        .loading-spinner { border: 4px solid rgba(255, 255, 255, 0.3); width: 32px; height: 32px; border-radius: 50%; border-left-color: #ffffff; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .dashboard-card { background-color: var(--bg-secondary); border-radius: 1.25rem; padding: 28px; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .dashboard-card:hover { transform: translateY(-5px); box-shadow: var(--card-shadow-hover); }
+        .card-title { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); }
+
+        .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 0.85rem; border: 1px solid; }
+        .rank-1 { background-color: var(--accent-primary-light); color: var(--accent-primary); border-color: hsl(210, 90%, 85%); }
+        .rank-2 { background-color: hsl(220, 20%, 94%); color: hsl(220, 10%, 40%); border-color: hsl(220, 20%, 88%); }
+        .rank-3 { background-color: hsl(210, 80%, 97%); color: hsl(210, 70%, 55%); border-color: hsl(210, 80%, 90%); }
+        .rank-default { background-color: var(--bg-primary); color: var(--text-secondary); border-color: var(--border-color); }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .sidebar-select {
-            padding: 8px 12px; border-radius: 0.5rem; width: 100%;
-            border: 1px solid #374151; /* gray-700 */
-            background-color: #1f2937; /* gray-800 */
-            color: #d1d5db; /* gray-300 */
-            font-size: 0.9em; font-weight: 500; cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            -webkit-appearance: none; appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat; background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-        }
-        .sidebar-select:focus {
-            outline: none; border-color: var(--primary-accent);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
-        }
-        .main-select {
-            background-color: var(--card-background) !important;
-            border-color: var(--border-color) !important;
-            color: var(--text-primary) !important;
-        }
-
-        .nav-link.nav-link-active {
-            background-color: var(--primary-accent);
-            color: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .nav-link:not(.nav-link-active):hover {
-            background-color: #1f2937; /* gray-800 */
-        }
-        
-        .detailed-ratings-table .best-in-category {
-            font-weight: 700;
-            color: var(--primary-accent-text);
-            background-color: var(--primary-accent-light);
-        }
-
-        #mobile-menu-button { display: none; }
-        @media (max-width: 1024px) {
-            #sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease-in-out;
-                z-index: 40;
-            }
-            #sidebar.open { transform: translateX(0); }
-            #main-content { margin-left: 0; }
-            #mobile-menu-button { display: block; }
-        }
+        .styled-select { padding: 10px 14px; border-radius: 0.6rem; width: 100%; border: 1px solid var(--border-color); background-color: var(--bg-secondary); color: var(--text-primary); font-size: 0.9em; font-weight: 500; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        .styled-select:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px hsla(210, 90%, 55%, 0.4); }
+        .detailed-ratings-table .best-in-category { font-weight: 700; color: var(--accent-primary-text); background-color: var(--accent-primary-light); }
     </style>
 </head>
-<body>
-    <div class="relative min-h-screen lg:flex">
-        <!-- Mobile Menu Button -->
-        <button id="mobile-menu-button" class="lg:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg text-slate-600 hover:text-slate-900 transition">
-            <svg id="mobile-menu-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-            <svg id="mobile-menu-close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-72 bg-slate-900 text-slate-300 p-6 flex flex-col fixed top-0 left-0 h-full transform lg:transform-none shadow-2xl lg:shadow-none">
-            <!-- Header -->
-            <div class="mb-10">
-                <a href="#" class="flex items-center gap-3">
-                     <svg class="h-9 w-9 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" /></svg>
-                     <span class="text-2xl font-bold text-white tracking-tighter">OllamaBench</span>
-                </a>
-            </div>
-
-            <!-- Navigation -->
-            <nav id="main-navigation" class="flex-grow space-y-2">
-                 <a href="#" data-tab="overview" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 transition-colors duration-200">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
-                     <span class="font-semibold">Übersicht</span>
-                 </a>
-                 <a href="#" data-tab="details" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 transition-colors duration-200">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm3 2h4v2H8V5zm0 4h4v2H8V9zm4 4H8v2h4v-2z" clip-rule="evenodd" /></svg>
-                     <span class="font-semibold">Detail-Analyse</span>
-                 </a>
-                 <a href="#" data-tab="comparison" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 transition-colors duration-200">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" /><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" /></svg>
-                     <span class="font-semibold">Modellvergleich</span>
-                 </a>
+<body class="text-base">
+    
+    <header id="top-navbar-container">
+        <div id="floating-nav">
+            <nav id="main-navigation" class="flex items-center space-x-1">
+                <a href="#" data-tab="overview" class="nav-link">Übersicht</a>
+                <a href="#" data-tab="details" class="nav-link">Detail-Analyse</a>
+                <a href="#" data-tab="comparison" class="nav-link">Modellvergleich</a>
             </nav>
 
-            <!-- Evaluation Controls -->
-            <div id="evaluation-controls" class="bg-slate-800/50 p-4 -m-6 mt-6 border-t border-slate-700">
-                 <h3 class="text-md font-semibold text-white mb-4">Neue Evaluierung</h3>
-                 <div class="space-y-4">
-                     <select id="eval-category-select" class="sidebar-select"></select>
-                     <div class="flex items-center gap-4">
-                         <div class="flex items-center gap-2"><input id="generate-only-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-600 cursor-pointer"><label for="generate-only-checkbox" class="text-sm text-slate-300 cursor-pointer">Nur generieren</label></div>
-                         <div class="flex items-center gap-2"><input id="judge-only-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-600 bg-gray-700 text-indigo-500 focus:ring-indigo-600 cursor-pointer"><label for="judge-only-checkbox" class="text-sm text-slate-300 cursor-pointer">Nur bewerten</label></div>
-                     </div>
-                     <button id="run-eval-button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 disabled:bg-slate-600 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5">
-                        <span id="run-eval-button-text">Start</span>
-                        <div class="loading-spinner hidden" style="width:16px; height:16px; border-width: 2px;"></div>
-                        <span class="dynamic-text hidden text-sm"></span>
-                     </button>
-                     <p id="eval-status" class="text-xs text-slate-400 mt-2 text-center h-4 truncate"></p>
-                 </div>
+            <div id="mobile-menu-toggle" class="hidden">
+                 <a href="#" class="flex items-center gap-3">
+                     <svg class="h-7 w-7 text-slate-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" /></svg>
+                     <span class="text-xl font-bold text-slate-800">OllamaBench</span>
+                </a>
+                <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-600 hover:text-slate-900 focus:outline-none">
+                    <svg id="mobile-menu-open-icon" class="h-6 w-6 block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    <svg id="mobile-menu-close-icon" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
             </div>
-        </aside>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden w-[calc(100%-2rem)] mx-auto mt-2 bg-white rounded-xl shadow-lg p-2">
+            <nav class="flex flex-col space-y-1">
+                <a href="#" data-tab="overview" class="nav-link mobile-nav-link text-base font-medium px-4 py-3 rounded-lg">Übersicht</a>
+                <a href="#" data-tab="details" class="nav-link mobile-nav-link text-base font-medium px-4 py-3 rounded-lg">Detail-Analyse</a>
+                <a href="#" data-tab="comparison" class="nav-link mobile-nav-link text-base font-medium px-4 py-3 rounded-lg">Modellvergleich</a>
+            </nav>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main id="main-content" class="lg:ml-72 flex-1 p-6 lg:p-10">
-             <div id="loading-indicator" class="flex justify-center items-center h-full pt-32">
-                 <div class="text-center">
-                    <div class="loading-spinner !w-12 !h-12 !border-slate-300 !border-l-indigo-600" style="border-width: 5px;"></div>
-                    <p class="text-slate-500 mt-4 text-lg font-medium">Lade Dashboard-Daten...</p>
-                 </div>
-             </div>
-             <div id="dashboard-content" class="hidden">
-                <!-- Main Header -->
-                <header class="flex justify-between items-center mb-8">
-                    <h1 id="main-header-title" class="text-3xl font-bold text-slate-800">Übersicht</h1>
+    <main id="main-content" class="pt-32">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="loading-indicator" class="flex justify-center items-center h-full pt-32">
+                <div class="text-center">
+                    <div class="loading-spinner !w-14 !h-14 !border-slate-300 !border-l-[var(--accent-primary)]" style="border-width: 5px;"></div>
+                    <p class="text-[var(--text-secondary)] mt-5 text-lg font-medium">Lade Dashboard-Daten...</p>
+                </div>
+            </div>
+            <div id="dashboard-content" class="hidden">
+                <header class="text-center mb-12">
+                    <h1 id="main-header-title" class="text-5xl font-extrabold text-[var(--text-primary)]">Übersicht</h1>
+                    <p class="mt-3 text-lg text-slate-500 max-w-2xl mx-auto">Ihr zentrales Cockpit für den Vergleich von LLM-Leistungsmetriken.</p>
                 </header>
 
-                <!-- Metric Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                    <div class="dashboard-card p-5 flex items-center gap-5"><div class="bg-indigo-50 text-indigo-600 rounded-lg p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><p class="text-sm text-slate-500">Vergleiche gesamt</p><p id="metric-total-comparisons" class="text-2xl font-bold">0</p></div></div>
-                    <div class="dashboard-card p-5 flex items-center gap-5"><div class="bg-blue-50 text-blue-600 rounded-lg p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0v-4m6 4v-4m6 4v-4" /></svg></div><div><p class="text-sm text-slate-500">Getestete Modelle</p><p id="metric-model-count" class="text-2xl font-bold">0</p></div></div>
-                    <div class="dashboard-card p-5 flex items-center gap-5"><div class="bg-amber-50 text-amber-600 rounded-lg p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l-3 3m5 0l-3 3m-5 12v-4m-2 2h4" /></svg></div><div><p class="text-sm text-slate-500">Top Modell (Ø ELO)</p><p id="metric-top-model" class="text-xl font-bold">N/A</p></div></div>
+                <div id="evaluation-controls" class="dashboard-card bg-gradient-to-br from-white to-slate-50 mb-10">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6 items-center">
+                        <div class="lg:col-span-2">
+                            <h3 class="text-lg font-bold text-[var(--text-primary)] mb-1">Neue Evaluierung starten</h3>
+                            <p class="text-sm text-[var(--text-secondary)]">Wählen Sie eine Kategorie und starten Sie den Benchmark.</p>
+                        </div>
+                        <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                            <select id="eval-category-select" class="styled-select"></select>
+                            <div class="flex items-center gap-4 justify-start sm:justify-center">
+                                <div class="flex items-center gap-2"><input id="generate-only-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[var(--accent-primary)] focus:ring-[var(--accent-primary)] cursor-pointer"><label for="generate-only-checkbox" class="text-sm cursor-pointer">Nur generieren</label></div>
+                                <div class="flex items-center gap-2"><input id="judge-only-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[var(--accent-primary)] focus:ring-[var(--accent-primary)] cursor-pointer"><label for="judge-only-checkbox" class="text-sm cursor-pointer">Nur bewerten</label></div>
+                            </div>
+                             <button id="run-eval-button" class="w-full bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 disabled:bg-slate-400 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5">
+                                <span id="run-eval-button-text">Start</span>
+                                <div class="loading-spinner hidden" style="width:16px; height:16px; border-width: 2px;"></div>
+                                <span class="dynamic-text hidden text-sm"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <p id="eval-status" class="text-xs text-slate-500 mt-3 text-center h-4 truncate"></p>
                 </div>
-                
-                <!-- Tab Content Areas -->
-                <div id="tab-content-overview" class="tab-content space-y-8">
-                     <div class="dashboard-card"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5"><h2 class="card-title">Gesamtranking der Modelle</h2><button id="export-overall" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">CSV Export</button></div><div class="table-container"><table id="overall-rankings-table" class="min-w-full"><thead class="bg-slate-50"><tr><th class="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">Rang</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Modell</th><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Beste Kategorie</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Höchstes ELO</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Ø ELO</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Vergleiche</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">S</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">N</th><th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">U</th></tr></thead><tbody id="overall-rankings-table-body" class="bg-white divide-y divide-slate-100"></tbody></table></div></div>
-                     <div class="grid grid-cols-1 xl:grid-cols-5 gap-8"><div class="dashboard-card flex flex-col xl:col-span-3"><div class="flex flex-col sm:flex-row items-center justify-between w-full mb-5"><h2 class="card-title">ELO-Ratings nach Kategorie</h2><select id="category-select-bar" class="w-full sm:w-auto mt-3 sm:mt-0 sidebar-select main-select"></select></div><div class="chart-container"><canvas id="barChart"></canvas></div></div><div class="dashboard-card flex flex-col xl:col-span-2"><h2 class="card-title text-center w-full mb-5">Modellstärken (Radar)</h2><div class="chart-container"><canvas id="radarChart"></canvas></div></div></div>
-                </div>
-                <div id="tab-content-details" class="tab-content"><div class="dashboard-card"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5"><h2 class="card-title">Detaillierte Ratings pro Kategorie</h2><button id="export-details" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">CSV Export</button></div><div class="table-container"><table id="detailed-ratings-table" class="min-w-full detailed-ratings-table"><thead id="detailed-ratings-thead" class="bg-slate-50"></thead><tbody id="detailed-ratings-tbody" class="bg-white divide-y divide-slate-100"></tbody></table></div></div></div>
-                <div id="tab-content-comparison" class="tab-content"><div class="dashboard-card"><h2 class="card-title mb-5">Direkter Modellvergleich</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-slate-50 p-4 rounded-lg mb-6 border border-slate-200"><div><label for="model-select-1" class="block text-sm font-medium text-slate-700 mb-1">Modell 1</label><select id="model-select-1" class="sidebar-select main-select w-full"></select></div><div><label for="model-select-2" class="block text-sm font-medium text-slate-700 mb-1">Modell 2</label><select id="model-select-2" class="sidebar-select main-select w-full"></select></div></div><div id="comparison-chart-container" class="chart-container mt-6"><canvas id="comparisonChart"></canvas></div><div id="comparison-no-data" class="text-center text-slate-500 p-8 hidden">Bitte wählen Sie zwei verschiedene Modelle aus.</div></div></div>
-             </div>
-        </main>
-    </div>
 
+                <div id="tab-content-container">
+                    <div id="tab-content-overview" class="tab-content space-y-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <div class="dashboard-card p-6 flex items-center gap-5"><div class="bg-[var(--accent-primary-light)] text-[var(--accent-primary)] rounded-xl p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><div><p class="text-base text-[var(--text-secondary)]">Vergleiche gesamt</p><p id="metric-total-comparisons" class="text-3xl font-bold">0</p></div></div>
+                            <div class="dashboard-card p-6 flex items-center gap-5"><div class="bg-blue-50 text-blue-600 rounded-xl p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0v-4m6 4v-4m6 4v-4" /></svg></div><div><p class="text-base text-[var(--text-secondary)]">Getestete Modelle</p><p id="metric-model-count" class="text-3xl font-bold">0</p></div></div>
+                            <div class="dashboard-card p-6 flex items-center gap-5"><div class="bg-amber-50 text-amber-600 rounded-xl p-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l-3 3m5 0l-3 3m-5 12v-4m-2 2h4" /></svg></div><div><p class="text-base text-[var(--text-secondary)]">Top Modell (Ø ELO)</p><p id="metric-top-model" class="text-2xl font-bold">N/A</p></div></div>
+                        </div>
+                        <div class="dashboard-card"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6"><h2 class="card-title">Gesamtranking der Modelle</h2><button id="export-overall" class="text-sm font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary-hover)] transition-colors mt-2 sm:mt-0">CSV Export</button></div><div class="table-container"><table id="overall-rankings-table" class="min-w-full"><thead class="bg-slate-50 border-b border-[var(--border-color)]"><tr><th class="px-6 py-4 text-center text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Rang</th><th class="px-6 py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Modell</th><th class="px-6 py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Beste Kategorie</th><th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Höchstes ELO</th><th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Ø ELO</th><th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Vergleiche</th><th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">S</th><th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">N</th><th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">U</th></tr></thead><tbody id="overall-rankings-table-body" class="bg-white divide-y divide-[var(--border-color)]"></tbody></table></div></div>
+                        <div class="grid grid-cols-1 xl:grid-cols-5 gap-10"><div class="dashboard-card flex flex-col xl:col-span-3"><div class="flex flex-col sm:flex-row items-center justify-between w-full mb-6"><h2 class="card-title">ELO-Ratings nach Kategorie</h2><select id="category-select-bar" class="w-full sm:w-auto mt-4 sm:mt-0 styled-select"></select></div><div class="chart-container"><canvas id="barChart"></canvas></div></div><div class="dashboard-card flex flex-col xl:col-span-2"><h2 class="card-title text-center w-full mb-6">Modellstärken (Radar)</h2><div class="chart-container"><canvas id="radarChart"></canvas></div></div></div>
+                    </div>
+                    <div id="tab-content-details" class="tab-content"><div class="dashboard-card"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6"><h2 class="card-title">Detaillierte Ratings pro Kategorie</h2><button id="export-details" class="text-sm font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary-hover)] transition-colors mt-2 sm:mt-0">CSV Export</button></div><div class="table-container"><table id="detailed-ratings-table" class="min-w-full detailed-ratings-table"><thead id="detailed-ratings-thead" class="bg-slate-50 sticky top-0"></thead><tbody id="detailed-ratings-tbody" class="bg-white divide-y divide-[var(--border-color)]"></tbody></table></div></div></div>
+                    <div id="tab-content-comparison" class="tab-content"><div class="dashboard-card"><h2 class="card-title mb-6">Direkter Modellvergleich</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center bg-slate-50 p-6 rounded-xl mb-6 border border-[var(--border-color)]"><div><label for="model-select-1" class="block text-sm font-medium text-slate-700 mb-2">Modell 1</label><select id="model-select-1" class="styled-select w-full"></select></div><div><label for="model-select-2" class="block text-sm font-medium text-slate-700 mb-2">Modell 2</label><select id="model-select-2" class="styled-select w-full"></select></div></div><div id="comparison-chart-container" class="chart-container mt-6"><canvas id="comparisonChart"></canvas></div><div id="comparison-no-data" class="text-center text-[var(--text-secondary)] p-8 hidden">Bitte wählen Sie zwei verschiedene Modelle aus.</div></div></div>
+                </div>
+            </div>
+        </div>
+        <footer class="py-8 mt-10 text-center text-sm text-slate-500">
+            <p>&copy; 2025 OllamaBench. Alle Rechte vorbehalten.</p>
+        </footer>
+    </main>
+    
     <script>
-        // --- JavaScript-Code (with UI logic improvements) ---
-        console.log("Modern Script block started."); 
+        // --- JavaScript-Code (angepasst für Floating Pill Navbar) ---
+        console.log("Modern Script block with Floating Pill Navbar logic.");
 
-        // --- API Endpoints & Global State ---
+        // --- API Endpoints & Global State (unverändert) ---
         const API_INITIAL_RESULTS_URL = '/api/results';
         const API_RESULTS_STREAM_URL = '/stream';
         const API_RUN_EVAL_URL = '/api/run_evaluation';
@@ -259,19 +235,22 @@
         let currentModelsData = {}, availableCategories = [], eventSource = null;
         const ALL_CATEGORIES_KEY = "__all__"; 
 
-        // --- Utility Functions ---
+        // --- Utility Functions (unverändert) ---
         function generateColors(count) {
             const colors = [];
-            const baseHues = [240, 340, 160, 45, 280, 200, 30, 300, 110, 260];
+            const baseHues = [210, 30, 160, 260, 340, 190, 50, 280, 110, 300]; 
             for (let i = 0; i < count; i++) {
                 const hue = baseHues[i % baseHues.length] + Math.floor(i / baseHues.length) * 35;
-                colors.push({ fill: `hsla(${hue % 360}, 70%, 60%, 0.6)`, stroke: `hsla(${hue % 360}, 70%, 50%, 1)` });
+                colors.push({ 
+                    fill: `hsla(${hue % 360}, 80%, 65%, 0.7)`, 
+                    stroke: `hsla(${hue % 360}, 80%, 55%, 1)` 
+                });
             }
             return colors;
         }
         function capitalizeFirstLetter(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
-        // --- UI Update Functions ---
+        // --- UI Update Functions (Logik unverändert) ---
         function showStatusMessage(message) { document.getElementById('eval-status').textContent = message; }
         function updateEvaluationButton(isLoading, message = null) {
             const runButton = document.getElementById('run-eval-button');
@@ -289,9 +268,8 @@
                 dynamicTextEl.classList.add('hidden');
             }
         }
-        
         function updateBarChart(selectedCategory) {
-            const barCtx = document.getElementById('barChart')?.getContext('2d');
+             const barCtx = document.getElementById('barChart')?.getContext('2d');
             if (!barCtx) return;
             if (barChartInstance) barChartInstance.destroy();
 
@@ -312,20 +290,19 @@
                 });
             }
             const sortedIndices = data.ratings.map((_, i) => i).sort((a, b) => data.ratings[b] - data.ratings[a]);
-            const gradient = barCtx.createLinearGradient(0, 0, 0, 350);
-            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.7)');
-            gradient.addColorStop(1, 'rgba(129, 140, 248, 0.3)');
+            const gradient = barCtx.createLinearGradient(0, 0, 0, 380);
+            gradient.addColorStop(0, 'hsla(210, 90%, 55%, 0.8)');
+            gradient.addColorStop(1, 'hsla(210, 90%, 75%, 0.3)');
 
             barChartInstance = new Chart(barCtx, {
                 type: 'bar',
                 data: { 
                     labels: sortedIndices.map(i => data.labels[i]), 
-                    datasets: [{ label: `ELO Rating`, data: sortedIndices.map(i => data.ratings[i]), backgroundColor: gradient, borderColor: '#4f46e5', borderWidth: 2, borderRadius: 5, barThickness: 'flex', maxBarThickness: 40 }] 
+                    datasets: [{ label: `ELO Rating`, data: sortedIndices.map(i => data.ratings[i]), backgroundColor: gradient, borderColor: 'hsl(210, 90%, 55%)', borderWidth: 2, borderRadius: 6, barThickness: 'flex', maxBarThickness: 45 }] 
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e293b', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false }, ticks: { color: 'hsl(220, 10%, 50%)' } }, y: { grid: { color: 'hsl(220, 20%, 92%)' }, ticks: { color: 'hsl(220, 10%, 50%)' } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'hsl(225, 15%, 12%)', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8, titleColor: 'white', bodyColor: 'white' } } }
             });
         }
-
         function updateRadarChart() {
             const radarCtx = document.getElementById('radarChart')?.getContext('2d');
             if (!radarCtx) return; if (radarChartInstance) radarChartInstance.destroy();
@@ -344,10 +321,9 @@
             radarChartInstance = new Chart(radarCtx, {
                 type: 'radar',
                 data: { labels: radarLabels, datasets: datasets },
-                options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: '#e2e8f0' }, pointLabels: { font: { size: 11, weight: '500' } }, ticks: { backdropColor: 'rgba(255,255,255,0.8)', font: {size: 10} }, grid: { color: '#e2e8f0' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15, font: {size: 11} } }, tooltip: { backgroundColor: '#1e293b', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: 'hsl(220, 20%, 92%)' }, pointLabels: { font: { size: 12, weight: '500' }, color: 'hsl(220, 10%, 40%)' }, ticks: { backdropColor: 'hsla(0, 0%, 100%, 0.75)', font: {size: 10}, color: 'hsl(220, 10%, 50%)' }, grid: { color: 'hsl(220, 20%, 92%)' } } }, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15, font: {size: 11}, color: 'hsl(220, 10%, 50%)' } }, tooltip: { backgroundColor: 'hsl(225, 15%, 12%)', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8, titleColor: 'white', bodyColor: 'white' } } }
             });
         }
-
         function populateOverallRankings(modelsData) {
             const tableBody = document.getElementById('overall-rankings-table-body');
             if (!tableBody) return; tableBody.innerHTML = '';
@@ -364,42 +340,42 @@
                 modelStats.push({ name: modelName, highestCategory, highestRating: highestRating === -Infinity ? 0 : highestRating, avgRating: catCount > 0 ? totalRating / catCount : 0, categoryCount: catCount, ...details });
             });
             modelStats.sort((a, b) => b.avgRating - a.avgRating);
-            if (modelStats.length === 0) { tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-slate-500">Keine Daten vorhanden.</td></tr>'; return; }
+            if (modelStats.length === 0) { tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-12 text-[var(--text-secondary)]">Keine Daten vorhanden. Führen Sie eine Evaluierung durch.</td></tr>'; return; }
             modelStats.forEach((stats, index) => {
                 const rank = index + 1; let rankClass = 'rank-default';
                 if (rank === 1) rankClass = 'rank-1'; else if (rank === 2) rankClass = 'rank-2'; else if (rank === 3) rankClass = 'rank-3';
-                tableBody.innerHTML += `<tr class="hover:bg-slate-50 transition-colors"><td class="px-6 py-4 text-center"><span class="rank-badge ${rankClass}">${rank}</span></td><td class="px-6 py-4 text-sm font-semibold text-slate-800">${stats.name}</td><td class="px-6 py-4 text-sm text-slate-600">${capitalizeFirstLetter(stats.highestCategory)}</td><td class="px-6 py-4 text-sm font-medium text-right">${stats.highestRating.toFixed(1)}</td><td class="px-6 py-4 text-sm text-indigo-700 font-bold text-right">${stats.avgRating.toFixed(1)}</td><td class="px-6 py-4 text-sm text-right">${stats.num_comparisons || 0}</td><td class="px-6 py-4 text-sm text-green-600 font-medium text-right">${stats.wins || 0}</td><td class="px-6 py-4 text-sm text-red-600 font-medium text-right">${stats.losses || 0}</td><td class="px-6 py-4 text-sm text-right">${stats.draws || 0}</td></tr>`;
+                tableBody.innerHTML += `<tr class="hover:bg-slate-50 transition-colors duration-150"><td class="px-6 py-4 text-center"><span class="rank-badge ${rankClass}">${rank}</span></td><td class="px-6 py-4 text-sm font-semibold text-slate-800">${stats.name}</td><td class="px-6 py-4 text-sm text-slate-600">${capitalizeFirstLetter(stats.highestCategory)}</td><td class="px-6 py-4 text-sm font-medium text-right">${stats.highestRating.toFixed(1)}</td><td class="px-6 py-4 text-sm text-[var(--accent-primary-text)] font-bold text-right">${stats.avgRating.toFixed(1)}</td><td class="px-6 py-4 text-sm text-right">${stats.num_comparisons || 0}</td><td class="px-6 py-4 text-sm text-green-600 font-medium text-right">${stats.wins || 0}</td><td class="px-6 py-4 text-sm text-red-600 font-medium text-right">${stats.losses || 0}</td><td class="px-6 py-4 text-sm text-right">${stats.draws || 0}</td></tr>`;
             });
         }
-        
         function populateDetailedTable(modelsData, categories) {
             const tableHead = document.getElementById('detailed-ratings-thead'), tableBody = document.getElementById('detailed-ratings-tbody');
             if (!tableHead || !tableBody) return;
-            tableHead.innerHTML = `<tr><th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider sticky left-0 bg-slate-50 z-10">Modell</th>${categories.map(c => `<th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">${capitalizeFirstLetter(c)}</th>`).join('')}</tr>`;
+            tableHead.innerHTML = `<tr><th class="px-6 py-4 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider sticky left-0 bg-slate-50 z-10 border-b border-[var(--border-color)]">Modell</th>${categories.map(c => `<th class="px-6 py-4 text-right text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider border-b border-[var(--border-color)]">${capitalizeFirstLetter(c)}</th>`).join('')}</tr>`;
             const modelNames = Object.keys(modelsData).sort();
             if(modelNames.length === 0) { tableBody.innerHTML = ''; return; }
+            const bestInCategory = {};
+            categories.forEach((cat, index) => {
+                let maxRating = -Infinity;
+                modelNames.forEach(modelName => {
+                    const rating = modelsData[modelName]?.elo_rating_by_category?.[cat];
+                    if (typeof rating === 'number' && rating > maxRating) maxRating = rating;
+                });
+                bestInCategory[cat] = maxRating;
+            });
             tableBody.innerHTML = modelNames.map(modelName => {
                 const details = modelsData[modelName];
-                let rowHtml = `<tr class="hover:bg-slate-50"><td class="px-6 py-4 text-sm font-semibold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10">${modelName}</td>`;
+                let rowHtml = `<tr class="group hover:bg-slate-50 transition-colors duration-150"><td class="px-6 py-4 text-sm font-semibold text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50 z-10">${modelName}</td>`;
                 rowHtml += categories.map(cat => {
                     const rating = details.elo_rating_by_category?.[cat];
+                    const isBest = (typeof rating === 'number' && rating === bestInCategory[cat] && rating > 0);
                     const display = typeof rating === 'number' ? rating.toFixed(1) : '<span class="text-slate-400">N/A</span>';
                     const counts = details.comparison_counts_by_category?.[cat];
                     const tip = counts ? `S:${counts.wins||0} | N:${counts.losses||0} | U:${counts.draws||0}` : 'Keine Daten';
-                    return `<td class="px-6 py-4 text-sm text-right" title="${tip}">${display}</td>`;
+                    return `<td class="px-6 py-4 text-sm text-right ${isBest ? 'best-in-category' : ''}" title="${tip}">${display}</td>`;
                 }).join('');
                 return rowHtml + '</tr>';
             }).join('');
-            categories.forEach((cat, index) => {
-                let maxRating = -Infinity, maxCell = null;
-                tableBody.querySelectorAll(`tr > td:nth-child(${index + 2})`).forEach(cell => {
-                    const rating = parseFloat(cell.textContent);
-                    if (!isNaN(rating) && rating > maxRating) { maxRating = rating; maxCell = cell; }
-                });
-                if (maxCell) maxCell.classList.add('best-in-category');
-            });
         }
-        
         function updateMetricCards(modelsData) {
             const models = Object.values(modelsData);
             document.getElementById('metric-total-comparisons').textContent = new Intl.NumberFormat('de-DE').format(models.reduce((s, m) => s + (m.num_comparisons || 0), 0));
@@ -414,14 +390,12 @@
             }
             document.getElementById('metric-top-model').textContent = topModel.length > 20 ? topModel.substring(0,17) + '...' : topModel;
         }
-
         function populateSelect(selectEl, options, currentValue, defaultValue, defaultText) {
             if (!selectEl) return;
-            const currentVal = selectEl.value; // Preserve value if it exists
+            const currentVal = selectEl.value;
             selectEl.innerHTML = `<option value="${defaultValue}">${defaultText}</option>` + options.map(o => `<option value="${o.value}">${o.text}</option>`).join('');
             selectEl.value = Array.from(selectEl.options).some(opt => opt.value === currentVal) ? currentVal : defaultValue;
         }
-
         function updateComparisonChart() {
             const model1 = document.getElementById('model-select-1').value;
             const model2 = document.getElementById('model-select-2').value;
@@ -452,18 +426,34 @@
                 data: {
                     labels: commonCategories.map(c => capitalizeFirstLetter(c)),
                     datasets: [
-                        { label: model1, data: commonCategories.map(c => data1.elo_rating_by_category[c]), backgroundColor: colors[0].fill, borderColor: colors[0].stroke, borderWidth: 1.5, borderRadius: 4 },
-                        { label: model2, data: commonCategories.map(c => data2.elo_rating_by_category[c]), backgroundColor: colors[1].fill, borderColor: colors[1].stroke, borderWidth: 1.5, borderRadius: 4 }
+                        { label: model1, data: commonCategories.map(c => data1.elo_rating_by_category[c]), backgroundColor: colors[0].fill, borderColor: colors[0].stroke, borderWidth: 1.5, borderRadius: 5 },
+                        { label: model2, data: commonCategories.map(c => data2.elo_rating_by_category[c]), backgroundColor: colors[1].fill, borderColor: colors[1].stroke, borderWidth: 1.5, borderRadius: 5 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }, plugins: { legend: { position: 'top' }, tooltip: { backgroundColor: '#1e293b', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8 } } }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false, grid: { color: 'hsl(220, 20%, 92%)' }, ticks: { color: 'hsl(220, 10%, 50%)' } }, x: { grid: { display: false }, ticks: { color: 'hsl(220, 10%, 50%)' } } }, plugins: { legend: { position: 'top', labels: { color: 'hsl(220, 10%, 50%)' } }, tooltip: { backgroundColor: 'hsl(225, 15%, 12%)', titleFont: { weight: 'bold'}, bodyFont: { size: 13 }, padding: 12, cornerRadius: 8, titleColor: 'white', bodyColor: 'white' } } }
             });
         }
-        
         function exportTableToCSV(tableId, filename) {
-            // Implementation remains the same
+            let csv = [];
+            const rows = document.querySelectorAll(`#${tableId} tr`);
+            for (const row of rows) {
+                let row_data = [];
+                const cols = row.querySelectorAll('td, th');
+                for (const col of cols) {
+                    let data = '"' + col.innerText.replace(/"/g, '""') + '"';
+                    row_data.push(data);
+                }
+                csv.push(row_data.join(','));
+            }
+            const csv_string = csv.join('\n');
+            const data_uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string);
+            const link = document.createElement('a');
+            link.setAttribute('href', data_uri);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
-        
         function updateAllUI(data) {
             currentModelsData = data.models || {};
             const categories = new Set();
@@ -476,11 +466,11 @@
             
             const categoryOptions = availableCategories.map(c => ({value: c, text: capitalizeFirstLetter(c)}));
             populateSelect(document.getElementById('eval-category-select'), categoryOptions, '', ALL_CATEGORIES_KEY, 'Alle Kategorien');
-            populateSelect(document.getElementById('category-select-bar'), categoryOptions, '', ALL_CATEGORIES_KEY, 'Alle Kategorien (Durchschnitt)');
+            populateSelect(document.getElementById('category-select-bar'), categoryOptions, '', ALL_CATEGORIES_KEY, 'Alle Kategorien (Ø)');
             
             const modelOptions = Object.keys(currentModelsData).sort().map(m => ({value: m, text: m}));
-            populateSelect(document.getElementById('model-select-1'), modelOptions, '', '', 'Modell auswählen...');
-            populateSelect(document.getElementById('model-select-2'), modelOptions, '', '', 'Modell auswählen...');
+            populateSelect(document.getElementById('model-select-1'), modelOptions, '', '', 'Modell 1 auswählen...');
+            populateSelect(document.getElementById('model-select-2'), modelOptions, '', '', 'Modell 2 auswählen...');
 
             updateBarChart(document.getElementById('category-select-bar').value || ALL_CATEGORIES_KEY); 
             updateRadarChart();
@@ -492,48 +482,64 @@
 
         // --- Main Execution Logic & Event Handlers ---
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM loaded. Initializing modern dashboard.");
-
             fetch(API_INITIAL_RESULTS_URL)
                 .then(res => { if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`); return res.json(); })
                 .then(updateAllUI)
                 .catch(err => {
                     console.error('Initial data load failed:', err);
-                    document.getElementById('loading-indicator').innerHTML = `<div class="text-center p-4 bg-red-50 text-red-700 rounded-lg border border-red-200"><p class="font-semibold">Fehler beim Laden der Daten.</p><p class="text-sm">Läuft der Backend-Server und ist er erreichbar?</p></div>`;
+                    document.getElementById('loading-indicator').innerHTML = `<div class="text-center p-6 bg-red-50 text-red-800 rounded-lg border border-red-200"><p class="font-semibold text-lg">Fehler beim Laden der Daten</p><p class="text-sm mt-2">Konnte keine Verbindung zum Backend herstellen. Bitte stellen Sie sicher, dass der Server läuft und erreichbar ist.</p></div>`;
                 }).finally(() => {
                     fetchEvaluationStatus();
                     connectEventSource();
                 });
             
             const navLinks = document.querySelectorAll('.nav-link');
+            const tabContents = document.querySelectorAll('.tab-content');
             const mainHeaderTitle = document.getElementById('main-header-title');
-            navLinks.forEach(link => {
-                link.addEventListener('click', e => {
-                    e.preventDefault();
-                    const tabName = link.dataset.tab;
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('nav-link-active'));
-                    link.classList.add('nav-link-active');
-                    mainHeaderTitle.textContent = link.querySelector('span').textContent;
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById(`tab-content-${tabName}`).classList.add('active');
-                    
-                    if(window.innerWidth < 1024) {
-                        document.getElementById('sidebar').classList.remove('open');
-                        document.getElementById('mobile-menu-open-icon').classList.remove('hidden');
-                        document.getElementById('mobile-menu-close-icon').classList.add('hidden');
-                    }
-                });
-            });
+            
+            const handleTabClick = (e) => {
+                e.preventDefault();
+                const tabName = e.currentTarget.dataset.tab;
+
+                navLinks.forEach(l => l.classList.remove('nav-link-active'));
+                document.querySelectorAll(`.nav-link[data-tab="${tabName}"]`).forEach(l => l.classList.add('nav-link-active'));
+
+                const headerText = e.currentTarget.textContent;
+                mainHeaderTitle.textContent = headerText;
+                const headerDescriptions = {
+                    'Übersicht': 'Ihr zentrales Cockpit für den Vergleich von LLM-Leistungsmetriken.',
+                    'Detail-Analyse': 'Eine detaillierte Aufschlüsselung der ELO-Werte für jedes Modell und jede Kategorie.',
+                    'Modellvergleich': 'Vergleichen Sie die Leistung von zwei Modellen direkt nebeneinander.'
+                };
+                mainHeaderTitle.nextElementSibling.textContent = headerDescriptions[headerText] || '';
+
+                tabContents.forEach(c => c.classList.remove('active'));
+                document.getElementById(`tab-content-${tabName}`).classList.add('active');
+
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (!mobileMenu.classList.contains('hidden')) {
+                     mobileMenu.classList.add('hidden');
+                     document.getElementById('mobile-menu-open-icon').classList.remove('hidden');
+                     document.getElementById('mobile-menu-close-icon').classList.add('hidden');
+                }
+            };
+            
+            navLinks.forEach(link => link.addEventListener('click', handleTabClick));
+            
             document.querySelector('.nav-link[data-tab="overview"]').click();
             
-            const mobileMenuButton = document.getElementById('mobile-menu-button'), sidebar = document.getElementById('sidebar');
-            const openIcon = document.getElementById('mobile-menu-open-icon'), closeIcon = document.getElementById('mobile-menu-close-icon');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('mobile-menu-open-icon');
+            const closeIcon = document.getElementById('mobile-menu-close-icon');
+
             mobileMenuButton.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
+                mobileMenu.classList.toggle('hidden');
                 openIcon.classList.toggle('hidden');
                 closeIcon.classList.toggle('hidden');
             });
 
+            // Event Listeners for controls
             const generateOnlyCheckbox = document.getElementById('generate-only-checkbox');
             const judgeOnlyCheckbox = document.getElementById('judge-only-checkbox');
             generateOnlyCheckbox.addEventListener('change', () => { if (generateOnlyCheckbox.checked) judgeOnlyCheckbox.checked = false; });
@@ -546,18 +552,14 @@
             document.getElementById('export-details').addEventListener('click', () => exportTableToCSV('detailed-ratings-table', 'ollamabench-details.csv'));
         });
         
-        // --- Core Functions (Unchanged) ---
+        // --- Core Functions (unverändert) ---
         function connectEventSource() {
             if (eventSource && eventSource.readyState !== EventSource.CLOSED) eventSource.close();
             eventSource = new EventSource(API_RESULTS_STREAM_URL);
             eventSource.onopen = () => console.log("SSE connected.");
             eventSource.onmessage = (event) => { try { updateAllUI(JSON.parse(event.data)); } catch(e) { console.error("SSE parse error", e); }};
-            eventSource.onerror = () => { 
-                console.error("SSE connection failed. Retrying in 5s.");
-                eventSource.close(); setTimeout(connectEventSource, 5000); 
-            };
+            eventSource.onerror = () => { console.error("SSE connection failed. Retrying in 5s."); eventSource.close(); setTimeout(connectEventSource, 5000); };
         }
-
         async function fetchEvaluationStatus() {
             try {
                 const res = await fetch(API_EVAL_STATUS_URL);
@@ -571,10 +573,9 @@
                 updateEvaluationButton(false);
             }
         }
-        
         async function runEvaluation() {
             updateEvaluationButton(true, "Wird gestartet...");
-            showStatusMessage("Sende Anfrage...");
+            showStatusMessage("Sende Anfrage an den Server...");
             const selectedCategory = document.getElementById('eval-category-select').value;
             const runAllCategories = selectedCategory === ALL_CATEGORIES_KEY;
             const payload = {
@@ -583,16 +584,16 @@
                 generate_only: document.getElementById('generate-only-checkbox').checked,
                 judge_only: document.getElementById('judge-only-checkbox').checked
             };
-            console.log("Running evaluation with payload:", payload);
             try {
                 const res = await fetch(API_RUN_EVAL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!res.ok) { throw new Error(`Serverantwort: ${res.status} ${await res.text()}`); }
-                const result = await res.json();
+                const resText = await res.text();
+                if (!res.ok) { throw new Error(`Serverantwort: ${res.status} ${resText}`); }
+                const result = JSON.parse(resText);
                 updateEvaluationButton(result.running, result.message);
                 showStatusMessage(result.message);
             } catch (e) {
                 console.error("Starting evaluation failed:", e);
-                showStatusMessage(`Start fehlgeschlagen.`);
+                showStatusMessage(`Start der Evaluierung fehlgeschlagen.`);
                 updateEvaluationButton(false);
             }
         }
