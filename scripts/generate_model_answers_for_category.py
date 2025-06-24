@@ -1,17 +1,17 @@
 import logging
 import os
-from typing import Dict, Any, Optional, List, Union
+from typing import Dict, Any, List
 
+from models.factory import create_llm
 from models.llms import LLM
-from utils.get_data import load_prompt_dataset
+from utils.get_data import load_prompt_dataset, prepare_prompt_for_llm
 from utils.file_operations import save_json_file, load_json_file
+from utils.config import ConfigService
 
 logger = logging.getLogger(__name__)
 
 def _ensure_dir(file_path: str):
-    """
-    Ensures that the directory for a given file_path exists.
-    """
+    """Ensures that the directory for a given file_path exists."""
     directory = os.path.dirname(file_path)
     if directory and not os.path.exists(directory):
         try:
@@ -21,52 +21,30 @@ def _ensure_dir(file_path: str):
             logger.error(f"Error creating directory {directory}: {e}")
             raise
 
-def _prepare_prompt_for_llm(raw_prompt_content: Any) -> Union[str, List[Dict[str, str]], None]:
-    """
-    Prepares the raw prompt content into the format expected by the LLM.
-    Handles strings, lists of strings, and lists of dictionaries.
-    """
-    if isinstance(raw_prompt_content, str):
-        return raw_prompt_content
-    elif isinstance(raw_prompt_content, list):
-        # Already in the correct message format (e.g., [{'role': 'user', 'content': '...'}])
-        if all(isinstance(item, dict) and "role" in item and "content" in item for item in raw_prompt_content):
-            return raw_prompt_content
-        # List of simple strings, will be converted to message format
-        elif all(isinstance(item, str) for item in raw_prompt_content):
-            return [{"role": "user", "content": text} for text in raw_prompt_content]
-    
-    logger.warning(f"Unsupported prompt content type: {type(raw_prompt_content)}. Skipping.")
-    return None
-
 def _process_single_prompt(
     prompt_entry: Dict[str, Any],
     model: LLM,
-    output_dir: str,
+    output_file_path: str,
     prompt_id_col: str,
     prompt_content_col: str,
 ) -> bool:
     """
-    Generates and saves a response for a single prompt, avoiding
-    regeneration if a response already exists.
+    Generates and saves a response for a single prompt, avoiding regeneration if it exists.
     """
     prompt_id = prompt_entry.get(prompt_id_col)
     raw_prompt_content = prompt_entry.get(prompt_content_col)
 
     if prompt_id is None or raw_prompt_content is None:
-        logger.warning(f"Skipping entry for model '{model.model_name}' due to missing prompt_id or content.")
+        logger.warning(f"Skipping entry for model '{model.model_name}' due to missing prompt ID or content.")
         return False
 
-    safe_prompt_id_filename = str(prompt_id).replace(os.sep, "_") + ".json"
-    output_file_path = os.path.join(output_dir, safe_prompt_id_filename)
-
-    # --- Efficiency Check: Avoid regenerating existing answers ---
+    # Efficiency Check: Avoid regenerating existing answers
     existing_answers = load_json_file(output_file_path) or []
     if any(ans.get("model") == model.model_name for ans in existing_answers if isinstance(ans, dict)):
-        logger.info(f"Answer for prompt ID '{prompt_id}' by model '{model.model_name}' already exists. Skipping generation.")
+        logger.info(f"Answer for prompt ID '{prompt_id}' by model '{model.model_name}' already exists. Skipping.")
         return True
 
-    final_prompt_for_llm = _prepare_prompt_for_llm(raw_prompt_content)
+    final_prompt_for_llm = prepare_prompt_for_llm(raw_prompt_content)
     if final_prompt_for_llm is None:
         return False
 
@@ -74,16 +52,11 @@ def _process_single_prompt(
     response_text = model.generate_response(prompt=final_prompt_for_llm)
 
     if response_text is None:
-        logger.warning(f"Response generation from model '{model.model_name}' for prompt ID '{prompt_id}' failed.")
+        logger.warning(f"Failed to generate response from '{model.model_name}' for prompt ID '{prompt_id}'.")
         return False
 
-    new_response_entry = {
-        "response": response_text,
-        "model": model.model_name,
-        "prompt_id": prompt_id
-    }
+    new_response_entry = {"response": response_text, "model": model.model_name, "prompt_id": prompt_id}
     
-    # Add the new response to the list of existing answers
     all_answers = [ans for ans in existing_answers if isinstance(ans, dict)]
     all_answers.append(new_response_entry)
 
@@ -95,30 +68,23 @@ def _process_single_prompt(
 
 def _process_prompts_for_model(
     model_name: str,
-    dataset: Any,
-    config: Dict[str, Any],
+    dataset: List[Dict[str, Any]],
+    config_service: ConfigService,
     category_output_dir: str,
-    prompt_id_col: str,
-    prompt_content_col: str,
 ):
-    """
-    Iterates through all prompts for a single model and orchestrates response generation.
-    """
+    """Iterates through all prompts for a single model and orchestrates response generation."""
     logger.info(f"Processing prompts for model: '{model_name}' in category: '{os.path.basename(category_output_dir)}'")
     
-    api_url = config.get("LLM_runtime", {}).get("api_base_url")
-    temperature = config.get('comparison_llms',{}).get("generation_options", {}).get("temperature", 0.0)
-    has_reasoning = config.get('comparison_llms',{}).get("has_reasoning", True) 
-    
-    model = LLM(
-        api_url=api_url,
-        model_name=model_name,
-        has_reasoning=has_reasoning,
-        temperature=temperature
-    )
+    model = create_llm(model_name, config_service)
+    if not model:
+        logger.error(f"Could not create LLM for '{model_name}'. Skipping.")
+        return
+
+    dataset_config = config_service.dataset_config
+    prompt_id_col = dataset_config.get("columns", {}).get("id")
+    prompt_content_col = dataset_config.get("columns", {}).get("prompt")
 
     try:
-        # Ensures the category-specific output directory exists
         _ensure_dir(os.path.join(category_output_dir, "dummy.file"))
     except Exception as e:
         logger.error(f"Cannot create/access directory '{category_output_dir}' for model '{model_name}'. Skipping. Error: {e}")
@@ -126,8 +92,11 @@ def _process_prompts_for_model(
 
     success_count, fail_count = 0, 0
     for prompt_entry in dataset:
+        safe_prompt_id = str(prompt_entry.get(prompt_id_col, 'unknown_id')).replace(os.sep, "_")
+        output_file_path = os.path.join(category_output_dir, f"{safe_prompt_id}.json")
+
         if _process_single_prompt(
-            prompt_entry, model, category_output_dir,
+            prompt_entry, model, output_file_path,
             prompt_id_col, prompt_content_col
         ):
             success_count += 1
@@ -137,31 +106,27 @@ def _process_prompts_for_model(
     logger.info(f"Processing for model '{model_name}' complete. Succeeded/Skipped: {success_count}, Failed: {fail_count}.")
 
 def generate_and_save_model_answers_for_category(config: Dict[str, Any], category: str):
-    """
-    Main orchestrator for generating model answers for all prompts in a category.
-    """
+    """Main orchestrator for generating model answers for all prompts in a category."""
     logger.info(f"--- Starting answer generation for category: '{category}' ---")
+    
+    config_service = ConfigService()
+    config = config_service.get_full_config() # Use the full config dict for legacy compatibility if needed
 
-    models_to_run: Optional[List[str]] = config.get('comparison_llms',{}).get("names") 
+    models_to_run = config_service.comparison_llms_config.get("names")
     if not models_to_run:
         logger.error("No models configured under 'comparison_llms'. Aborting.")
         return
 
     dataset = load_prompt_dataset(config, category)
     if not dataset:
-        logger.error(f"Could not load dataset for category '{category}'. Aborting generation task.")
-        return
-        
-    # --- Correctly read column names from the configuration ---
-    columns_cfg = config.get("dataset", {}).get("columns", {})
-    prompt_id_col = columns_cfg.get("id")
-    prompt_content_col = columns_cfg.get("prompt")
-    
-    if not prompt_id_col or not prompt_content_col:
-        logger.error("Column names for 'id' or 'prompt' are not configured in config.yaml under dataset -> columns. Aborting.")
+        logger.error(f"Could not load dataset for category '{category}'. Aborting.")
         return
 
-    base_output_dir = config.get("paths", {}).get("output_dir", "model_responses")
+    base_output_dir = config_service.get_path("output_dir")
+    if not base_output_dir:
+        logger.error("Output directory 'output_dir' not configured in paths. Aborting.")
+        return
+        
     category_output_dir = os.path.join(base_output_dir, category)
     logger.info(f"Output directory for this run: '{category_output_dir}'")
 
@@ -169,10 +134,8 @@ def generate_and_save_model_answers_for_category(config: Dict[str, Any], categor
         _process_prompts_for_model(
             model_name=model_name,
             dataset=dataset,
-            config=config,
+            config_service=config_service,
             category_output_dir=category_output_dir,
-            prompt_id_col=prompt_id_col,
-            prompt_content_col=prompt_content_col,
         )
 
     logger.info(f"--- Finished answer generation for category '{category}' ---")

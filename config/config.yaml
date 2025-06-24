@@ -6,7 +6,7 @@
 categories: ['schreiben','rollenspiel','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
-  comparisons_per_prompt: 40
+  comparisons_per_prompt: 35
 
 # --- Model Config ---
 comparison_llms:
