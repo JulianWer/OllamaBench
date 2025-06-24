@@ -148,7 +148,7 @@ def load_prompt_dataset(app_config: Dict[str, Any], category: str) -> Optional[D
     """
     Loads a dataset for a specific category using a tiered approach:
     1. Tries to load a pre-filtered local JSON file.
-    2. If not found, loads the full dataset from Hugging Face Hub, using 'data_files' from config if provided.
+    2. If not found, loads the full dataset from Hugging Face Hub.
     3. Caches the full dataset and saves categorized samples locally for future runs.
     4. Filters the full dataset for the requested category.
     """
@@ -157,12 +157,10 @@ def load_prompt_dataset(app_config: Dict[str, Any], category: str) -> Optional[D
         logger.critical("The 'prompt' column is not defined in the configuration. Cannot load dataset.")
         return None
 
-    # Tier 1: Attempt to load from local category-specific JSON
     local_ds = _load_from_local_json(config, category)
     if local_ds:
         return local_ds
 
-    # Tier 2: Load from Hugging Face if no local file is found
     if not config.hf_dataset_name:
         logger.error("No local dataset found, and no Hugging Face dataset name is configured.")
         return None
@@ -174,10 +172,7 @@ def load_prompt_dataset(app_config: Dict[str, Any], category: str) -> Optional[D
         logger.info(f"Loading full dataset '{config.hf_dataset_name}' from Hugging Face Hub.")
         try:
             load_params = {"path": config.hf_dataset_name, "trust_remote_code": True}
-            
-            # --- GENERIC HANDLING OF DATA_FILES ---
-            if config.data_files and isinstance(config.data_files, dict):
-                logger.info(f"Applying 'data_files' configuration from config.yaml: {config.data_files}")
+            if config.data_files:
                 load_params["data_files"] = config.data_files
                 
             loaded_object = load_dataset(**load_params)
@@ -188,26 +183,24 @@ def load_prompt_dataset(app_config: Dict[str, Any], category: str) -> Optional[D
                 full_ds = loaded_object
             
             if not isinstance(full_ds, (Dataset, IterableDataset)):
-                logger.error(f"Could not extract a valid Dataset object from the loaded data (type: {type(full_ds)}).")
+                logger.error(f"Could not extract a valid Dataset object from loaded data (type: {type(full_ds)}).")
                 return None
             
             if not _validate_columns(set(full_ds.column_names), config):
                 return None
             
             _hf_dataset_cache[config.hf_dataset_name] = full_ds
-            if isinstance(full_ds, Dataset): # Only save non-iterable datasets
+            if isinstance(full_ds, Dataset):
                 _save_dataset_by_category(full_ds, config)
 
         except Exception as e:
             logger.exception(f"Failed to load dataset from Hugging Face Hub: {e}")
             return None
 
-    # Tier 3: Filter the full dataset for the requested category
     if config.category_column and config.category_column in full_ds.column_names:
         logger.info(f"Filtering dataset for category: '{category}'.")
-        # Ensure we don't try to filter an iterable dataset, which is not supported directly.
         if isinstance(full_ds, IterableDataset):
-             logger.warning("Filtering an IterableDataset is not directly supported in this caching model; consider pre-processing.")
+             logger.warning("Filtering an IterableDataset is not directly supported.")
              return full_ds 
         
         category_ds = full_ds.filter(lambda ex: ex[config.category_column] == category)
@@ -216,18 +209,14 @@ def load_prompt_dataset(app_config: Dict[str, Any], category: str) -> Optional[D
             return None
         return category_ds
     else:
-        logger.warning(f"Category column not found or not configured. Returning the full, unfiltered dataset.")
+        logger.warning("Category column not configured or found. Returning full dataset.")
         return full_ds
-
 
 def extract_prompt_info_from_dataset_item(
     app_config: Dict[str, Any],
     dataset_item: Dict[str, Any]
 ) -> Tuple[Optional[Any], Optional[Any], Optional[Any]]:
-    """
-    Extracts prompt, ground truth, and prompt ID from a single dataset item
-    based on the application's configuration.
-    """
+    """Extracts prompt, ground truth, and ID from a single dataset item based on config."""
     config = _parse_dataset_config(app_config)
     
     prompt_data = dataset_item.get(config.prompt_column)
@@ -238,3 +227,52 @@ def extract_prompt_info_from_dataset_item(
         logger.warning(f"Prompt data not found in item using column name '{config.prompt_column}'.")
 
     return prompt_data, gt_data, prompt_id
+
+def prepare_prompt_for_llm(raw_prompt_content: Any) -> Union[str, List[Dict[str, str]], None]:
+    """
+    Prepares the raw prompt content into the format expected by the LLM (string or message list).
+    """
+    if isinstance(raw_prompt_content, str):
+        return raw_prompt_content
+    elif isinstance(raw_prompt_content, list):
+        if all(isinstance(item, dict) and "role" in item and "content" in item for item in raw_prompt_content):
+            return raw_prompt_content
+        elif all(isinstance(item, str) for item in raw_prompt_content):
+            # Convert a list of strings into a multi-turn conversation format
+            messages = []
+            for i, text in enumerate(raw_prompt_content):
+                role = "assistant" if i % 2 != 0 and i > 0 else "user"
+                messages.append({"role": role, "content": text})
+            return messages
+    
+    logger.warning(f"Unsupported prompt content type: {type(raw_prompt_content)}. Skipping.")
+    return None
+
+def extract_prompt_text(prompt_data: Any) -> Optional[str]:
+    """
+    Extracts a single string prompt from potentially complex prompt data, suitable for a judge.
+    Prioritizes the last user turn, falls back to concatenating all turns' content.
+    """
+    if isinstance(prompt_data, str):
+        return prompt_data
+    elif isinstance(prompt_data, list):
+        user_turns_content = []
+        all_turns_content = []
+        for turn in prompt_data:
+            if isinstance(turn, dict) and isinstance(turn.get("content"), str):
+                content = turn["content"]
+                all_turns_content.append(content)
+                if turn.get("role") == "user":
+                    user_turns_content.append(content)
+            elif isinstance(turn, str):
+                 all_turns_content.append(turn)
+        
+        if user_turns_content:
+            logger.debug("Extracted prompt text from the last 'user' turn for the judge.")
+            return user_turns_content[-1]
+        elif all_turns_content:
+            logger.warning(f"No 'user' role found in prompt turns. Concatenating all {len(all_turns_content)} turns.")
+            return "\n".join(all_turns_content)
+        
+    logger.warning(f"Unsupported or empty prompt data type: {type(prompt_data)}. Cannot extract text.")
+    return None

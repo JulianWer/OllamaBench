@@ -1,0 +1,733 @@
+{
+    "models": {
+        "qwen3:0.6b": {
+            "elo_rating_by_category": {
+                "schreiben": 937.5073220747475,
+                "rollenspiel": 838.605844237767,
+                "begründung": 1001.1195683838387,
+                "extraktion": 1069.0160248522764,
+                "stamm": 895.1518558526367,
+                "geisteswissenschaften": 666.0550511560734
+            },
+            "num_comparisons": 312,
+            "wins": 46,
+            "losses": 103,
+            "draws": 163,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 13,
+                    "losses": 20,
+                    "draws": 21,
+                    "num_comparisons": 54
+                },
+                "rollenspiel": {
+                    "wins": 6,
+                    "losses": 24,
+                    "draws": 15,
+                    "num_comparisons": 45
+                },
+                "begründung": {
+                    "wins": 1,
+                    "losses": 2,
+                    "draws": 54,
+                    "num_comparisons": 57
+                },
+                "extraktion": {
+                    "wins": 13,
+                    "losses": 2,
+                    "draws": 34,
+                    "num_comparisons": 49
+                },
+                "stamm": {
+                    "wins": 6,
+                    "losses": 21,
+                    "draws": 28,
+                    "num_comparisons": 55
+                },
+                "geisteswissenschaften": {
+                    "wins": 7,
+                    "losses": 34,
+                    "draws": 11,
+                    "num_comparisons": 52
+                }
+            }
+        },
+        "Ministral-8B-Instruct-2410-Q4_K_M:latest": {
+            "elo_rating_by_category": {
+                "schreiben": 960.8295168473065,
+                "rollenspiel": 943.2070399929712,
+                "begründung": 983.7552111498414,
+                "extraktion": 994.0796889464812,
+                "stamm": 1122.5100457052615,
+                "geisteswissenschaften": 1279.5516603417586
+            },
+            "num_comparisons": 357,
+            "wins": 113,
+            "losses": 73,
+            "draws": 171,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 15,
+                    "losses": 19,
+                    "draws": 17,
+                    "num_comparisons": 51
+                },
+                "rollenspiel": {
+                    "wins": 21,
+                    "losses": 26,
+                    "draws": 13,
+                    "num_comparisons": 60
+                },
+                "begründung": {
+                    "wins": 3,
+                    "losses": 4,
+                    "draws": 49,
+                    "num_comparisons": 56
+                },
+                "extraktion": {
+                    "wins": 11,
+                    "losses": 13,
+                    "draws": 42,
+                    "num_comparisons": 66
+                },
+                "stamm": {
+                    "wins": 28,
+                    "losses": 7,
+                    "draws": 26,
+                    "num_comparisons": 61
+                },
+                "geisteswissenschaften": {
+                    "wins": 35,
+                    "losses": 4,
+                    "draws": 24,
+                    "num_comparisons": 63
+                }
+            }
+        },
+        "gemma2:2b": {
+            "elo_rating_by_category": {
+                "schreiben": 1042.9182298218764,
+                "rollenspiel": 1117.7423711735348,
+                "begründung": 1007.8501787436368,
+                "extraktion": 957.978186779003,
+                "stamm": 1026.2970564457623,
+                "geisteswissenschaften": 1121.5832185765858
+            },
+            "num_comparisons": 361,
+            "wins": 102,
+            "losses": 69,
+            "draws": 190,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 21,
+                    "losses": 16,
+                    "draws": 23,
+                    "num_comparisons": 60
+                },
+                "rollenspiel": {
+                    "wins": 26,
+                    "losses": 11,
+                    "draws": 25,
+                    "num_comparisons": 62
+                },
+                "begründung": {
+                    "wins": 5,
+                    "losses": 4,
+                    "draws": 49,
+                    "num_comparisons": 58
+                },
+                "extraktion": {
+                    "wins": 8,
+                    "losses": 16,
+                    "draws": 42,
+                    "num_comparisons": 66
+                },
+                "stamm": {
+                    "wins": 16,
+                    "losses": 13,
+                    "draws": 25,
+                    "num_comparisons": 54
+                },
+                "geisteswissenschaften": {
+                    "wins": 26,
+                    "losses": 9,
+                    "draws": 26,
+                    "num_comparisons": 61
+                }
+            }
+        },
+        "llama3.2:1b": {
+            "elo_rating_by_category": {
+                "schreiben": 749.7257297521344,
+                "rollenspiel": 780.8596493172303,
+                "begründung": 918.342328546776,
+                "extraktion": 837.5611805902863,
+                "stamm": 719.1065379166351,
+                "geisteswissenschaften": 557.0078110582398
+            },
+            "num_comparisons": 346,
+            "wins": 22,
+            "losses": 198,
+            "draws": 126,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 8,
+                    "losses": 41,
+                    "draws": 13,
+                    "num_comparisons": 62
+                },
+                "rollenspiel": {
+                    "wins": 9,
+                    "losses": 35,
+                    "draws": 13,
+                    "num_comparisons": 57
+                },
+                "begründung": {
+                    "wins": 0,
+                    "losses": 15,
+                    "draws": 43,
+                    "num_comparisons": 58
+                },
+                "extraktion": {
+                    "wins": 0,
+                    "losses": 23,
+                    "draws": 28,
+                    "num_comparisons": 51
+                },
+                "stamm": {
+                    "wins": 1,
+                    "losses": 35,
+                    "draws": 17,
+                    "num_comparisons": 53
+                },
+                "geisteswissenschaften": {
+                    "wins": 4,
+                    "losses": 49,
+                    "draws": 12,
+                    "num_comparisons": 65
+                }
+            }
+        },
+        "qwen:7b-chat": {
+            "elo_rating_by_category": {
+                "schreiben": 782.1408967741431,
+                "rollenspiel": 689.1031417520556,
+                "begründung": 937.8746594596731,
+                "extraktion": 952.6824747250187,
+                "stamm": 711.3500473084002,
+                "geisteswissenschaften": 591.6118504941588
+            },
+            "num_comparisons": 367,
+            "wins": 24,
+            "losses": 188,
+            "draws": 155,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 10,
+                    "losses": 38,
+                    "draws": 17,
+                    "num_comparisons": 65
+                },
+                "rollenspiel": {
+                    "wins": 2,
+                    "losses": 41,
+                    "draws": 17,
+                    "num_comparisons": 60
+                },
+                "begründung": {
+                    "wins": 1,
+                    "losses": 13,
+                    "draws": 51,
+                    "num_comparisons": 65
+                },
+                "extraktion": {
+                    "wins": 5,
+                    "losses": 11,
+                    "draws": 39,
+                    "num_comparisons": 55
+                },
+                "stamm": {
+                    "wins": 1,
+                    "losses": 39,
+                    "draws": 22,
+                    "num_comparisons": 62
+                },
+                "geisteswissenschaften": {
+                    "wins": 5,
+                    "losses": 46,
+                    "draws": 9,
+                    "num_comparisons": 60
+                }
+            }
+        },
+        "llama3.2:3b": {
+            "elo_rating_by_category": {
+                "schreiben": 847.1064820644685,
+                "rollenspiel": 929.9831138845179,
+                "begründung": 972.5372760335325,
+                "extraktion": 927.4080750732003,
+                "stamm": 870.1602115711283,
+                "geisteswissenschaften": 884.7186067356504
+            },
+            "num_comparisons": 345,
+            "wins": 52,
+            "losses": 140,
+            "draws": 153,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 10,
+                    "losses": 27,
+                    "draws": 22,
+                    "num_comparisons": 59
+                },
+                "rollenspiel": {
+                    "wins": 15,
+                    "losses": 21,
+                    "draws": 19,
+                    "num_comparisons": 55
+                },
+                "begründung": {
+                    "wins": 2,
+                    "losses": 7,
+                    "draws": 42,
+                    "num_comparisons": 51
+                },
+                "extraktion": {
+                    "wins": 6,
+                    "losses": 20,
+                    "draws": 33,
+                    "num_comparisons": 59
+                },
+                "stamm": {
+                    "wins": 8,
+                    "losses": 29,
+                    "draws": 25,
+                    "num_comparisons": 62
+                },
+                "geisteswissenschaften": {
+                    "wins": 11,
+                    "losses": 36,
+                    "draws": 12,
+                    "num_comparisons": 59
+                }
+            }
+        },
+        "gemma3:4b": {
+            "elo_rating_by_category": {
+                "schreiben": 1158.8292406196804,
+                "rollenspiel": 1337.3143839172087,
+                "begründung": 980.7640913130982,
+                "extraktion": 1012.0779148344088,
+                "stamm": 1137.732979325218,
+                "geisteswissenschaften": 1322.9838476158493
+            },
+            "num_comparisons": 343,
+            "wins": 137,
+            "losses": 37,
+            "draws": 169,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 35,
+                    "losses": 11,
+                    "draws": 21,
+                    "num_comparisons": 67
+                },
+                "rollenspiel": {
+                    "wins": 34,
+                    "losses": 1,
+                    "draws": 13,
+                    "num_comparisons": 48
+                },
+                "begründung": {
+                    "wins": 3,
+                    "losses": 8,
+                    "draws": 51,
+                    "num_comparisons": 62
+                },
+                "extraktion": {
+                    "wins": 14,
+                    "losses": 13,
+                    "draws": 30,
+                    "num_comparisons": 57
+                },
+                "stamm": {
+                    "wins": 23,
+                    "losses": 2,
+                    "draws": 33,
+                    "num_comparisons": 58
+                },
+                "geisteswissenschaften": {
+                    "wins": 28,
+                    "losses": 2,
+                    "draws": 21,
+                    "num_comparisons": 51
+                }
+            }
+        },
+        "qwen3:1.7b": {
+            "elo_rating_by_category": {
+                "schreiben": 1245.1972128453253,
+                "rollenspiel": 1224.9195595631486,
+                "begründung": 1007.0780875011271,
+                "extraktion": 1151.1609772612067,
+                "stamm": 1207.2382272596474,
+                "geisteswissenschaften": 1190.9089230942623
+            },
+            "num_comparisons": 324,
+            "wins": 138,
+            "losses": 16,
+            "draws": 170,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 35,
+                    "losses": 5,
+                    "draws": 18,
+                    "num_comparisons": 58
+                },
+                "rollenspiel": {
+                    "wins": 26,
+                    "losses": 4,
+                    "draws": 26,
+                    "num_comparisons": 56
+                },
+                "begründung": {
+                    "wins": 1,
+                    "losses": 1,
+                    "draws": 46,
+                    "num_comparisons": 48
+                },
+                "extraktion": {
+                    "wins": 23,
+                    "losses": 0,
+                    "draws": 31,
+                    "num_comparisons": 54
+                },
+                "stamm": {
+                    "wins": 27,
+                    "losses": 0,
+                    "draws": 31,
+                    "num_comparisons": 58
+                },
+                "geisteswissenschaften": {
+                    "wins": 26,
+                    "losses": 6,
+                    "draws": 18,
+                    "num_comparisons": 50
+                }
+            }
+        },
+        "mistral:7b": {
+            "elo_rating_by_category": {
+                "schreiben": 1007.2484822013579,
+                "rollenspiel": 877.9637803643308,
+                "begründung": 971.3443788292582,
+                "extraktion": 964.0405159999535,
+                "stamm": 949.4173508164336,
+                "geisteswissenschaften": 1028.3638872549802
+            },
+            "num_comparisons": 340,
+            "wins": 69,
+            "losses": 109,
+            "draws": 162,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 15,
+                    "losses": 15,
+                    "draws": 22,
+                    "num_comparisons": 52
+                },
+                "rollenspiel": {
+                    "wins": 16,
+                    "losses": 38,
+                    "draws": 10,
+                    "num_comparisons": 64
+                },
+                "begründung": {
+                    "wins": 4,
+                    "losses": 8,
+                    "draws": 42,
+                    "num_comparisons": 54
+                },
+                "extraktion": {
+                    "wins": 8,
+                    "losses": 14,
+                    "draws": 40,
+                    "num_comparisons": 62
+                },
+                "stamm": {
+                    "wins": 7,
+                    "losses": 17,
+                    "draws": 32,
+                    "num_comparisons": 56
+                },
+                "geisteswissenschaften": {
+                    "wins": 19,
+                    "losses": 17,
+                    "draws": 16,
+                    "num_comparisons": 52
+                }
+            }
+        },
+        "qwen3:4b": {
+            "elo_rating_by_category": {
+                "schreiben": 1325.0334732854108,
+                "rollenspiel": 1266.8266718103387,
+                "begründung": 1130.4272600478607,
+                "extraktion": 1103.4181366133023,
+                "stamm": 1253.1330857265016,
+                "geisteswissenschaften": 1387.153048450058
+            },
+            "num_comparisons": 349,
+            "wins": 181,
+            "losses": 7,
+            "draws": 161,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 35,
+                    "losses": 2,
+                    "draws": 17,
+                    "num_comparisons": 54
+                },
+                "rollenspiel": {
+                    "wins": 33,
+                    "losses": 1,
+                    "draws": 30,
+                    "num_comparisons": 64
+                },
+                "begründung": {
+                    "wins": 26,
+                    "losses": 2,
+                    "draws": 35,
+                    "num_comparisons": 63
+                },
+                "extraktion": {
+                    "wins": 20,
+                    "losses": 1,
+                    "draws": 34,
+                    "num_comparisons": 55
+                },
+                "stamm": {
+                    "wins": 29,
+                    "losses": 1,
+                    "draws": 23,
+                    "num_comparisons": 53
+                },
+                "geisteswissenschaften": {
+                    "wins": 38,
+                    "losses": 0,
+                    "draws": 22,
+                    "num_comparisons": 60
+                }
+            }
+        },
+        "qwen3:8b": {
+            "elo_rating_by_category": {
+                "schreiben": 1351.2419370310217,
+                "rollenspiel": 1320.209908327395,
+                "begründung": 1135.9296329090691,
+                "extraktion": 1108.8480723176244,
+                "stamm": 1321.810505097639,
+                "geisteswissenschaften": 1424.3369463715565
+            },
+            "num_comparisons": 350,
+            "wins": 204,
+            "losses": 2,
+            "draws": 144,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 34,
+                    "losses": 0,
+                    "draws": 15,
+                    "num_comparisons": 49
+                },
+                "rollenspiel": {
+                    "wins": 40,
+                    "losses": 0,
+                    "draws": 19,
+                    "num_comparisons": 59
+                },
+                "begründung": {
+                    "wins": 25,
+                    "losses": 0,
+                    "draws": 39,
+                    "num_comparisons": 64
+                },
+                "extraktion": {
+                    "wins": 19,
+                    "losses": 1,
+                    "draws": 35,
+                    "num_comparisons": 55
+                },
+                "stamm": {
+                    "wins": 44,
+                    "losses": 1,
+                    "draws": 17,
+                    "num_comparisons": 62
+                },
+                "geisteswissenschaften": {
+                    "wins": 42,
+                    "losses": 0,
+                    "draws": 19,
+                    "num_comparisons": 61
+                }
+            }
+        },
+        "gemma:2b-instruct": {
+            "elo_rating_by_category": {
+                "schreiben": 581.0840077024166,
+                "rollenspiel": 583.8091546872002,
+                "begründung": 979.668049237743,
+                "extraktion": 939.3200973656969,
+                "stamm": 750.3976607866203,
+                "geisteswissenschaften": 412.42545446547183
+            },
+            "num_comparisons": 332,
+            "wins": 17,
+            "losses": 189,
+            "draws": 126,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 3,
+                    "losses": 46,
+                    "draws": 5,
+                    "num_comparisons": 54
+                },
+                "rollenspiel": {
+                    "wins": 3,
+                    "losses": 42,
+                    "draws": 5,
+                    "num_comparisons": 50
+                },
+                "begründung": {
+                    "wins": 1,
+                    "losses": 4,
+                    "draws": 52,
+                    "num_comparisons": 57
+                },
+                "extraktion": {
+                    "wins": 6,
+                    "losses": 16,
+                    "draws": 38,
+                    "num_comparisons": 60
+                },
+                "stamm": {
+                    "wins": 3,
+                    "losses": 32,
+                    "draws": 18,
+                    "num_comparisons": 53
+                },
+                "geisteswissenschaften": {
+                    "wins": 1,
+                    "losses": 49,
+                    "draws": 8,
+                    "num_comparisons": 58
+                }
+            }
+        },
+        "gemma3:1b": {
+            "elo_rating_by_category": {
+                "schreiben": 998.2126159368574,
+                "rollenspiel": 1094.6303666893389,
+                "begründung": 956.5479757972496,
+                "extraktion": 974.5071365359464,
+                "stamm": 1047.8611737886242,
+                "geisteswissenschaften": 1084.1674609957481
+            },
+            "num_comparisons": 353,
+            "wins": 88,
+            "losses": 69,
+            "draws": 196,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 19,
+                    "losses": 16,
+                    "draws": 23,
+                    "num_comparisons": 58
+                },
+                "rollenspiel": {
+                    "wins": 26,
+                    "losses": 11,
+                    "draws": 28,
+                    "num_comparisons": 65
+                },
+                "begründung": {
+                    "wins": 0,
+                    "losses": 6,
+                    "draws": 47,
+                    "num_comparisons": 53
+                },
+                "extraktion": {
+                    "wins": 8,
+                    "losses": 12,
+                    "draws": 39,
+                    "num_comparisons": 59
+                },
+                "stamm": {
+                    "wins": 16,
+                    "losses": 8,
+                    "draws": 34,
+                    "num_comparisons": 58
+                },
+                "geisteswissenschaften": {
+                    "wins": 19,
+                    "losses": 16,
+                    "draws": 25,
+                    "num_comparisons": 60
+                }
+            }
+        },
+        "llama3.1:8b": {
+            "elo_rating_by_category": {
+                "schreiben": 1012.9248530432585,
+                "rollenspiel": 994.8250142829647,
+                "begründung": 1016.7613020472961,
+                "extraktion": 1007.9015181055913,
+                "stamm": 987.8332623994952,
+                "geisteswissenschaften": 1049.132233389607
+            },
+            "num_comparisons": 315,
+            "wins": 86,
+            "losses": 79,
+            "draws": 150,
+            "comparison_counts_by_category": {
+                "schreiben": {
+                    "wins": 21,
+                    "losses": 18,
+                    "draws": 18,
+                    "num_comparisons": 57
+                },
+                "rollenspiel": {
+                    "wins": 19,
+                    "losses": 21,
+                    "draws": 15,
+                    "num_comparisons": 55
+                },
+                "begründung": {
+                    "wins": 6,
+                    "losses": 4,
+                    "draws": 44,
+                    "num_comparisons": 54
+                },
+                "extraktion": {
+                    "wins": 10,
+                    "losses": 9,
+                    "draws": 33,
+                    "num_comparisons": 52
+                },
+                "stamm": {
+                    "wins": 12,
+                    "losses": 16,
+                    "draws": 23,
+                    "num_comparisons": 51
+                },
+                "geisteswissenschaften": {
+                    "wins": 18,
+                    "losses": 11,
+                    "draws": 17,
+                    "num_comparisons": 46
+                }
+            }
+        }
+    },
+    "timestamp": "2025-06-23T14:20:48.635110+00:00"
+}
