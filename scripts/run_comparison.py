@@ -4,8 +4,9 @@ import random
 from itertools import combinations
 from typing import Dict, Any, List, Optional, Tuple
 
-from evaluation.ranking import (MatchType, calculate_mELO_ratings_by_gradient_descent, ModelRatingsType)
+from evaluation.ranking import (MatchType, calculate_mELO_ratings as calculate_ratings, ModelRatingsType)
 from models.factory import create_judge_llm
+from models.judge_llm import JudgeLLM
 from utils.config import ConfigService
 from utils.file_operations import load_json_file, save_elo_results
 from utils.get_data import load_prompt_dataset, extract_prompt_info_from_dataset_item, extract_prompt_text
@@ -27,7 +28,7 @@ def _get_model_answers_for_prompt(prompt_id: Any, category: str, config_service:
     return load_json_file(answers_file_path)
 
 def _perform_judgement_for_pair(
-    judge: 'JudgeLLM',
+    judge: JudgeLLM,
     prompt_text: str,
     ground_truth: Optional[str],
     model_a_name: str,
@@ -36,14 +37,13 @@ def _perform_judgement_for_pair(
     response_b: str
 ) -> Optional[float]:
     """Runs the judge on a pair of responses, handling position bias, and returns a single score for model A."""
-    # Judge in original order (A vs B)
+    # handle Position bias 
     verdict_1 = judge.evaluate(
         user_prompt=prompt_text,
         response_a=response_a,
         response_b=response_b,
         ground_truth=ground_truth
     )
-    # Judge in swapped order (B vs A)
     verdict_2 = judge.evaluate(
         user_prompt=prompt_text,
         response_a=response_b,
@@ -55,18 +55,14 @@ def _perform_judgement_for_pair(
         logger.warning(f"Judging failed for one or both positions for pair ({model_a_name} vs {model_b_name}). Skipping.")
         return None
     
-    # 1.0 for A (first response), 0.0 for B (second response), 0.5 for Tie
-    # If verdicts are contradictory (and not a tie), favor the first non-tie verdict as a simple heuristic.
-    # A more robust system could flag these for manual review.
-    final_score_model_a = 0.5  # Default to a tie
+    final_score_model_a = 0.5
     if verdict_1 != verdict_2 and verdict_1 != 0.5 and verdict_2 != 0.5:
         logger.warning(f"Contradictory verdicts for {model_a_name} vs {model_b_name}. Verdict1={verdict_1}, Verdict2={verdict_2}. Using first verdict.")
         final_score_model_a = verdict_1
     elif verdict_1 is not None:
          final_score_model_a = verdict_1
 
-
-    logger.info(f"Judgement for pair ({model_a_name} vs {model_b_name}): Verdict1 (A vs B)={verdict_1}, Verdict2 (B vs A)={verdict_2}. Final score for A = {final_score_model_a}")
+    logger.info(f"Judgement for pair ({model_a_name} vs {model_b_name}): Score for A = {final_score_model_a}")
     return final_score_model_a
 
 def _process_prompt_comparisons(
@@ -87,28 +83,23 @@ def _process_prompt_comparisons(
 
     existing_answers = _get_model_answers_for_prompt(prompt_id, category, config_service)
     if not isinstance(existing_answers, list) or len(existing_answers) < 2:
-        logger.warning(f"Not enough answers (found {len(existing_answers) if isinstance(existing_answers, list) else 0}) for prompt {prompt_id}. Skipping.")
         return []
 
     prompt_text_for_judge = extract_prompt_text(prompt_content)
     if prompt_text_for_judge is None:
-        logger.error(f"Could not extract usable prompt text for prompt ID {prompt_id}. Skipping comparisons.")
         return []
 
     all_pairs = list(combinations(existing_answers, 2))
     num_comparisons_per_prompt = config_service.get_full_config().get("comparison", {}).get("comparisons_per_prompt", 30)
     
-    # Shuffle and select a subset of pairs to compare
     random.shuffle(all_pairs)
     pairs_to_process = all_pairs[:num_comparisons_per_prompt]
     
     logger.info(f"Found {len(existing_answers)} answers for prompt {prompt_id}. Processing {len(pairs_to_process)}/{len(all_pairs)} pairs.")
 
     for response_obj_1, response_obj_2 in pairs_to_process:
-        model_a = response_obj_1.get("model")
-        model_b = response_obj_2.get("model")
-        response_a = response_obj_1.get("response")
-        response_b = response_obj_2.get("response")
+        model_a, model_b = response_obj_1.get("model"), response_obj_2.get("model")
+        response_a, response_b = response_obj_1.get("response"), response_obj_2.get("response")
 
         if not all([model_a, model_b, response_a is not None, response_b is not None, model_a != model_b]):
             continue
@@ -122,7 +113,6 @@ def _process_prompt_comparisons(
     return matches
 
 def run_judge_comparison(config_dict: Dict[str, Any], category: str) -> Optional[ModelRatingsType]:
-    """Executes comparison cycles for a given category using a judge LLM."""
     config_service = ConfigService()
     
     judge = create_judge_llm(config_service)
@@ -132,7 +122,6 @@ def run_judge_comparison(config_dict: Dict[str, Any], category: str) -> Optional
 
     dataset = load_prompt_dataset(config_dict, category)
     if not dataset:
-        logger.error(f"Could not load dataset for category '{category}'. Aborting.")
         return None
 
     logger.info(f"--- Starting judge comparisons for category: '{category}' ---")
@@ -150,16 +139,15 @@ def run_judge_comparison(config_dict: Dict[str, Any], category: str) -> Optional
         logger.warning(f"No valid matches were generated for category '{category}'. Skipping ELO update.")
         return None
 
-    logger.info(f"Collected {len(all_matches_for_category)} matches for '{category}'. Starting batch ELO update.")
+    logger.info(f"Collected {len(all_matches_for_category)} matches for '{category}'. Starting batch rating calculation.")
 
-    # Load existing results to update them
     results_file = config_service.get_path("results_file")
     lock_file = config_service.get_path("lock_file")
     current_results = load_json_file(results_file, lock_file) or {}
     model_ratings_store: ModelRatingsType = current_results.get("models", {})
     
     mELO_config = config_service.mELO_config
-    calculate_mELO_ratings_by_gradient_descent(
+    calculate_ratings(
         model_ratings=model_ratings_store,
         all_matches=all_matches_for_category,
         initial_rating=mELO_config.get("initial_rating", 1000.0),
@@ -168,8 +156,8 @@ def run_judge_comparison(config_dict: Dict[str, Any], category: str) -> Optional
     )
 
     if save_elo_results(model_ratings_store, config_dict):
-        logger.info(f"Successfully saved updated ELO ratings for '{category}' to '{results_file}'.")
+        logger.info(f"Successfully saved updated ratings for '{category}' to '{results_file}'.")
     else:
-        logger.error(f"Failed to save ELO ratings for '{category}'.")
+        logger.error(f"Failed to save ratings for '{category}'.")
         
     return model_ratings_store

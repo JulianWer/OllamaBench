@@ -2,4 +2,5 @@ datasets==3.5.0
 Flask==3.1.0
 PyYAML==6.0.2
 requests==2.32.3
+numpy==2.2.6
 
