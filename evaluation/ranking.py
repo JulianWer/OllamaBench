@@ -17,15 +17,6 @@ C_ELO_CONSTANT = math.log(10) / 400
 
 # --- Optimized ELO Calculation Logic ---
 
-def _calculate_expected_score(rating_a: float, rating_b: float) -> float:
-    """
-    Calculates the expected score for player A against player B using the sigmoid function.
-    This is mathematically equivalent to the standard Elo formula but uses math.exp, which is often faster.
-    """
-    # Original: 1 / (1 + math.pow(10, (rating_b - rating_a) / 400))
-    # Optimized: The exp function is generally faster than pow(10, x).
-    return 1.0 / (1.0 + math.exp(C_ELO_CONSTANT * (rating_b - rating_a)))
-
 def _initialize_ratings_for_mELO(
     model_ratings: ModelRatingsType,
     all_matches: List[MatchType],
@@ -100,30 +91,6 @@ def _update_match_statistics(
             model_data['losses'] += cat_stats.get('losses', 0)
             model_data['draws'] += cat_stats.get('draws', 0)
     logger.debug("Match statistics update finished.")
-
-def calculate_log_likelihood_mELO(
-    model_ratings: ModelRatingsType,
-    all_matches: List[MatchType]
-) -> float:
-    """Calculates the total log-likelihood of the observed matches given the current ratings."""
-    total_log_likelihood = 0.0
-    epsilon = 1e-9
-
-    for model_a, model_b, category, score_a in all_matches:
-        cat_str = category.lower()
-        try:
-            rating_a = model_ratings[model_a]['elo_rating_by_category'][cat_str]
-            rating_b = model_ratings[model_b]['elo_rating_by_category'][cat_str]
-        except KeyError:
-            continue
-
-        prob_a_wins = _calculate_expected_score(rating_a, rating_b)
-        
-        term_a = score_a * math.log(prob_a_wins + epsilon)
-        term_b = (1.0 - score_a) * math.log(1.0 - prob_a_wins + epsilon)
-        total_log_likelihood += term_a + term_b
-        
-    return total_log_likelihood
 
 def calculate_mELO_ratings(
     model_ratings: ModelRatingsType,
