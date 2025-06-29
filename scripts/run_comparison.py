@@ -59,8 +59,8 @@ def _perform_judgement_for_pair(
     if verdict_1 != verdict_2 and verdict_1 != 0.5 and verdict_2 != 0.5:
         logger.warning(f"Contradictory verdicts for {model_a_name} vs {model_b_name}. Verdict1={verdict_1}, Verdict2={verdict_2}. Using first verdict.")
         final_score_model_a = verdict_1
-    elif verdict_1 is not None:
-         final_score_model_a = verdict_1
+    elif verdict_1 == verdict_2:
+        final_score_model_a = 0.5
 
     logger.info(f"Judgement for pair ({model_a_name} vs {model_b_name}): Score for A = {final_score_model_a}")
     return final_score_model_a
