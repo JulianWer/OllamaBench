@@ -10,7 +10,7 @@ comparison:
 
 # --- Model Config ---
 comparison_llms:
-  names: ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
+  names: ['gemma3n:e4b','gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
                     'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
                     ,'llama3.2:3b', 'llama3.2:1b', 'llama3.1:8b', 'mistral:7b','Ministral-8B-Instruct-2410-Q4_K_M:latest']
   has_reasoning: true
