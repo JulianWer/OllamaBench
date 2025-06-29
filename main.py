@@ -113,7 +113,7 @@ def run_evaluation_cli(args: argparse.Namespace ,config: Dict[str, Any]):
 
 
 if __name__ == "__main__":
-    print("--- LocalBench CLI Execution Start ---")
+    print("--- OllamaBench CLI Execution Start ---")
     try:
         parser = argparse.ArgumentParser(description="OllamaBench: A benchmark tool for local LLMs.")
         
@@ -189,5 +189,5 @@ if __name__ == "__main__":
              pass
         sys.exit(1)
 
-    print("--- LocalBench CLI Execution End ---")
+    print("--- OllamaBench CLI Execution End ---")
     sys.exit(0)

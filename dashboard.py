@@ -226,6 +226,6 @@ def index():
 
 # --- Start Server ---
 if __name__ == '__main__':
-    logger.info(f"Starting LocalBench Dashboard Server on http://{DASHBOARD_HOST}:{DASHBOARD_PORT}")
+    logger.info(f"Starting OllamaBench Dashboard Server on http://{DASHBOARD_HOST}:{DASHBOARD_PORT}")
     logger.info(f"Debug Mode: {'ON' if DASHBOARD_DEBUG else 'OFF'}")
     app.run(host=DASHBOARD_HOST, port=DASHBOARD_PORT, debug=DASHBOARD_DEBUG, threaded=True)
