@@ -10,7 +10,7 @@ comparison:
 
 # --- Model Config ---
 comparison_llms:
-  names: ['gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
+  names: ['gemma3n:e4b','gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
                     'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
                     ,'llama3.2:3b', 'llama3.2:1b', 'llama3.1:8b', 'mistral:7b','Ministral-8B-Instruct-2410-Q4_K_M:latest']
   has_reasoning: true
@@ -22,13 +22,7 @@ judge_llm:
   has_reasoning: false
   generation_options:
     temperature: 0.0
-  system_prompt: "You are an automated evaluation system. Your SOLE task is to determine which AI assistant's response is better based on the user's query and potentially a ground truth answer. 
-                  \n**Evaluation Criteria:**
-                  * Helpfulness and relevance to the user's query.
-                  * Accuracy and correctness of information.
-                  * Depth, detail, and creativity.
-                  * Adherence to instructions in the user query."
-
+  system_prompt: "Please act as an impartial judge and evaluate the quality of the responses provided by two AI assistants to the user prompt displayed below. You will be given assistant A's answer and assistant B's answer. Your job is to evaluate which assistant's answer is better.\n\nBegin your evaluation by generating your own answer to the prompt. You must provide your answers before judging any answers.\n\nWhen evaluating the assistants' answers, compare both assistants' answers with your answer. You must identify and correct any mistakes or inaccurate information.\n\nThen consider if the assistant's answers are helpful, relevant, and concise. Helpful means the answer correctly responds to the prompt or follows the instructions. Note when user prompt has any ambiguity or more than one interpretation, it is more helpful and appropriate to ask for clarifications or more information from the user than providing an answer based on assumptions. Relevant means all parts of the response closely connect or are appropriate to what is being asked. Concise means the response is clear and not verbose or excessive.\n\nThen consider the creativity and novelty of the assistant's answers when needed. Finally, identify any missing important information in the assistants' answers that would be beneficial to include when responding to the user prompt.\n\nAfter providing your explanation, you must output only one of the following choices as your final verdict with a label:\n\n1. Assistant A is significantly better: [[A]]\n2. Tie, relatively the same: [[C]]\n3. Assistant B is better: [[B]]\n\nExample output: \"My final verdict is tie: [[C]]\"."
   
 # --- Dataset ---  
 dataset:

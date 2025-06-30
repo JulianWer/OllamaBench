@@ -17,15 +17,6 @@ C_ELO_CONSTANT = math.log(10) / 400
 
 # --- Optimized ELO Calculation Logic ---
 
-def _calculate_expected_score(rating_a: float, rating_b: float) -> float:
-    """
-    Calculates the expected score for player A against player B using the sigmoid function.
-    This is mathematically equivalent to the standard Elo formula but uses math.exp, which is often faster.
-    """
-    # Original: 1 / (1 + math.pow(10, (rating_b - rating_a) / 400))
-    # Optimized: The exp function is generally faster than pow(10, x).
-    return 1.0 / (1.0 + math.exp(C_ELO_CONSTANT * (rating_b - rating_a)))
-
 def _initialize_ratings_for_mELO(
     model_ratings: ModelRatingsType,
     all_matches: List[MatchType],
@@ -55,75 +46,48 @@ def _update_match_statistics(
     model_ratings: ModelRatingsType,
     current_matches_being_processed: List[MatchType]
 ) -> None:
-    """Updates match statistics (total and per category) after calculations."""
-    logger.debug(f"Updating match statistics based on {len(current_matches_being_processed)} matches...")
+    """
+    Aktualisiert (inkrementiert) die Spielstatistiken basierend auf einem neuen Stapel
+    verarbeiteter Matches. Diese Funktion setzt keine Statistiken mehr zurück und verhindert
+    so Datenverluste aus anderen Kategorien.
+    """
+    logger.debug(f"Inkrementiere Spielstatistiken mit {len(current_matches_being_processed)} neuen Matches...")
 
-    # Reset stats for models and categories involved in the current batch
-    models_in_batch = set()
-    for m_a, m_b, cat, _ in current_matches_being_processed:
-        models_in_batch.add(m_a)
-        models_in_batch.add(m_b)
-        
-    for model_name in models_in_batch:
-        if model_name in model_ratings:
-            model_ratings[model_name]['wins'] = 0
-            model_ratings[model_name]['losses'] = 0
-            model_ratings[model_name]['draws'] = 0
-            model_ratings[model_name]['num_comparisons'] = 0
-            for cat_stats in model_ratings[model_name]['comparison_counts_by_category'].values():
-                cat_stats.update({'wins': 0, 'losses': 0, 'draws': 0, 'num_comparisons': 0})
-
-    # Recalculate stats from the provided matches
     for model_a, model_b, category, score_a in current_matches_being_processed:
         cat_str = category.lower()
-        stats_a = model_ratings[model_a]['comparison_counts_by_category'][cat_str]
-        stats_b = model_ratings[model_b]['comparison_counts_by_category'][cat_str]
 
+        # Modelldaten abrufen (Annahme: Initialisierung ist bereits erfolgt)
+        model_a_data = model_ratings[model_a]
+        model_b_data = model_ratings[model_b]
+
+        # Kategoriespezifische Statistiken abrufen
+        stats_a = model_a_data['comparison_counts_by_category'][cat_str]
+        stats_b = model_b_data['comparison_counts_by_category'][cat_str]
+
+        # Gesamt- und kategoriespezifische Vergleichszahlen erhöhen
+        model_a_data['num_comparisons'] += 1
+        model_b_data['num_comparisons'] += 1
         stats_a['num_comparisons'] += 1
         stats_b['num_comparisons'] += 1
 
-        if score_a == 1.0:
+        # Zähler für Siege/Niederlagen/Unentschieden erhöhen
+        if score_a == 1.0:  # Modell A gewinnt
+            model_a_data['wins'] += 1
             stats_a['wins'] += 1
+            model_b_data['losses'] += 1
             stats_b['losses'] += 1
-        elif score_a == 0.0:
-            stats_a['losses'] += 1
+        elif score_a == 0.0:  # Modell B gewinnt
+            model_b_data['wins'] += 1
             stats_b['wins'] += 1
-        else: # score_a == 0.5
+            model_a_data['losses'] += 1
+            stats_a['losses'] += 1
+        else:  # Unentschieden
+            model_a_data['draws'] += 1
             stats_a['draws'] += 1
+            model_b_data['draws'] += 1
             stats_b['draws'] += 1
 
-    # Aggregate category stats to the top level for each model
-    for model_data in model_ratings.values():
-        for cat_stats in model_data['comparison_counts_by_category'].values():
-            model_data['num_comparisons'] += cat_stats.get('num_comparisons', 0)
-            model_data['wins'] += cat_stats.get('wins', 0)
-            model_data['losses'] += cat_stats.get('losses', 0)
-            model_data['draws'] += cat_stats.get('draws', 0)
-    logger.debug("Match statistics update finished.")
-
-def calculate_log_likelihood_mELO(
-    model_ratings: ModelRatingsType,
-    all_matches: List[MatchType]
-) -> float:
-    """Calculates the total log-likelihood of the observed matches given the current ratings."""
-    total_log_likelihood = 0.0
-    epsilon = 1e-9
-
-    for model_a, model_b, category, score_a in all_matches:
-        cat_str = category.lower()
-        try:
-            rating_a = model_ratings[model_a]['elo_rating_by_category'][cat_str]
-            rating_b = model_ratings[model_b]['elo_rating_by_category'][cat_str]
-        except KeyError:
-            continue
-
-        prob_a_wins = _calculate_expected_score(rating_a, rating_b)
-        
-        term_a = score_a * math.log(prob_a_wins + epsilon)
-        term_b = (1.0 - score_a) * math.log(1.0 - prob_a_wins + epsilon)
-        total_log_likelihood += term_a + term_b
-        
-    return total_log_likelihood
+    logger.debug("Aktualisierung der Spielstatistiken abgeschlossen.")
 
 def calculate_mELO_ratings(
     model_ratings: ModelRatingsType,
@@ -144,7 +108,12 @@ def calculate_mELO_ratings(
     models = sorted(list(model_ratings.keys()))
     model_to_idx = {name: i for i, name in enumerate(models)}
     
-    all_categories = sorted(list(set(m[2].lower() for m in all_matches)))
+    categories_from_matches = set(m[2].lower() for m in all_matches)
+    categories_from_ratings = set()
+    for model_data in model_ratings.values():
+        categories_from_ratings.update(model_data.get('elo_rating_by_category', {}).keys())
+    all_categories = sorted(list(categories_from_matches.union(categories_from_ratings)))
+
     category_to_idx = {name: i for i, name in enumerate(all_categories)}
     
     num_models = len(models)
