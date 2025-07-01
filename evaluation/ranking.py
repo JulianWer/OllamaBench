@@ -47,47 +47,42 @@ def _update_match_statistics(
     current_matches_being_processed: List[MatchType]
 ) -> None:
     """
-    Aktualisiert (inkrementiert) die Spielstatistiken basierend auf einem neuen Stapel
-    verarbeiteter Matches. Diese Funktion setzt keine Statistiken mehr zurück und verhindert
-    so Datenverluste aus anderen Kategorien.
+    Update (incremental) game statistics based on the list of matches. 
+    This function does not reset any statistics and prevents data loss.
     """
-    logger.debug(f"Inkrementiere Spielstatistiken mit {len(current_matches_being_processed)} neuen Matches...")
+    logger.debug(f"Incremental statistics with {len(current_matches_being_processed)} new matches...")
 
     for model_a, model_b, category, score_a in current_matches_being_processed:
         cat_str = category.lower()
 
-        # Modelldaten abrufen (Annahme: Initialisierung ist bereits erfolgt)
         model_a_data = model_ratings[model_a]
         model_b_data = model_ratings[model_b]
 
-        # Kategoriespezifische Statistiken abrufen
         stats_a = model_a_data['comparison_counts_by_category'][cat_str]
         stats_b = model_b_data['comparison_counts_by_category'][cat_str]
 
-        # Gesamt- und kategoriespezifische Vergleichszahlen erhöhen
         model_a_data['num_comparisons'] += 1
         model_b_data['num_comparisons'] += 1
         stats_a['num_comparisons'] += 1
         stats_b['num_comparisons'] += 1
 
-        # Zähler für Siege/Niederlagen/Unentschieden erhöhen
-        if score_a == 1.0:  # Modell A gewinnt
+        if score_a == 1.0:  # Model A wins
             model_a_data['wins'] += 1
             stats_a['wins'] += 1
             model_b_data['losses'] += 1
             stats_b['losses'] += 1
-        elif score_a == 0.0:  # Modell B gewinnt
+        elif score_a == 0.0:  # Model B wins
             model_b_data['wins'] += 1
             stats_b['wins'] += 1
             model_a_data['losses'] += 1
             stats_a['losses'] += 1
-        else:  # Unentschieden
+        else:  # Tie
             model_a_data['draws'] += 1
             stats_a['draws'] += 1
             model_b_data['draws'] += 1
             stats_b['draws'] += 1
 
-    logger.debug("Aktualisierung der Spielstatistiken abgeschlossen.")
+    logger.debug("Update statistics finished.")
 
 def calculate_mELO_ratings(
     model_ratings: ModelRatingsType,
