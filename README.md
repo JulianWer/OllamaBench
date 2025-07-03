@@ -1,7 +1,15 @@
-# OllamaBench: Comprehensive Benchmarking Framework for Local LLMs
+Of course. A new README has been created that incorporates the fact that the project is from a bachelor thesis and also integrates the analysis from the provided Jupyter Notebook.
 
-OllamaBench is a robust and extensible framework for performance evaluation of local language models running via Ollama. It provides an automated pipeline for rigorous testing, AI-based evaluation, and detailed analysis through an interactive dashboard and command-line interface (CLI).
-The current Rakings are:
+Here is the new `README.md`:
+
+# OllamaBench: A Comprehensive Benchmarking Framework for Local LLMs
+
+OllamaBench is a robust and extensible framework for the performance evaluation of local language models running via Ollama. This project was developed as part of a **bachelor thesis** and provides an automated pipeline for rigorous testing, AI-based evaluation, and detailed analysis through an interactive dashboard and command-line interface (CLI).
+
+## Latest Rankings
+
+The current rankings based on the latest benchmark run are:
+
 ```
 --- OllamaBench ELO Rankings ---
 --------------------------------------------------------------------------------
@@ -25,29 +33,38 @@ Rank  Model                                            Avg ELO           W/L/D
 --------------------------------------------------------------------------------
 ```
 
-## Core Features
+*Ranking data last updated: 2025-06-30*
 
-  * **Modular Benchmarking**: Conduct evaluations across a wide range of disciplines such as `Writing`, `Coding`, `Reasoning`, and `Knowledge Extraction`.
-  * **AI-Powered Adjudication**: Utilize a powerful "judge" LLM of your choice to provide objective, nuanced, and reproducible evaluations of model responses.
-  * **Advanced ELO Ranking**: Model performance is rated using the m-ELO algorithm, a variant of the standard ELO system designed for faster convergence and higher accuracy in pairwise comparisons.
-  * **Interactive Analysis Dashboard**: A web-based dashboard built with Flask and Chart.js offers live insights into results, including:
-      * **Overall Leaderboards** and aggregate metrics.
-      * **Detailed Categorical ELO Scores** for granular analysis.
-      * **Direct Model-to-Model Comparison** across different task areas.
-      * **Live Updates** of results via Server-Sent Events (SSE).
-  * **Extensive Configurability**: Customize nearly every aspect of the benchmarking process via a central `config.yaml` file, including model parameters, datasets, evaluation categories, and ELO settings.
-  * **Automation-Friendly CLI**: A robust command-line interface allows for scripting and automation of benchmarking workflows, with separate controls for the response generation and evaluation phases.
-  * **Transparency and Traceability**: All generated responses and judge verdicts are archived in structured JSON files for detailed review and post-hoc analysis.
+
+## Benchmark Analysis & Validity
+
+The credibility of the benchmark results is critical. The project includes an `analyse_results.ipynb` notebook for documentation and validity checks.
+
+### Comparison with Public Leaderboards
+
+The notebook includes a comparative analysis between this project's results (`Meine LLM Arena`) and the public `LMArena.ai` leaderboard. The plot from the notebook visually confirms two main points:
+
+1.  **Strong Correlation**: The relative ranking of models is highly consistent between both arenas.
+2.  **Systematic ELO Difference**: `LMArena.ai` provides significantly higher absolute ELO ratings, which is likely due to differences in voter pools, prompt sets, or the underlying ELO calculation methodology.
+
+This indicates that while the absolute numbers differ, **OllamaBench produces a relative ranking of models that is in good agreement with larger, public benchmarks.**
+
+### Internal Consistency
+
+The leaderboard data demonstrates strong internal consistency, supported by two key observations from the analysis notebook:
+
+1.  **Logical Performance Scaling**: Performance (ELO) scales logically with model size within the same family (e.g., `Qwen3: 8b > 4b > 1.7b > 0.6b`).
+2.  **Correlation of ELO and W/L/D Record**: The ELO rankings are strongly supported by the win/loss/draw statistics. Models with higher ELO scores have a significantly better win-to-loss ratio.
+
+These factors indicate that the evaluation methodology is applied consistently and that the rankings are a credible representation of the models' relative performance.
 
 ## System Architecture & Workflow
 
-OllamaBench is designed to be process-safe and atomic to ensure data integrity during benchmark runs.
-
-1.  **Configuration & Prompt Loading**: The system is initialized via the `config.yaml` file. Prompts for a specific category are loaded either from local JSON files or directly from a Hugging Face dataset.
-2.  **Answer Generation (Optional)**: The models defined as `comparison_llms` generate answers to the loaded prompts. Existing answers are cached and not regenerated to improve efficiency.
-3.  **Pairwise Adjudication (Optional)**: The `judge_llm` performs a pairwise evaluation of responses. To minimize positional bias, responses are evaluated in two rounds in a swapped order. The judge outputs a verdict (`[[A]]`, `[[B]]`, or `[[C]]` for a tie).
-4.  **ELO Calculation**: The adjudication results are fed into the m-ELO algorithm to update the models' ELO ratings. The `results.json` file is updated atomically using file locking to prevent race conditions.
-5.  **Visualization**: The Flask-based dashboard reads the `results.json` file and streams the latest rankings and charts to the client via SSE.
+1.  **Configuration & Prompt Loading**: The system is initialized via `config.yaml`. Prompts for a specific category are loaded from local JSON files (e.g., `begründung_prompts.json`) or a Hugging Face dataset.
+2.  **Answer Generation (Optional)**: Models defined in `comparison_llms` generate answers to the prompts.
+3.  **Pairwise Adjudication (Optional)**: The `judge_llm` performs a pairwise evaluation of responses. Positional bias is minimized by evaluating in two rounds with swapped positions.
+4.  **ELO Calculation**: The adjudication results are processed by the m-ELO algorithm to update model ratings. The `results.json` file is updated atomically using file locking.
+5.  **Visualization**: The Flask-based dashboard reads the `results.json` file and streams the latest rankings to the client.
 
 ## Getting Started
 
@@ -60,43 +77,34 @@ OllamaBench is designed to be process-safe and atomic to ensure data integrity d
 ### Installation & Configuration
 
 1.  **Clone the Repository**:
-
     ```bash
     git clone https://github.com/JulianWer/OllamaBench.git
     cd OllamaBench
     ```
-
 2.  **Set up a Virtual Environment (Recommended)**:
-
     ```bash
     python -m venv venv
     source venv/bin/activate  # Windows: venv\Scripts\activate
     ```
-
-3.  **Install Dependencies**:
-
+3.  **Install Dependencies**: The required packages are listed in `requirements.txt`.
     ```bash
     pip install -r requirements.txt
     ```
-
 4.  **Pull Ollama Models**: Ensure Ollama is running and pull the models you wish to evaluate and use as a judge.
-
     ```bash
-    ollama pull llama3:8b
-    ollama pull qwen2:7b
-    ollama pull qwen2:32b-instruct  # Recommended as a powerful judge
+    ollama pull llama3.1:8b
+    ollama pull gemma3:4b
+    ollama pull qwen3:30b-a3b # Recommended as a powerful judge
     ```
-
 5.  **Customize Configuration**: Edit `config/config.yaml` to define your test run.
-
       * `judge_llm -> name`: Specify the model tag for your judge LLM.
       * `comparison_llms -> names`: List all models that will compete.
       * `LLM_runtime -> api_base_url`: Verify this matches your Ollama API URL.
-      * `categories`: Select the categories you wish to test in.
+      * `categories`: Select the categories you wish to test.
 
 ## Usage
 
-### Web Dashboard (Recommended Method)
+### Web Dashboard (Recommended)
 
 For interactive analysis and control, start the server:
 
@@ -108,17 +116,13 @@ Navigate to `http://127.0.0.1:5001` in your browser.
 
 ### Command-Line Interface (For Automation)
 
-Run benchmarks via the CLI:
-
-```bash
-python main.py [ARGUMENTS]
-```
+Run benchmarks via the CLI using `main.py`.
 
 **Key CLI Arguments**:
 
   * `--show-rankings`: Displays the current ELO ranking table and exits.
   * `--all-categories`: Runs the benchmark for all configured categories.
-  * `--category <name>`: Runs the benchmark for a single specified category only.
+  * `--category <name>`: Runs the benchmark for a single specified category.
   * `--generate-only`: Only performs the answer generation step.
   * `--judge-only`: Only performs the adjudication step on existing answers.
 
