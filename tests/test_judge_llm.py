@@ -1,67 +1,93 @@
 import unittest
-from models.judge_llm import _build_judge_prompt, JudgeLLM
+from unittest.mock import patch
+from models.judge_llm import JudgeLLM
 
-class TestJudgeLLM(unittest.TestCase):
+class TestJudgeLLMImproved(unittest.TestCase):
 
     def setUp(self):
-        """Erstellt eine Instanz von JudgeLLM für Tests."""
-        self.judge = JudgeLLM(api_url="http://fake-url:11434", model_name="test-judge")
+        self.chat_patcher = patch('models.judge_llm.chat_with_model')
+        self.mock_chat_with_model = self.chat_patcher.start()
 
-    def test_build_judge_prompt_no_ground_truth(self):
-        """
-        Testet die Erstellung des Judge-Prompts ohne eine Referenzantwort.
-        """
-        prompt = "Was ist die Hauptstadt von Frankreich?"
-        response1 = "Paris"
-        response2 = "Die Hauptstadt ist Paris."
+        self.judge = JudgeLLM(
+            api_url="http://fake-api.com/v1",
+            model_name="test-judge-model",
+            system_prompt="You are an impartial judge.",
+            temperature=0.0,
+            has_reasoning=False
+        )
+
+    def tearDown(self):
+        self.chat_patcher.stop()
+
+    def test_evaluate_outcomes(self):
+        # Test cases: (llm_response_content, expected_score)
+        test_cases = [
+            ("[[A]]", 1.0),
+            ("[[B]]", 0.0),
+            ("[[C]]", 0.5),
+            ("  [[A]]  ", 1.0),  # Test with extra whitespace
+            ("Some noise before [[B]] and after.", 0.0), # Test with surrounding text
+            ("The verdict is [[c]]", 0.5), # Test with case-insensitivity
+            ("This is a malformed response without a verdict", None), # Test parsing failure
+            ("", None), # Test empty response
+        ]
+
+        for response_text, expected_score in test_cases:
+            with self.subTest(response_text=response_text, expected_score=expected_score):
+                self.mock_chat_with_model.return_value = {
+                    'message': {'content': response_text}
+                }
+
+                # Call the method under test
+                score = self.judge.evaluate(
+                    user_prompt="Is the sky blue?",
+                    response_a="Yes, it is.",
+                    response_b="No, it's green."
+                )
+
+                # Assert that the returned score is correct
+                self.assertEqual(score, expected_score)
+                self.mock_chat_with_model.assert_called_once()
+                self.mock_chat_with_model.reset_mock()
+
+    def test_evaluate_with_ground_truth(self):
+        self.mock_chat_with_model.return_value = {'message': {'content': '[[A]]'}}
+        ground_truth_text = "The sky is blue due to Rayleigh scattering."
+
+        self.judge.evaluate(
+            user_prompt="Is the sky blue?",
+            response_a="Yes.",
+            response_b="No.",
+            ground_truth=ground_truth_text
+        )
+
+        self.mock_chat_with_model.assert_called_once()
+        _args, kwargs = self.mock_chat_with_model.call_args
+        self.assertIn(ground_truth_text, kwargs['prompt'])
+        self.assertIn("[The Start of Reference Answer]", kwargs['prompt'])
+
+    def test_evaluate_handles_api_failures(self):
+        # Test cases for various invalid API responses
+        failure_cases = [
+            None,
+            "just a string, not a dict",
+            {},
+            {"message": "not a dict"},
+            {"message": {}}, # Missing 'content' key
+        ]
         
-        judge_prompt = _build_judge_prompt(prompt, response1, response2)
-        
-        self.assertIn("[User Question]", judge_prompt)
-        self.assertIn(prompt, judge_prompt)
-        self.assertIn("[The Start of Assistant A’s Answer]", judge_prompt)
-        self.assertIn(response1, judge_prompt)
-        self.assertIn("[The Start of Assistant B’s Answer]", judge_prompt)
-        self.assertIn(response2, judge_prompt)
-        self.assertNotIn("[The Start of Reference Answer]", judge_prompt)
-        self.assertIn("strictly following this format: '[[A]]' if assistant A is better, '[[B]]' if assistant B is better, and '[[C]]' for a tie.", judge_prompt)
-
-    def test_build_judge_prompt_with_ground_truth(self):
-        """
-        Testet die Erstellung des Judge-Prompts MIT einer Referenzantwort.
-        """
-        prompt = "Fasse zusammen."
-        response1 = "Kurze Zusammenfassung."
-        response2 = "Lange Zusammenfassung."
-        ground_truth = "Eine perfekte Zusammenfassung."
-        
-        judge_prompt = _build_judge_prompt(prompt, response1, response2, ground_truth=ground_truth)
-        
-        self.assertIn("[The Start of Reference Answer]", judge_prompt)
-        self.assertIn(ground_truth, judge_prompt)
-        self.assertIn("evaluate the correctness of the responses", judge_prompt)
-        self.assertIn("'[[A]]' if assistant A is more correct, '[[B]]' if assistant B is more correct", judge_prompt)
-
-    def test_parse_judge_verdict(self):
-        """
-        Testet das Parsen von verschiedenen Formaten der Judge-Antwort.
-        """
-        self.assertEqual(self.judge._parse_judge_verdict("[[A]]"), 1.0)
-        self.assertEqual(self.judge._parse_judge_verdict("[[B]]"), 0.0)
-        self.assertEqual(self.judge._parse_judge_verdict("[[C]]"), 0.5)
-
-        self.assertEqual(self.judge._parse_judge_verdict("Ich denke, A ist besser. [[A]]"), 1.0)
-        self.assertEqual(self.judge._parse_judge_verdict("Antwort B ist klar überlegen. [[B]]"), 0.0)
-        self.assertEqual(self.judge._parse_judge_verdict("Beide sind gleich gut. [[C]] Dies war eine schwere Entscheidung."), 0.5)
-
-        self.assertEqual(self.judge._parse_judge_verdict("  [[a]]  "), 1.0)
-        self.assertEqual(self.judge._parse_judge_verdict("[[ b ]]"), 0.0)
-
-        self.assertIsNone(self.judge._parse_judge_verdict("A ist besser."))
-        self.assertIsNone(self.judge._parse_judge_verdict("[A]"))
-        self.assertIsNone(self.judge._parse_judge_verdict(""))
-        self.assertIsNone(self.judge._parse_judge_verdict(None))
-        self.assertIsNone(self.judge._parse_judge_verdict("Das ist [[D]]."))
+        for api_response in failure_cases:
+             with self.subTest(api_response=api_response):
+                self.mock_chat_with_model.return_value = api_response
+                
+                score = self.judge.evaluate(
+                    user_prompt="test prompt",
+                    response_a="answer A",
+                    response_b="answer B"
+                )
+                
+                self.assertIsNone(score)
+                self.mock_chat_with_model.reset_mock()
 
 if __name__ == '__main__':
     unittest.main()

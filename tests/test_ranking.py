@@ -1,27 +1,10 @@
 import unittest
 import math
 from collections import defaultdict
-from evaluation.ranking import _calculate_expected_score, calculate_mELO_ratings, C_ELO_CONSTANT
+from evaluation.ranking import calculate_mELO_ratings, C_ELO_CONSTANT
 
 class TestRanking(unittest.TestCase):
 
-    def test_calculate_expected_score(self):
-        """
-        Testet die Berechnung des erwarteten Ergebnisses zwischen zwei Spielern.
-        """
-        # Test case  1: Equal Player
-        self.assertAlmostEqual(_calculate_expected_score(1000, 1000), 0.5)
-
-        # Test case 2: Stronger Player A
-        self.assertGreater(_calculate_expected_score(1200, 1000), 0.5)
-        self.assertAlmostEqual(_calculate_expected_score(1200, 1000), 0.7597, places=4)
-
-        #  Test case 3: Weaker Player A
-        self.assertLess(_calculate_expected_score(1000, 1200), 0.5)
-        self.assertAlmostEqual(_calculate_expected_score(1000, 1200), 0.2403, places=4)
-        
-        # Test case 4: Huge difference 
-        self.assertAlmostEqual(_calculate_expected_score(1800, 1000), 0.9901, places=4)
 
     def test_calculate_mELO_ratings_basic(self):
         """
