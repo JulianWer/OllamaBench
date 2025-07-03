@@ -6,11 +6,7 @@
     <title>OllamaBench Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- ULTRA-MODERNES DESIGN SYSTEM (FLOATING PILL) --- */
         :root {
             --bg-primary: hsl(220, 30%, 98%);
             --bg-secondary: #ffffff;
@@ -57,11 +53,10 @@
             letter-spacing: -0.02em;
         }
 
-        /* --- STYLES FÜR DIE NEUE FLOATING PILL NAVBAR --- */
         #top-navbar-container {
             position: fixed; top: 0; left: 0; right: 0;
             z-index: 50;
-            padding-top: 1.5rem; /* 24px */
+            padding-top: 1.5rem; 
         }
         #floating-nav {
             margin-left: auto;
@@ -72,7 +67,7 @@
             border: 1px solid var(--navbar-border);
             border-radius: 9999px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-            padding: 0.5rem; /* 8px */
+            padding: 0.5rem; 
             display: flex;
             align-items: center;
             width: max-content;
@@ -80,8 +75,8 @@
         .nav-link {
             font-family: 'Inter', sans-serif;
             font-weight: 500;
-            font-size: 0.875rem; /* 14px */
-            padding: 0.5rem 1rem; /* 8px 16px */
+            font-size: 0.875rem; 
+            padding: 0.5rem 1rem; 
             border-radius: 9999px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-secondary);
@@ -95,7 +90,7 @@
         .nav-link:not(.nav-link-active):hover {
             color: var(--text-primary);
         }
-        /* Responsivität der Navbar */
+
         @media (max-width: 768px) {
             #floating-nav {
                 width: calc(100% - 2rem);
