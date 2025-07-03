@@ -1,16 +1,16 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9">
   <diagram id="codeviz-diagram" name="System Diagram">
-    <mxGraphModel dx="1763" dy="1261" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="1589" dy="938" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="1107" value="" style="html=1;whiteSpace=wrap;container=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;fillOpacity=20;strokeWidth=2;containerType=none;recursiveResize=0;movable=1;resizable=1;autosize=0;dropTarget=0" parent="1" vertex="1">
           <mxGeometry x="1104.24" y="759" width="320" height="281" as="geometry" />
         </mxCell>
-        <mxCell id="1123" value="Lokale KI APIs&lt;br&gt;Ollama, etc." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
+        <mxCell id="1123" value="LLM-Runtime&lt;br&gt;(z.B. Ollama)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
           <mxGeometry x="75.92" y="170" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1124" value="Datensatz&lt;br&gt;Hugging Face Hub, etc." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
+        <mxCell id="1124" value="Datensätze&lt;br&gt;(z.B. Hugging Face Hub)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
           <mxGeometry x="75.91783122957376" y="40" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
         <mxCell id="1107_label" value="Externe Systeme" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;labelBackgroundColor=white;spacing=5" parent="1" vertex="1">
@@ -25,10 +25,10 @@
         <mxCell id="1121" value="Modell Antworten" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1108" vertex="1">
           <mxGeometry x="215.91783122957378" y="50" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1122" value="Benchmark Ergebnisse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1108" vertex="1">
+        <mxCell id="1122" value="Benchmark Resultate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1108" vertex="1">
           <mxGeometry x="20" y="50" width="170" height="84.08" as="geometry" />
         </mxCell>
-        <mxCell id="1108_label" value="Lokaler Daten Speicher" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;labelBackgroundColor=white;spacing=5" parent="1" vertex="1">
+        <mxCell id="1108_label" value="Lokaler Datenspeicher" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;labelBackgroundColor=white;spacing=5" parent="1" vertex="1">
           <mxGeometry x="815.7656624591475" y="500.00000000000006" width="608.4734936887213" height="24" as="geometry" />
         </mxCell>
         <mxCell id="1109" value="" style="html=1;whiteSpace=wrap;container=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;fillOpacity=20;strokeWidth=2;containerType=none;recursiveResize=0;movable=1;resizable=1;autosize=0;dropTarget=0" parent="1" vertex="1">
@@ -37,22 +37,22 @@
         <mxCell id="1115" value="Konfiguration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
           <mxGeometry x="80" y="163.92000000000002" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1116" value="Benchmark Skripte" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
+        <mxCell id="1116" value="Benchmark Steuerung" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
           <mxGeometry x="366.2498994468251" y="28" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1117" value="LLM &amp;amp; Evaluation Logik" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
+        <mxCell id="1117" value="Evaluations-Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
           <mxGeometry x="366.24783122957376" y="163.92" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1118" value="Data Utilities" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
+        <mxCell id="1118" value="Datenmanagement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
           <mxGeometry x="707.9956624591475" y="38" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
         <mxCell id="1109_label" value="Benchmark" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;labelBackgroundColor=white;spacing=5;rotation=-90;" parent="1" vertex="1">
           <mxGeometry x="-210" y="888.5" width="608.4734936887212" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="1111" value="Nutzer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
+        <mxCell id="1111" value="Anwender" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
           <mxGeometry x="349.99728903696706" y="469.96" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1112" value="CLI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
+        <mxCell id="1112" value="Kommandozeilen-Schnittstelle (CLI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
           <mxGeometry x="129.99522081971566" y="570" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
         <mxCell id="edge-1745" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1111" target="1112" edge="1">
@@ -92,7 +92,7 @@
         </mxCell>
         <mxCell id="edge-1751_label" value="führt aus" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-1751" vertex="1" connectable="0">
           <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
-            <mxPoint x="23" y="-20" as="offset" />
+            <mxPoint x="3" y="-20" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="edge-1752" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1113" target="1118" edge="1">
@@ -188,7 +188,7 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="910" y="740" />
-              <mxPoint x="1330" y="740" />
+              <mxPoint x="1320" y="740" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -197,17 +197,19 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="edge-1758" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1118" target="1121" edge="1">
+        <mxCell id="edge-1758" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="890" y="710" />
-              <mxPoint x="1134" y="710" />
+              <mxPoint x="880" y="710" />
+              <mxPoint x="1124" y="710" />
             </Array>
+            <mxPoint x="880" y="800" as="sourcePoint" />
+            <mxPoint x="1124" y="624.0789156147871" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="edge-1758_label" value="verwaltet" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-1758" vertex="1" connectable="0">
           <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="32" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="edge-1759" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1118" target="1122" edge="1">
@@ -248,10 +250,10 @@
             <mxPoint x="3" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="1113" value="Web-Anwendung" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
+        <mxCell id="1113" value="Webanwendung" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
           <mxGeometry x="578.316305204929" y="660" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1119" value="LLM API Klient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
+        <mxCell id="1119" value="LLM-API-Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1" vertex="1">
           <mxGeometry x="779.9978312295738" y="925.92" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
       </root>
