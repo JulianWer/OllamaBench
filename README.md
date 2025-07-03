@@ -1,7 +1,3 @@
-Of course. A new README has been created that incorporates the fact that the project is from a bachelor thesis and also integrates the analysis from the provided Jupyter Notebook.
-
-Here is the new `README.md`:
-
 # OllamaBench: A Comprehensive Benchmarking Framework for Local LLMs
 
 OllamaBench is a robust and extensible framework for the performance evaluation of local language models running via Ollama. This project was developed as part of a **bachelor thesis** and provides an automated pipeline for rigorous testing, AI-based evaluation, and detailed analysis through an interactive dashboard and command-line interface (CLI).
