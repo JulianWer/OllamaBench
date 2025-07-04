@@ -31,6 +31,11 @@ Rank  Model                                            Avg ELO           W/L/D
 
 *Ranking data last updated: 2025-06-30*
 
+## License
+
+See the [LICENSE](https://github.com/JulianWer/OllamaBench/blob/main/LICENSE.md) file for license rights and limitations (MIT).
+
+
 
 ## Benchmark Analysis & Validity
 
