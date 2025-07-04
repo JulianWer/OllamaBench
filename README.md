@@ -134,3 +134,10 @@ python main.py --category coding --judge-only
 # Run a full end-to-end benchmark for all categories
 python main.py --all-categories
 ```
+
+
+## Future Work
+
+  * Add also remote Models
+  * Reduce self-bias by using two Judge-Models
+
