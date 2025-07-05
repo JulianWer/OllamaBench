@@ -50,12 +50,6 @@ NUM_SAVE_DATASET_ENTRIES: 1000
 
 # --- ELO Rating Configuration ---
 
-used_rating_method: mElo # mElo or elo
-
-elo:
-  initial_rating: 1000
-  k_factor: 16
-
 mELO:
   initial_rating: 1000
   learning_rate: 100
