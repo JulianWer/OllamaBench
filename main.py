@@ -104,14 +104,14 @@ def run_evaluation_cli(args: argparse.Namespace ,config: Dict[str, Any]):
             categories_to_run = ALL_CATEGORIES # Fallback
 
         complete_run = not args.generate_only and not args.judge_only
-        generate_answers = not args.judge_only and args.generate_only or complete_run
-        run_judgement =  not args.generate_only and args.judge_only or complete_run
+        generate_answers = (not args.judge_only and args.generate_only) or complete_run
+        run_judgement =  (not args.generate_only and args.judge_only) or complete_run
         run_benchmark(config=config, categories_to_run=categories_to_run, generate_answers= generate_answers , run_judgement= run_judgement)
 
     except Exception as e:
         logger.exception(f"An unexpected error occurred during the main evaluation task: {e}")
 
-
+# category
 if __name__ == "__main__":
     print("--- OllamaBench CLI Execution Start ---")
     try:
@@ -163,10 +163,6 @@ if __name__ == "__main__":
         if args.show_rankings:
             display_rankings_cli(CONFIG)
             sys.exit(0)
-
-        # Ensure a category is specified for a benchmark run
-        if not args.all_categories and not args.category:
-            parser.error("Either --all-categories or --category must be specified when not using --show-rankings.")
 
         # --- Run Evaluation ---
         main_logger.info("Starting evaluation process...")
