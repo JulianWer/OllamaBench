@@ -130,6 +130,8 @@ Run benchmarks via the CLI using `main.py`.
 **Example Workflow**:
 
 ```bash
+# Creates a table for the current rankings
+python main.py --show-rankings
 # Generate answers for the 'coding' category only
 python main.py --category schreiben --generate-only
 
