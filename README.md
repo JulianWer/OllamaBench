@@ -131,13 +131,19 @@ Run benchmarks via the CLI using `main.py`.
 
 ```bash
 # Generate answers for the 'coding' category only
-python main.py --category coding --generate-only
+python main.py --category schreiben --generate-only
 
 # Subsequently, run the adjudication for the same category
-python main.py --category coding --judge-only
+python main.py --category schreiben --judge-only
+
+# Run a full end-to-end benchmark for one specific category 
+python main.py --category schreiben
 
 # Run a full end-to-end benchmark for all categories
 python main.py --all-categories
+
+# Run a full end-to-end benchmark for all categories
+python main.py
 ```
 
 
