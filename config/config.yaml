@@ -76,3 +76,4 @@ dashboard:
 logging:
   level: "INFO" 
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  log_file: "logs/warnings.log" 

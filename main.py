@@ -1,5 +1,6 @@
 import argparse
 import logging
+import logging.handlers
 import sys
 import os
 from typing import Dict, Any, List
@@ -25,13 +26,45 @@ except (FileNotFoundError, KeyError, ValueError, Exception) as e:
 
 def setup_logging(config: Dict[str, Any]):
     """Configures logging based on the loaded configuration."""
-    log_level_str = config.get("logging", {}).get("level", "INFO").upper()
-    log_format = config.get("logging", {}).get("format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    logging_config = config.get("logging", {})
+    
+    log_level_str = logging_config.get("level", "INFO").upper()
+    log_format_str = logging_config.get("format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    log_file_path = logging_config.get("log_file") 
 
-    log_handlers = [logging.StreamHandler(sys.stdout)] # Log to stdout by default
-    logging.basicConfig(level=getattr(logging, log_level_str, logging.INFO),
-                        format=log_format,
-                        handlers=log_handlers)
+    root_logger = logging.getLogger()
+    log_level = getattr(logging, log_level_str, logging.INFO)
+    root_logger.setLevel(log_level)
+
+    if root_logger.hasHandlers():
+        root_logger.handlers.clear()
+
+    formatter = logging.Formatter(log_format_str)
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    root_logger.addHandler(console_handler)
+
+    if log_file_path:
+        try:
+            log_dir = os.path.dirname(log_file_path)
+            if log_dir:
+                os.makedirs(log_dir, exist_ok=True)
+            
+            file_handler = logging.handlers.RotatingFileHandler(
+                log_file_path, maxBytes=5*1024*1024, backupCount=2, mode='a', encoding='utf-8'
+            )
+            file_handler.setLevel(logging.WARNING) 
+            file_handler.setFormatter(formatter)
+            root_logger.addHandler(file_handler)
+            
+            root_logger.info(f"Logging in die Konsole ist aktiviert. Warnings (und höher) werden in '{log_file_path}' gespeichert.")
+
+        except Exception as e:
+            root_logger.error(f"Fehler beim Einrichten des File-Loggers: {e}", exc_info=True)
+    else:
+        root_logger.info("Logging in die Konsole ist aktiviert. Es wird keine Log-Datei geschrieben.")
+
 
 
 def display_rankings_cli(config: Dict[str, Any]):
