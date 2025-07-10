@@ -6,13 +6,13 @@
 categories: ['schreiben','rollenspiel','begründung', 'extraktion','stamm','geisteswissenschaften']
 
 comparison:
-  comparisons_per_prompt: 35
+  comparisons_per_prompt: 45
 
 # --- Model Config ---
 comparison_llms:
-  names: ['gemma3n:e4b','gemma3:4b','gemma3:1b','gemma2:2b', 'gemma:2b-instruct',
-                    'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat'
-                    ,'llama3.2:3b', 'llama3.2:1b', 'llama3.1:8b', 'mistral:7b','Ministral-8B-Instruct-2410-Q4_K_M:latest']
+  names: ['gemma3n:e4b-it-q4_K_M','gemma3:4b-it-q4_K_M','gemma3:1b-it-q4_K_M', 'gemma2:2b-instruct-q4_K_M', 'gemma:2b-instruct-q4_K_M',
+                    'qwen3:4b','qwen3:1.7b','qwen3:0.6b','qwen3:8b' ,'qwen:7b-chat-v1.5-q4_K_M'
+                    ,'llama3.2:3b-instruct-q4_K_M', 'llama3.2:1b-instruct-q4_K_M', 'llama3.1:8b-instruct-q4_K_M', 'mistral:7b-instruct-v0.3-q4_K_M','Ministral-8B-Instruct-2410-Q4_K_M:latest']
   has_reasoning: true
   generation_options:
     temperature: 0.0
