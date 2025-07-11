@@ -33,12 +33,12 @@ def run_benchmark(
         f"Starting benchmark for categories: {categories_to_run}. "
         f"Generate answers: {generate_answers}, Run judgement: {run_judgement}"
     )
-    
     success_count = 0
     error_count = 0
 
     for i, category in enumerate(categories_to_run, 1):
         logger.info(f"--- Processing category {i}/{len(categories_to_run)}: '{category}' ---")
+        logger.debug("Run category: {category}")
         try:
             if generate_answers:
                 generate_and_save_model_answers_for_category(config=config, category=category)

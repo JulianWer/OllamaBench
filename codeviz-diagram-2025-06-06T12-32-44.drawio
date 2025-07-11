@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.9 Chrome/134.0.6998.205 Electron/35.4.0 Safari/537.36" version="27.0.9">
   <diagram id="codeviz-diagram" name="System Diagram">
-    <mxGraphModel dx="1589" dy="938" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="1543" dy="1104" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -10,7 +10,7 @@
         <mxCell id="1123" value="LLM-Runtime&lt;br&gt;(z.B. Ollama)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
           <mxGeometry x="75.92" y="181" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
-        <mxCell id="1124" value="Datensätze&lt;br&gt;(z.B. Hugging Face Hub)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
+        <mxCell id="1124" value="Datensatz Hub&lt;br&gt;(z.B. Hugging Face Hub)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1107" vertex="1">
           <mxGeometry x="75.91783122957376" y="40" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
         <mxCell id="1107_label" value="Externe Systeme" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;labelBackgroundColor=white;spacing=5" parent="1" vertex="1">
@@ -44,7 +44,7 @@
           <mxGeometry x="399.99783122957376" y="181" width="168.1578312295738" height="84.0789156147869" as="geometry" />
         </mxCell>
         <mxCell id="1118" value="Datenmanagement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" parent="1109" vertex="1">
-          <mxGeometry x="729.9956624591475" y="38" width="168.1578312295738" height="84.0789156147869" as="geometry" />
+          <mxGeometry x="730" y="40" width="168.16" height="82.08" as="geometry" />
         </mxCell>
         <mxCell id="1109_label" value="OllamaBench" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;labelBackgroundColor=white;spacing=5;rotation=-90;" parent="1" vertex="1">
           <mxGeometry x="-240" y="901" width="608.4734936887212" height="24" as="geometry" />
@@ -186,45 +186,17 @@
             <mxPoint x="14" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="edge-1757" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1118" target="1120" edge="1">
+        <mxCell id="edge-1759" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="1118" target="1108" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="910" y="740" />
-              <mxPoint x="1320" y="740" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge-1757_label" value="verwaltet" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-1757" vertex="1" connectable="0">
-          <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge-1758" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="880" y="710" />
-              <mxPoint x="1124" y="710" />
-            </Array>
-            <mxPoint x="880" y="800" as="sourcePoint" />
-            <mxPoint x="1124" y="624.0789156147871" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge-1758_label" value="verwaltet" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-1758" vertex="1" connectable="0">
-          <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
-            <mxPoint x="32" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="edge-1759" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1118" target="1122" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="870" y="690" />
-              <mxPoint x="930" y="690" />
+              <mxPoint x="854" y="720" />
+              <mxPoint x="1120" y="720" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="edge-1759_label" value="verwaltet" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="edge-1759" vertex="1" connectable="0">
           <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
-            <mxPoint x="40" y="-25" as="offset" />
+            <mxPoint x="51" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="edge-1760" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" parent="1" source="1118" target="1124" edge="1">

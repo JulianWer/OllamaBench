@@ -54,16 +54,14 @@ def setup_logging(config: Dict[str, Any]):
             file_handler = logging.handlers.RotatingFileHandler(
                 log_file_path, maxBytes=5*1024*1024, backupCount=2, mode='a', encoding='utf-8'
             )
-            file_handler.setLevel(logging.WARNING) 
+            file_handler.setLevel(logging.DEBUG) 
             file_handler.setFormatter(formatter)
             root_logger.addHandler(file_handler)
-            
-            root_logger.info(f"Logging in die Konsole ist aktiviert. Warnings (und höher) werden in '{log_file_path}' gespeichert.")
 
         except Exception as e:
-            root_logger.error(f"Fehler beim Einrichten des File-Loggers: {e}", exc_info=True)
+            root_logger.error(f"Error File-Logger: {e}", exc_info=True)
     else:
-        root_logger.info("Logging in die Konsole ist aktiviert. Es wird keine Log-Datei geschrieben.")
+        root_logger.info("Logging is activated")
 
 
 
