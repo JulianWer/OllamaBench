@@ -73,7 +73,6 @@ def _process_prompt_comparisons(
 ) -> List[MatchType]:
     """Processes all comparisons for a single prompt and returns a list of matches."""
     matches = []
-    
     prompt_content, ground_truth, prompt_id = extract_prompt_info_from_dataset_item(
         config_service.get_full_config(), prompt
     )
@@ -114,6 +113,9 @@ def _process_prompt_comparisons(
 
 def run_judge_comparison(config_dict: Dict[str, Any], category: str) -> Optional[ModelRatingsType]:
     config_service = ConfigService()
+    
+    random.seed(42)
+
     
     judge = create_judge_llm(config_service)
     if not judge:
