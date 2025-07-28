@@ -27,7 +27,13 @@ function generateColors(count) {
 }
 
 function capitalizeFirstLetter(s) {
-    return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    if (!s) return ''; 
+
+    if (/stem/i.test(s)) {
+        return s.toUpperCase(); 
+    }
+    
+    return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 // --- UI Update Functions ---

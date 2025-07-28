@@ -3,7 +3,7 @@
 # ==================================================
 
 
-categories: ['schreiben','rollenspiel','begründung', 'extraktion','stamm','geisteswissenschaften']
+categories: ['schreiben','rollenspiel','begründung', 'extraktion','stem','geisteswissenschaften']
 
 comparison:
   comparisons_per_prompt: 45
