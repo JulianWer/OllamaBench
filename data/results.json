@@ -208,7 +208,7 @@
         }
       }
     },
-    "Ministral-8B-Instruct-2410-Q4_K_M": {
+    "Ministral-8B-Instruct-2410-Q4_K_M:latest": {
       "elo_rating_by_category": {
         "schreiben": 918.8544995404454,
         "rollenspiel": 965.1423414226362,
